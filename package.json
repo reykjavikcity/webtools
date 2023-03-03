@@ -1,0 +1,68 @@
+{
+  "name": "@reykjavik/webtools",
+  "version": "0.0.0",
+  "description": "Misc. JS/TS helpers used by Reykjavík City's web dev teams.",
+  "main": "index.js",
+  "repository": "ssh://git@github.com:reykjavikcity/webtools.git",
+  "author": "Reykjavík (http://www.reykjavik.is)",
+  "contributors": [
+    "Elías Nökkvi Gíslason",
+    "Már Örlygsson <mar.orlygsson@reykjavik.is>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "yarn install  &&  yarn run test --watch",
+    "test": "jest",
+    "build": "yarn install  &&  yarn run test  &&  node build.mjs",
+    "prepublishOnly": "echo \"\nRun 'yarn run publishdist' to publish this package\n\n\"  && exit 1",
+    "publish:lib": "yarn run build  &&  cd _npm-dist  &&  npm publish",
+    "publish:canary": "yarn run build  &&  cd _npm-dist  &&  npm publish --tag canary",
+    "format": "eslint --fix  \"*.{mjs,js,ts,tsx}\" \"src/**/*.{mjs,js,ts,tsx}\"  &&  prettier --write \"*.{json,md}\"  \"src/**/*.{json,md}\""
+  },
+  "dependencies": {
+    "@reykjavik/hanna-utils": "^0.2.3"
+  },
+  "peerDependencies": {
+    "next": ">12",
+    "react": ">16.8.0",
+    "react-dom": ">16.8.0"
+  },
+  "devDependencies": {
+    "@hugsmidjan/hxmstyle": "^7.0.0",
+    "@jest/globals": "^29.5.0",
+    "@types/node": "^18.14.5",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "eslint": "^8.35.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "next": "^12",
+    "prettier": "^2.8.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "ts-jest": "^29.0.5",
+    "typescript": "^4.9.5"
+  },
+  "hxmstyle": {
+    "options": {
+      "react": true,
+      "typescript": true
+    }
+  },
+  "dist_package_json": {
+    "engines": {
+      "node": ">=16"
+    },
+    "sideEffects": false,
+    "private": null,
+    "scripts": null,
+    "devDependencies": null,
+    "hxmstyle": null,
+    "packageManager": null
+  },
+  "packageManager": "^yarn@1.22.1",
+  "engines": {
+    "node": "^18"
+  }
+}

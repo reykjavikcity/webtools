@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node",
+    "target": "ES2015",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "jsx": "react",
+
+    "strict": true, // Don't be daft. Always be strict.
+    "noUncheckedIndexedAccess": true, // Should be part of strict
+    "useUnknownInCatchVariables": true
+  },
+  "exclude": ["node_modules", "npm-dist"],
+  "include": ["**/*.ts", "**/*.tsx"]
+}

@@ -1,0 +1,32 @@
+import { expect, test } from '@jest/globals';
+
+import { pingSiteImprove, SiteImprove } from './SiteImprove';
+
+test('SiteImprove', () => {
+  expect(!SiteImprove).toEqual(false);
+});
+
+test('pingSiteImprove', () => {
+  expect(window._sz).toBe(undefined);
+  pingSiteImprove('foo', 'submit', 'data');
+  const _sz = window._sz || [];
+  expect(_sz._jit_defined_).toBe(true);
+  expect(_sz.at(-1)).toEqual(['event', 'foo', 'submit', 'data']);
+  pingSiteImprove('foo', 'reset');
+  expect(_sz.at(-1)).toEqual(['event', 'foo', 'reset']);
+});
+
+// ---------------------------------------------------------------------------
+// Testing exports
+
+/* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first, simple-import-sort/imports */
+import * as moduleExports from './SiteImprove';
+
+if (false as boolean) {
+  const exports: Record<keyof typeof moduleExports, true> = {
+    SiteImprove: true,
+    pingSiteImprove: true,
+  };
+}
+import type { SiteImproveProps } from './SiteImprove';
+/* eslint-enable */
