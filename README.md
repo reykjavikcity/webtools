@@ -1,11 +1,5 @@
 # @reykjavik/webtools
 
-> **Warning** This repo is still very much WIP. The npm package has **NOT**
-> been published yet.
->
-> See [Project Prep TODO](https://github.com/reykjavikcity/webtools/issues/1)
-> for what's planned
-
 Miscellaneous JavaScript/TypeScript helpers used by Reykjavík City's web dev
 teams.
 
