@@ -5,9 +5,9 @@ import { ServerResponse } from 'http';
 import { AppType } from 'next/app';
 import { NextRouter } from 'next/router';
 
-import { HTTP_400_BadRequest } from '../http';
+import { HTTP_400_BadRequest } from '../http.js';
 
-import { ErrorProps, InferErrorPageProps, makeErrorizeAppHOC } from './http';
+import { ErrorProps, InferErrorPageProps, makeErrorizeAppHOC } from './http.js';
 
 test('showErrorPage', () => {
   expect(3).toEqual(3);
@@ -101,8 +101,8 @@ if (false as boolean) {
 // Testing exports
 
 /* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first, simple-import-sort/imports */
-import * as vannillaHttpExports from '../http';
-import * as moduleExports from './http';
+import * as vannillaHttpExports from '../http.js';
+import * as moduleExports from './http.js';
 
 declare const vanillaHttpReExports: Record<keyof typeof vannillaHttpExports, true>;
 
@@ -114,5 +114,5 @@ if (false as boolean) {
   };
 }
 
-import type { ErrorProps as T1, InferErrorPageProps as T2 } from './http';
+import type { ErrorProps as T1, InferErrorPageProps as T2 } from './http.js';
 /* eslint-enable */

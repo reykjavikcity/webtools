@@ -2,7 +2,7 @@ import { expect, jest, test } from '@jest/globals';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Socket } from 'net';
 
-import { cacheControl } from './http';
+import { cacheControl } from './http.js';
 
 test('cacheControl', () => {
   const res = new ServerResponse(new IncomingMessage(new Socket()));
@@ -17,7 +17,7 @@ test('cacheControl', () => {
 // Testing exports
 
 /* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first, simple-import-sort/imports */
-import * as moduleExports from './http';
+import * as moduleExports from './http.js';
 
 // `false` condition guarantees that the following code is never executed
 if (false as boolean) {
@@ -52,5 +52,5 @@ import type {
   HTTP_SERVER_ERROR,
   HTTP_STATUS,
   HTTP_SUCCESS,
-} from './http';
+} from './http.js';
 /* eslint-enable */

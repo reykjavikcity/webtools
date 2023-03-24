@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Add '.js' file extensions to local ESM import paths
 
 ## 0.1.0 – 0.1.1
 

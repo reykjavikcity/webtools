@@ -3,7 +3,7 @@ import { EitherObj } from '@reykjavik/hanna-utils';
 import { Router } from 'next/router';
 import Script from 'next/script';
 
-import { useCookieHubConsent } from '../CookieHubConsent';
+import { useCookieHubConsent } from '../CookieHubConsent.js';
 
 // Event tracking - https://help.siteimprove.com/support/solutions/articles/80000863895-getting-started-with-event-tracking
 // Custom page visit tracking - https://help.siteimprove.com/support/solutions/articles/80000448441-siteimprove-analytics-custom-visit-tracking

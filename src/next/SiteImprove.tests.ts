@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals';
 
-import { pingSiteImprove, SiteImprove } from './SiteImprove';
+import { pingSiteImprove, SiteImprove } from './SiteImprove.js';
 
 test('SiteImprove', () => {
   expect(!SiteImprove).toEqual(false);
@@ -20,7 +20,7 @@ test('pingSiteImprove', () => {
 // Testing exports
 
 /* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first, simple-import-sort/imports */
-import * as moduleExports from './SiteImprove';
+import * as moduleExports from './SiteImprove.js';
 
 if (false as boolean) {
   const exports: Record<keyof typeof moduleExports, true> = {
@@ -28,5 +28,5 @@ if (false as boolean) {
     pingSiteImprove: true,
   };
 }
-import type { SiteImproveProps } from './SiteImprove';
+import type { SiteImproveProps } from './SiteImprove.js';
 /* eslint-enable */

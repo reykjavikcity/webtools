@@ -3,8 +3,8 @@ import { Cleanup } from '@reykjavik/hanna-utils';
 import { ServerResponse } from 'http';
 import type { AppProps, AppType } from 'next/app';
 
-import type { HTTP_418_ImATeapot, HTTP_ERROR, TTLConfig } from '../http';
-import { cacheControl, HTTP_304_NotModified } from '../http';
+import type { HTTP_418_ImATeapot, HTTP_ERROR, TTLConfig } from '../http.js';
+import { cacheControl, HTTP_304_NotModified } from '../http.js';
 
 type HTTP_ERROR_all = HTTP_ERROR | typeof HTTP_418_ImATeapot;
 
@@ -12,7 +12,7 @@ type HTTP_ERROR_all = HTTP_ERROR | typeof HTTP_418_ImATeapot;
   Re-export all of the base [http module](#reykjavikwebtoolshttp)'s exports,
   purely for convenience.
 */
-export * from '../http';
+export * from '../http.js';
 
 // ---------------------------------------------------------------------------
 type NextContextLike = { res: ServerResponse };

@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals';
 
-import { CookieHubProvider } from './CookieHubConsent';
+import { CookieHubProvider } from './CookieHubConsent.js';
 
 test('CookieHubProvider', () => {
   expect(!CookieHubProvider).toEqual(false);
@@ -10,7 +10,7 @@ test('CookieHubProvider', () => {
 // Testing exports
 
 /* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first, simple-import-sort/imports */
-import * as moduleExports from './CookieHubConsent';
+import * as moduleExports from './CookieHubConsent.js';
 
 if (false as boolean) {
   const exports: Record<keyof typeof moduleExports, true> = {
@@ -18,5 +18,5 @@ if (false as boolean) {
     useCookieHubConsent: true,
   };
 }
-import type { CookieHubProviderProps } from './CookieHubConsent';
+import type { CookieHubProviderProps } from './CookieHubConsent.js';
 /* eslint-enable */
