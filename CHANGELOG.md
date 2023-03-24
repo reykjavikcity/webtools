@@ -3,9 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- fix: Only "mock load" SiteImprove once on component mount
 
-## 0.1.0 – 0.1.5
+## 0.1.0 – 0.1.6
 
 _2023-03-24_
 
