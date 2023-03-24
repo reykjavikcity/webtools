@@ -1,6 +1,6 @@
 {
   "name": "@reykjavik/webtools",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Misc. JS/TS helpers used by Reykjavík City's web dev teams.",
   "main": "index.js",
   "repository": "ssh://git@github.com:reykjavikcity/webtools.git",
