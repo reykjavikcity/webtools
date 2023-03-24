@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- feat: Add all the HTTP status codes, for completeness
 
 ## 0.1.0 – 0.1.2
 

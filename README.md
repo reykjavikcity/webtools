@@ -41,13 +41,9 @@ Various framework agnostic helpers for leveraging HTTP magic.
 
 ### HTTP Status Codes
 
-The most common HTTP status codes are exported with human-readable names.
+All the web-related HTTP status codes are exported with human-readable names:
 
 - `HTTP_200_OK`
-- `HTTP_201_Created`
-- `HTTP_202_Accepted`
-- `HTTP_301_MovedPermanently`
-- `HTTP_302_Found`
 - `HTTP_303_SeeOther`
 - `HTTP_304_NotModified`
 - `HTTP_307_TemporaryRedirect`
@@ -56,24 +52,38 @@ The most common HTTP status codes are exported with human-readable names.
 - `HTTP_401_Unauthorized`
 - `HTTP_403_Forbidden`
 - `HTTP_404_NotFound`
-- `HTTP_410_Gone`
 - `HTTP_418_ImATeapot`
 - `HTTP_500_InternalServerError`
+- ...ad nauseum.
 
 ### Types for HTTP Status code groups
 
 These type unions are useful when writing HTTP helper functions and error
 handling, etc.
 
-- `HTTP_SUCCESS` (200, 201, 202)
-- `HTTP_REDIRECTION` (301, 302, 303, 304, 307, 308)
-  - `HTTP_NOTMODIFIED` (304)
-- `HTTP_CLIENT_ERROR` (400, 401, 403, 404, 410)
-  - `HTTP_NOT_FOUND` (400, 404, 410)
-  - `HTTP_BANNED` (401, 403)
-- `HTTP_SERVER_ERROR` (500)
-- `HTTP_ERROR` (`HTTP_CLIENT_ERROR` + `HTTP_SERVER_ERROR`)
-- `HTTP_STATUS` (all of the supported status-cedes)
+Union Types for the more commonly occurrring HTTP Status codes:
+
+- `HTTP_STATUS` (all the status-codes!)
+  - `HTTP_INFO` (100, 101)
+  - `HTTP_SUCCESS` (200, 201, 202)
+  - `HTTP_REDIRECTION` (301, 302, 303, 304, 307, 308)
+    - `HTTP_NOTMODIFIED` (304)
+  - `HTTP_ERROR`
+    - `HTTP_CLIENT_ERROR`
+      - `HTTP_NOT_FOUND` (400, 404, 410)
+      - `HTTP_BANNED` (401, 403)
+    - `HTTP_SERVER_ERROR` (500)
+
+More complete union types, including all the esoteric status codes, are also
+available:
+
+- `HTTP_STATUS` (all the status-codes!)
+  - `HTTP_INFO_ALL` (1\*\*)
+  - `HTTP_SUCCESS_ALL` (2\*\*)
+  - `HTTP_REDIRECTION_ALL` (3\*\*)
+  - `HTTP_ERROR_ALL`
+    - `HTTP_CLIENT_ERROR_ALL` (4\*\*)
+    - `HTTP_SERVER_ERROR_ALL` (4\*\*)
 
 ### `cacheControl` helper
 
