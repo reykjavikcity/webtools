@@ -24,7 +24,7 @@
     "@reykjavik/hanna-utils": "^0.2.3"
   },
   "peerDependencies": {
-    "next": ">12",
+    "next": ">11",
     "react": ">16.8.0",
     "react-dom": ">16.8.0"
   },

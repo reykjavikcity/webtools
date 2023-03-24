@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- feat: Relax the Next.js peerDependency version to include v11
 
 ## 0.1.0 – 0.1.3
 
