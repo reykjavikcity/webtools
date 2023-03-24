@@ -155,28 +155,34 @@ export const SiteImprove = (props: SiteImproveProps) => {
     (analytics && props.hasConstented !== false) ||
     (analytics === undefined && props.hasConstented);
 
-  useEffect(() => {
-    if (consented) {
-      const routerEvents = Router.events;
-      routerEvents.on('routeChangeStart', captureRefUrl);
-      routerEvents.on('routeChangeComplete', sendRoutingEvent);
-      return () => {
-        routerEvents.off('routeChangeStart', captureRefUrl);
-        routerEvents.off('routeChangeComplete', sendRoutingEvent);
-      };
-    }
-  }, [consented]);
+  useEffect(
+    () => {
+      if (consented) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.info(
+            'Mock loading SiteImprove in development mode.',
+            props.scriptUrl || props.accountId
+          );
+          if (!window._sz) {
+            setTimeout(() => {
+              window._sz = window._sz || [];
+            }, 300);
+          }
+        }
+        const routerEvents = Router.events;
+        routerEvents.on('routeChangeStart', captureRefUrl);
+        routerEvents.on('routeChangeComplete', sendRoutingEvent);
+        return () => {
+          routerEvents.off('routeChangeStart', captureRefUrl);
+          routerEvents.off('routeChangeComplete', sendRoutingEvent);
+        };
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [consented]
+  );
 
-  if (!consented) {
-    return null;
-  }
-  if (process.env.NODE_ENV !== 'production') {
-    console.info('Mock loading SiteImprove in development mode.');
-    if (!window._sz) {
-      setTimeout(() => {
-        window._sz = window._sz || [];
-      }, 300);
-    }
+  if (!consented || process.env.NODE_ENV !== 'production') {
     return null;
   }
 

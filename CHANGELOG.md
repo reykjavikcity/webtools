@@ -3,7 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- feat: Relax the Next.js peerDependency version to include v11
+- fix: Only "mock load" SiteImprove once on component mount
 
 ## 0.1.0 – 0.1.5
 
