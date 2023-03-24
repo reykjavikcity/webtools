@@ -19,7 +19,6 @@ type NextContextLike = { res: ServerResponse };
 
 export type ErrorProps = {
   statusCode: HTTP_ERROR_all;
-  /** If a HTTP_ERROR code is passed, a default error message is displayed */
   message?: string;
 };
 

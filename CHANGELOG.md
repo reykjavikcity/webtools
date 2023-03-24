@@ -3,7 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- fix: Drop `418` from `HTTP_CLIENT_ERROR` list. Stay serious.
+- fix: Drop `418` from `HTTP_CLIENT_ERROR` list
+- fix: Remove incorrect JSDoc comment
 
 ## 0.1.0
 
