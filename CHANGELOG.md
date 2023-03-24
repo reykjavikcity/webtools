@@ -3,11 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- fix: Mangled filenames in `pkg.exports`
-- fix: Drop `418` from `HTTP_CLIENT_ERROR` list
-- fix: Remove incorrect JSDoc comment
 
-## 0.1.0
+## 0.1.0 – 0.1.1
 
 _2023-03-24_
 
