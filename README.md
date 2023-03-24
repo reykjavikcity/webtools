@@ -65,15 +65,15 @@ The most common HTTP status codes are exported with human-readable names.
 These type unions are useful when writing HTTP helper functions and error
 handling, etc.
 
-- `HTTP_SUCCESS` (2xx)
-- `HTTP_REDIRECTION` (3xx)
+- `HTTP_SUCCESS` (200, 201, 202)
+- `HTTP_REDIRECTION` (301, 302, 303, 304, 307, 308)
   - `HTTP_NOTMODIFIED` (304)
-- `HTTP_CLIENT_ERROR` (4xx)
-  - `HTTP_NOT_FOUND` (400, 404)
+- `HTTP_CLIENT_ERROR` (400, 401, 403, 404, 410)
+  - `HTTP_NOT_FOUND` (400, 404, 410)
   - `HTTP_BANNED` (401, 403)
-- `HTTP_SERVER_ERROR` (5xx)
-- `HTTP_ERROR` (4xx, 5xx)
-- `HTTP_STATUS` (all of the above)
+- `HTTP_SERVER_ERROR` (500)
+- `HTTP_ERROR` (`HTTP_CLIENT_ERROR` + `HTTP_SERVER_ERROR`)
+- `HTTP_STATUS` (all of the supported status-cedes)
 
 ### `cacheControl` helper
 
