@@ -91,7 +91,7 @@ writeFile(`${outDir}/esm/package.json`, JSON.stringify({ type: 'module' }));
 
 makePackageJson(outDir, {
   exports: entryPoints.reduce((exports, file) => {
-    const token = file.replace(/\.ts$/, '');
+    const token = file.replace(/\.tsx?$/, '');
     const expToken = token === 'index' ? '.' : `./${token}`;
     exports[expToken] = {
       import: `./esm/${token}.js`,

@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Mangled filenames in `pkg.exports`
 - fix: Drop `418` from `HTTP_CLIENT_ERROR` list
 - fix: Remove incorrect JSDoc comment
 
