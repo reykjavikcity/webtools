@@ -3,8 +3,10 @@ import { Cleanup } from '@reykjavik/hanna-utils';
 import { ServerResponse } from 'http';
 import type { AppProps, AppType } from 'next/app';
 
-import type { HTTP_ERROR, TTLConfig } from '../http';
+import type { HTTP_418_ImATeapot, HTTP_ERROR, TTLConfig } from '../http';
 import { cacheControl, HTTP_304_NotModified } from '../http';
+
+type HTTP_ERROR_all = HTTP_ERROR | typeof HTTP_418_ImATeapot;
 
 /*
   Re-export all of the base [http module](#reykjavikwebtoolshttp)'s exports,
@@ -16,7 +18,7 @@ export * from '../http';
 type NextContextLike = { res: ServerResponse };
 
 export type ErrorProps = {
-  statusCode: HTTP_ERROR;
+  statusCode: HTTP_ERROR_all;
   /** If a HTTP_ERROR code is passed, a default error message is displayed */
   message?: string;
 };
@@ -30,7 +32,7 @@ type ErrorizedPageProps<EP extends ErrorProps = ErrorProps> =
 
 type ShowErrorPageFn<EP extends ErrorProps = ErrorProps> = (
   response: ServerResponse | NextContextLike,
-  error: (ErrorProps extends EP ? HTTP_ERROR : never) | EP,
+  error: (ErrorProps extends EP ? HTTP_ERROR_all : never) | EP,
   /** Defaults to `"2s"`. Gets forwarded on to the `cacheControl` helper from `@reykjavik/webtools/http` */
   ttl?: TTLConfig
 ) => { props: ErrorizedPageProps<EP> };

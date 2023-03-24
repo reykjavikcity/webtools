@@ -73,8 +73,14 @@ export type HTTP_CLIENT_ERROR =
   | typeof HTTP_401_Unauthorized
   | typeof HTTP_403_Forbidden
   | typeof HTTP_404_NotFound
-  | typeof HTTP_410_Gone
-  | typeof HTTP_418_ImATeapot;
+  | typeof HTTP_410_Gone;
+/*
+  NOPE: No joke statuses in this utilitarian type union.
+  Later we might like to create a wider union with literally all the HTTP_4xx_*
+  status codes, including these more esoteric ones.
+  `HTTP_CLIENT_ERROR_ALL`, `HTTP_SERVER_ERROR_ALL`, `HTTP_ERROR_ALL`, etc.
+*/
+// | typeof HTTP_418_ImATeapot;
 
 export type HTTP_NOT_FOUND =
   | typeof HTTP_400_BadRequest
@@ -90,6 +96,7 @@ export type HTTP_STATUS =
   | HTTP_SUCCESS
   | HTTP_REDIRECTION
   | HTTP_CLIENT_ERROR
+  | typeof HTTP_418_ImATeapot
   | HTTP_SERVER_ERROR;
 
 // ---------------------------------------------------------------------------

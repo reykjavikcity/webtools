@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Drop `418` from `HTTP_CLIENT_ERROR` list. Stay serious.
 
 ## 0.1.0
 
