@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { EitherObj } from '@reykjavik/hanna-utils';
-import { Router } from 'next/router';
-import Script from 'next/script';
+import { Router } from 'next/router.js';
+import Script from 'next/script.js';
 
 import { useCookieHubConsent } from '../CookieHubConsent.js';
 

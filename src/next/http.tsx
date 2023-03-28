@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Cleanup } from '@reykjavik/hanna-utils';
 import { ServerResponse } from 'http';
-import type { AppProps, AppType } from 'next/app';
+import type { AppProps, AppType } from 'next/app.js';
 
 import type { HTTP_418_ImATeapot, HTTP_ERROR, TTLConfig } from '../http.js';
 import { cacheControl, HTTP_304_NotModified } from '../http.js';
