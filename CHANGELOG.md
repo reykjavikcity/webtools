@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Make next/http `ErrorProps` accept `HTTP_ERROR_ALL`
 
 ## 0.1.0 – 0.1.6
 
