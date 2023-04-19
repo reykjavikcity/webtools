@@ -73,10 +73,9 @@ const _emitEvent =
           _sz = window._sz = [];
           _sz._jit_defined_ = true;
         }
+        _sz.push(event);
         if (process.env.NODE_ENV === 'development') {
           console.info('SiteImprove:', event);
-        } else {
-          _sz.push(event);
         }
       };
 
@@ -123,7 +122,7 @@ const logOutboundLinks = () => {
     }
     link.$$bound = true;
     // Waiting for the bubble phase allows other click handlers to preventDefault()
-    link.addEventListener('click', (e: MouseEvent) => {
+    link.addEventListener('click', (e) => {
       if (e.defaultPrevented) {
         return;
       }

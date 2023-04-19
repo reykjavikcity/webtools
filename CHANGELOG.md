@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/next/SiteImprove`:
+  - feat: Always push events to `window._sz`, even in development mode
   - fix: Remove stray, unused import
 
 ## 0.1.7
