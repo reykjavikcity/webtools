@@ -3,15 +3,13 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- `@reykjavik/webtools/next/SiteImprove`:
-  - feat: Always push events to `window._sz`, even in development mode
-  - fix: Remove stray, unused import
 
-## 0.1.7
+## 0.1.7 – 0.1.8
 
 _2023-04-19_
 
 - `@reykjavik/webtools/next/SiteImprove`:
+  - feat: Always push events to `window._sz`, even in development mode
   - feat: Auto-track outbound link clicks, also for late-injected elements.
   - feat: Add `pingSiteImproveOutbound` helper
   - fix: Strip pageview ref URLs on history back/forward traversal
