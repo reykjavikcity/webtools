@@ -4,7 +4,6 @@ import { Router } from 'next/router.js';
 import Script from 'next/script.js';
 
 import { useCookieHubConsent } from '../CookieHubConsent.js';
-import { doc } from 'prettier';
 
 // Event tracking - https://help.siteimprove.com/support/solutions/articles/80000863895-getting-started-with-event-tracking
 // Custom page visit tracking - https://help.siteimprove.com/support/solutions/articles/80000448441-siteimprove-analytics-custom-visit-tracking

@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/next/SiteImprove`:
+  - fix: Remove stray, unused import
 
 ## 0.1.7
 
