@@ -3,7 +3,12 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- fix: Make next/http `ErrorProps` accept `HTTP_ERROR_ALL`
+- `@reykjavik/webtools/next/SiteImprove`:
+  - feat: Auto-track outbound link clicks, also for late-injected elements.
+  - feat: Add `pingSiteImproveOutbound` helper
+  - fix: Strip pageview ref URLs on history back/forward traversal
+- `@reykjavik/webtools/next/http`
+  - fix: Make `ErrorProps` accept `HTTP_ERROR_ALL`
 
 ## 0.1.0 – 0.1.6
 

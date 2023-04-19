@@ -26,6 +26,7 @@ if (false as boolean) {
   const exports: Record<keyof typeof moduleExports, true> = {
     SiteImprove: true,
     pingSiteImprove: true,
+    pingSiteImproveOutbound: true,
   };
 }
 import type { SiteImproveProps } from './SiteImprove.js';

@@ -29,7 +29,7 @@ yarn add @reykjavik/webtools
 - [`@reykjavik/webtools/next/SiteImprove`](#reykjavikwebtoolsnextsiteimprove)
   - [`SiteImprove` component](#siteimprove-component)
   - [`pingSiteImprove` helper](#pingsiteimprove-helper)
-- [Changelog](#changelog)
+  - [`pingSiteImproveOutbound` helper](#pingsiteimproveoutbound-helper)
 
 <!-- prettier-ignore-start -->
 
@@ -399,6 +399,8 @@ applications and perform custom event tracking.
 A component for loading a SiteImprove analytics script and set up page-view
 tracking across Next.js routes.
 
+It also automatically logs all out-öbound link clicks.
+
 ```js
 import { SiteImprove } from '@reykjavik/webtools/next/SiteImprove';
 
@@ -446,7 +448,26 @@ const handleSubmit = () => {
 };
 ```
 
-In dev mode it only logs tracking events to the console.
+### `pingSiteImproveOutbound` helper
+
+**Syntax:** `pingSiteImproveOutbound(ourl: string): void`
+
+A small helper for reporting to SiteImrove when the user is programmatically
+being sent to a different URL/resource.
+
+```js
+import { pingSiteImproveOutbound } from '@reykjavik/webtools/next/SiteImprove';
+
+const handleSubmit = () => {
+  // perform submit action...
+  if (success) {
+    const fileUrl ='/download/report.pdf'
+    pingSiteImproveOutbound(fileUrl);
+    document.location.href = fileUrl
+  }
+};
+
+
 
 ---
 
@@ -454,3 +475,4 @@ In dev mode it only logs tracking events to the console.
 
 See
 [CHANGELOG.md](https://github.com/reykjavikcity/webtools/blob/main/CHANGELOG.md)
+```

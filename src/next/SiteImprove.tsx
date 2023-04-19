@@ -4,6 +4,7 @@ import { Router } from 'next/router.js';
 import Script from 'next/script.js';
 
 import { useCookieHubConsent } from '../CookieHubConsent.js';
+import { doc } from 'prettier';
 
 // Event tracking - https://help.siteimprove.com/support/solutions/articles/80000863895-getting-started-with-event-tracking
 // Custom page visit tracking - https://help.siteimprove.com/support/solutions/articles/80000448441-siteimprove-analytics-custom-visit-tracking
@@ -21,10 +22,13 @@ declare global {
        * just-in-time.
        */
       _jit_defined_?: true;
+      core?: {
+        data: Array<SiteImproveEvent>;
+      };
     };
   }
 }
-type SiteImproveEvent = SiteImprovePageView | SiteImproveCustomEvent;
+type SiteImproveEvent = SiteImprovePageView | SiteImproveRequest | SiteImproveCustomEvent;
 
 type SiteImprovePageView = [
   type: 'trackdynamic',
@@ -32,9 +36,20 @@ type SiteImprovePageView = [
     /** New page URL */
     url: string;
     /** The previous (referer) URL */
-    ref: string;
+    ref?: string;
     /** New page title */
     title?: string;
+  }
+];
+type SiteImproveRequest = [
+  type: 'request',
+  data: {
+    /** Outbound URL */
+    ourl: string;
+    /** The current page URL */
+    ref: string;
+
+    autoonclick?: 1;
   }
 ];
 type SiteImproveCustomEvent = [
@@ -89,10 +104,47 @@ const sendRoutingEvent = (url: string) =>
     'trackdynamic',
     {
       url,
-      ref: refUrl,
+      // On `history.back()`/`history.forward()` the URL change happens before
+      // `routeChangeStart`, so `refUrl` and `url` become the same.
+      // in that case we suppress the `ref`
+      ref: refUrl !== url ? refUrl : undefined,
       title: document.title,
     },
   ]);
+
+// ---------------------------------------------------------------------------
+
+const logOutboundLinks = () => {
+  const captureLinkClicks = (e: MouseEvent) => {
+    const link = (e.target as Element).closest<HTMLAnchorElement & { $$bound?: boolean }>(
+      'a[href]'
+    );
+    if (!link || link.$$bound) {
+      return;
+    }
+    link.$$bound = true;
+    // Waiting for the bubble phase allows other click handlers to preventDefault()
+    link.addEventListener('click', (e: MouseEvent) => {
+      if (e.defaultPrevented) {
+        return;
+      }
+      // Skip logging outbound request if SiteImprove has already done so.
+      // BTW, SiteImprove binds its autoonclick handlers on "mousedown"
+      // so they're guaranteed to have run before our "click" listener.
+      const events = window._sz?.core?.data;
+      const [type, data] = (events && events[events.length - 1]) || [];
+      if (type === 'request' && data.autoonclick && data.ourl === link.href) {
+        return;
+      }
+      pingSiteImproveOutbound(link.href);
+    });
+  };
+  const { body } = document;
+
+  // bind 'click' listener to the capture phase
+  body.addEventListener('click', captureLinkClicks, true);
+  return () => body.removeEventListener('click', captureLinkClicks, true);
+};
 
 // ---------------------------------------------------------------------------
 
@@ -172,9 +224,11 @@ export const SiteImprove = (props: SiteImproveProps) => {
         const routerEvents = Router.events;
         routerEvents.on('routeChangeStart', captureRefUrl);
         routerEvents.on('routeChangeComplete', sendRoutingEvent);
+        const stopLoggingOutboundLinks = logOutboundLinks();
         return () => {
           routerEvents.off('routeChangeStart', captureRefUrl);
           routerEvents.off('routeChangeComplete', sendRoutingEvent);
+          stopLoggingOutboundLinks();
         };
       }
     },
@@ -214,7 +268,27 @@ export const pingSiteImprove = (category: string, action: string, label?: string
     process.env.NODE_ENV === 'development' &&
     (!window._sz || window._sz._jit_defined_)
   ) {
-    console.warn('`pingSiteImprove` Was called before SiteImprove script was loaded.');
+    console.warn('`pingSiteImprove` was called before SiteImprove script was loaded.');
   }
   _emitEvent(['event', category, action, label]);
+};
+
+// ---------------------------------------------------------------------------
+
+/**
+ * A small helper for reporting to SiteImrove when the user is programmatically
+ * being sent to a different URL/resource.
+ *
+ * @see https://github.com/reykjavikcity/webtools/tree/v0.1##pingsiteimproveoutbound-helper
+ */
+export const pingSiteImproveOutbound = (ourl: string) => {
+  if (
+    process.env.NODE_ENV === 'development' &&
+    (!window._sz || window._sz._jit_defined_)
+  ) {
+    console.warn(
+      '`pingSiteImproveOutbound` was called before SiteImprove script was loaded.'
+    );
+  }
+  _emitEvent(['request', { ourl, ref: document.location.href }]);
 };
