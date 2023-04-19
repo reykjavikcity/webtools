@@ -13,6 +13,6 @@
     "noUncheckedIndexedAccess": true, // Should be part of strict
     "useUnknownInCatchVariables": true
   },
-  "exclude": ["node_modules", "npm-dist"],
+  "exclude": ["node_modules", "_npm-dist"],
   "include": ["**/*.ts", "**/*.tsx"]
 }
