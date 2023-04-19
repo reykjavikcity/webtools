@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.7
+
+_2023-04-19_
+
 - `@reykjavik/webtools/next/SiteImprove`:
   - feat: Auto-track outbound link clicks, also for late-injected elements.
   - feat: Add `pingSiteImproveOutbound` helper
