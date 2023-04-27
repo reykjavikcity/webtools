@@ -2,7 +2,7 @@ import { expect, jest, test } from '@jest/globals';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Socket } from 'net';
 
-import { cacheControl } from './http.js';
+import { cacheControl, toSec } from './http.js';
 
 test('cacheControl', () => {
   const res = new ServerResponse(new IncomingMessage(new Socket()));
@@ -11,6 +11,27 @@ test('cacheControl', () => {
   expect(cacheControl(res, '1s')).toEqual(undefined);
   expect(spy).toHaveBeenCalled();
   expect(res.getHeader('Cache-Control')).toEqual('private, max-age=1, immutable');
+});
+
+test('toSec', () => {
+  expect(toSec(123)).toEqual(123);
+  expect(toSec(123.7)).toEqual(124);
+  expect(toSec(-1)).toEqual(0);
+
+  expect(toSec('1s')).toEqual(1);
+  expect(toSec('-2s')).toEqual(0);
+  expect(toSec('2m')).toEqual(120);
+  expect(toSec('2.5m')).toEqual(150);
+  expect(toSec('2h')).toEqual(7200);
+  expect(toSec('3d')).toEqual(259200);
+  expect(toSec('4w')).toEqual(2419200);
+
+  // @ts-expect-error  (testing bad input)
+  const bad1: TTL = 'halló';
+  // @ts-expect-error  (testing bad input)
+  const bad2: TTL = undefined;
+  expect(toSec(bad1)).toEqual(0);
+  expect(toSec(bad2)).toEqual(0);
 });
 
 // ---------------------------------------------------------------------------
@@ -22,6 +43,7 @@ import * as moduleExports from './http.js';
 // `false` condition guarantees that the following code is never executed
 if (false as boolean) {
   const exports: Record<keyof typeof moduleExports, true> = {
+    toSec: true,
     cacheControl: true,
     HTTP_100_Continue: true,
     HTTP_101_SwitchingProtocols: true,
@@ -77,6 +99,7 @@ if (false as boolean) {
   };
 }
 import type {
+  TTL,
   TTLConfig,
   HTTP_STATUS,
   HTTP_INFO,

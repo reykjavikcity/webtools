@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/http`
+  - feat: Add `toSec` TTL helper
 
 ## 0.1.7 – 0.1.8
 

@@ -19,6 +19,7 @@ yarn add @reykjavik/webtools
   - [Types for HTTP Status code groups](#types-for-http-status-code-groups)
   - [`cacheControl` helper](#cachecontrol-helper)
     - [Type `TTLConfig`](#type-ttlconfig)
+  - [`toSec` TTL helper](#tosec-ttl-helper)
 - [`@reykjavik/webtools/next/http`](#reykjavikwebtoolsnexthttp)
   - [`makeErrorizeAppHOC`](#makeerrorizeapphoc)
   - [`showErrorPage` helper](#showerrorpage-helper)
@@ -154,6 +155,22 @@ Sets the response caching as "public", instead of the default "private"
 Allows setting a "must-revalidate" flag instead of the default "immutable". A
 value of `"normal"` omits the flagging and falls back to HTTP's default
 behavior.
+
+### `toSec` TTL helper
+
+**Syntax:** <code>toSec; (ttl: number | `${number}${'s'|'m'|'h'|'d'|'w'}`) =>
+number</code>
+
+Converts a `TTL` (max-age) value into seconds, and returns `0` for bad and/or
+negative input values.
+
+```js
+import type { toSec, TTL } from '@reykjavik/webtools/http';
+
+const ttl: TTL = '2h';
+
+const ttlSec = toSec(ttl);
+```
 
 ---
 

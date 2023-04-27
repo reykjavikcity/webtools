@@ -197,7 +197,7 @@ export type HTTP_ERROR_ALL = HTTP_CLIENT_ERROR_ALL | HTTP_SERVER_ERROR_ALL;
 // ---------------------------------------------------------------------------
 
 type TimeUnit = 's' | 'm' | 'h' | 'd' | 'w';
-type TTL = number | `${number}${TimeUnit}`;
+export type TTL = number | `${number}${TimeUnit}`;
 type TTLKeywords = 'permanent' | 'unset' | 'no-cache';
 type TTLObj = {
   /** Sets the cache `max-age=` for the resource. */
@@ -227,16 +227,19 @@ const unitToSeconds: Record<TimeUnit, number> = {
   w: 7 * 24 * 3_600,
 };
 
-const toSec = (ttl: TTL | undefined): number | undefined => {
-  if (ttl == null) {
-    return;
-  }
+/**
+ * Converts a `TTL` (max-age) value into seconds, and returns `0` for bad
+ * and/or negative input values.
+ *
+ * @see https://github.com/reykjavikcity/webtools/tree/v0.1#tosec-ttl-helper
+ */
+export const toSec = (ttl: TTL): number => {
   if (typeof ttl === 'string') {
     const value = parseFloat(ttl);
     const factor = unitToSeconds[ttl.slice(-1) as TimeUnit] || 1;
     ttl = value * factor;
   }
-  return !isNaN(ttl) ? ttl : undefined;
+  return Math.max(0, Math.round(ttl)) || 0;
 };
 
 const stabilities: Record<NonNullable<TTLObj['stability']>, string> = {
@@ -287,28 +290,28 @@ export const cacheControl = (
       maxAge = undefined;
     }
   }
-  maxAge = toSec(maxAge);
   if (maxAge == null) {
     response.removeHeader('Cache-Control');
     return;
   }
 
-  const sWR_ttl = toSec(opts.staleWhileRevalidate);
-  const sWR = sWR_ttl != null ? `, stale-while-revalidate=${sWR_ttl}` : '';
-
-  const sIE_ttl = toSec(opts.staleIfError);
-  const sIE = sIE_ttl != null ? `, stale-if-error=${sIE_ttl}` : '';
-
-  maxAge = Math.round(maxAge);
-
-  if (maxAge <= 0) {
+  maxAge = toSec(maxAge);
+  if (!maxAge) {
     setCC(response, 'no-cache');
     return;
   }
+
+  const sWR_ttl = toSec(opts.staleWhileRevalidate || 0);
+  const sWR = sWR_ttl ? `, stale-while-revalidate=${sWR_ttl}` : '';
+
+  const sIE_ttl = toSec(opts.staleIfError || 0);
+  const sIE = sIE_ttl ? `, stale-if-error=${sIE_ttl}` : '';
+
   const scope = opts.publ ? 'public' : 'private';
   const stability =
     (opts.stability && stabilities[opts.stability]) || stabilities.immutable;
 
-  eTag != null && response.setHeader('ETag', eTag);
   setCC(response, `${scope}, max-age=${maxAge + sWR + sIE + stability}`);
+
+  eTag != null && response.setHeader('ETag', eTag);
 };
