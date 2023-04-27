@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.9
+
+_2023-04-27_
+
 - `@reykjavik/webtools/http`
   - feat: Add `toSec` TTL helper
 
