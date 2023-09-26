@@ -57,9 +57,9 @@ const showErrorPage: ShowErrorPageFn = (response, error, ttl = '2s') => {
   };
 };
 
-export type InferErrorPageProps<SEP extends ShowErrorPageFn<any>> = Cleanup<
-  ReturnType<SEP>['props']
->;
+export type InferErrorPageProps<
+  SEP extends ShowErrorPageFn<any> // eslint-disable-line @typescript-eslint/no-explicit-any
+> = Cleanup<ReturnType<SEP>['props']>;
 
 // ===========================================================================
 
@@ -95,7 +95,7 @@ export const makeErrorizeAppHOC = <EP extends Partial<ErrorProps>>(
       return <App {...(appProps as AppProps<P>)} />;
     };
     ErrorizedApp.getInitialProps = App.getInitialProps;
-    ErrorizedApp.displayName = 'Errorized' + (App.displayName || App.name || 'App');
+    ErrorizedApp.displayName = `Errorized${App.displayName || App.name || 'App'}`;
     return ErrorizedApp;
   };
 

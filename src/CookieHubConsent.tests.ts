@@ -9,7 +9,7 @@ test('CookieHubProvider', () => {
 // ---------------------------------------------------------------------------
 // Testing exports
 
-/* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first, simple-import-sort/imports */
+/* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first */
 import * as moduleExports from './CookieHubConsent.js';
 
 if (false as boolean) {

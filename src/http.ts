@@ -126,8 +126,8 @@ export type HTTP_SUCCESS =
   | typeof HTTP_202_Accepted;
 
 export type HTTP_REDIRECTION =
-  | typeof HTTP_301_MovedPermanently
-  | typeof HTTP_302_Found
+  | typeof HTTP_301_MovedPermanently // eslint-disable-line deprecation/deprecation
+  | typeof HTTP_302_Found // eslint-disable-line deprecation/deprecation
   | typeof HTTP_303_SeeOther
   | typeof HTTP_304_NotModified
   | typeof HTTP_307_TemporaryRedirect

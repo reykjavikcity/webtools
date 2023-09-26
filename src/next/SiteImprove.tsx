@@ -79,6 +79,45 @@ const _emitEvent =
         }
       };
 
+// ---------------------------------------------------------------------------
+
+/**
+ * A small helper for tracking custom UI events and reporting them to SiteImrove.
+ *
+ * @see https://github.com/reykjavikcity/webtools/tree/v0.1##pingsiteimprove-helper
+ */
+export const pingSiteImprove = (category: string, action: string, label?: string) => {
+  if (
+    process.env.NODE_ENV === 'development' &&
+    (!window._sz || window._sz._jit_defined_)
+  ) {
+    console.warn('`pingSiteImprove` was called before SiteImprove script was loaded.');
+  }
+  _emitEvent(['event', category, action, label]);
+};
+
+// ---------------------------------------------------------------------------
+
+/**
+ * A small helper for reporting to SiteImrove when the user is programmatically
+ * being sent to a different URL/resource.
+ *
+ * @see https://github.com/reykjavikcity/webtools/tree/v0.1##pingsiteimproveoutbound-helper
+ */
+export const pingSiteImproveOutbound = (ourl: string) => {
+  if (
+    process.env.NODE_ENV === 'development' &&
+    (!window._sz || window._sz._jit_defined_)
+  ) {
+    console.warn(
+      '`pingSiteImproveOutbound` was called before SiteImprove script was loaded.'
+    );
+  }
+  _emitEvent(['request', { ourl, ref: document.location.href }]);
+};
+
+// ---------------------------------------------------------------------------
+
 /*
   SiteImprove's "trackdynamic" (page view) event requires both the new URL
   and the old (referer) URL.
@@ -252,41 +291,4 @@ export const SiteImprove = (props: SiteImproveProps) => {
       onError={props.onError}
     />
   );
-};
-
-// ---------------------------------------------------------------------------
-
-/**
- * A small helper for tracking custom UI events and reporting them to SiteImrove.
- *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1##pingsiteimprove-helper
- */
-export const pingSiteImprove = (category: string, action: string, label?: string) => {
-  if (
-    process.env.NODE_ENV === 'development' &&
-    (!window._sz || window._sz._jit_defined_)
-  ) {
-    console.warn('`pingSiteImprove` was called before SiteImprove script was loaded.');
-  }
-  _emitEvent(['event', category, action, label]);
-};
-
-// ---------------------------------------------------------------------------
-
-/**
- * A small helper for reporting to SiteImrove when the user is programmatically
- * being sent to a different URL/resource.
- *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1##pingsiteimproveoutbound-helper
- */
-export const pingSiteImproveOutbound = (ourl: string) => {
-  if (
-    process.env.NODE_ENV === 'development' &&
-    (!window._sz || window._sz._jit_defined_)
-  ) {
-    console.warn(
-      '`pingSiteImproveOutbound` was called before SiteImprove script was loaded.'
-    );
-  }
-  _emitEvent(['request', { ourl, ref: document.location.href }]);
 };

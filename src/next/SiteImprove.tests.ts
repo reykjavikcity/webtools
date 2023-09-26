@@ -19,7 +19,7 @@ test('pingSiteImprove', () => {
 // ---------------------------------------------------------------------------
 // Testing exports
 
-/* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first, simple-import-sort/imports */
+/* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first */
 import * as moduleExports from './SiteImprove.js';
 
 if (false as boolean) {

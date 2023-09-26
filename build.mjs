@@ -20,10 +20,10 @@ const makePackageJson = (
       ...pkg,
       ...pkg.dist_package_json,
       ...extraFields,
-    }).filter(([_, value]) => value != null)
+    }).filter(([, value]) => value != null)
   );
   delete libPkg.dist_package_json;
-  writeFileSync(outDir + '/package.json', JSON.stringify(libPkg, null, '\t'));
+  writeFileSync(`${outDir}/package.json`, JSON.stringify(libPkg, null, '\t'));
 };
 
 // ---------------------------------------------------------------------------
@@ -58,8 +58,9 @@ const addReferenePathsToIndex = (
       .map((declFile) => `/// <reference path="./${declFile}" />`);
     if (extraEntryPaths.length > 0) {
       const indexDeclFile = `${distFolder}/${dtsify(indexTsFile)}`;
-      const indexDecls =
-        extraEntryPaths.join('\n') + `\n\n` + readFileSync(indexDeclFile);
+      const indexDecls = `${extraEntryPaths.join('\n')}\n\n${readFileSync(
+        indexDeclFile
+      )}`;
       writeFileSync(indexDeclFile, indexDecls);
     }
   }
