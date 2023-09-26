@@ -18,7 +18,13 @@
     "prepublishOnly": "echo \"\nRun 'yarn run publishdist' to publish this package\n\n\"  && exit 1",
     "publish:lib": "yarn run build  &&  cd _npm-dist  &&  npm publish",
     "publish:canary": "yarn run build  &&  cd _npm-dist  &&  npm publish --tag canary",
-    "format": "eslint --fix  \"*.{mjs,js,ts,tsx}\" \"src/**/*.{mjs,js,ts,tsx}\"  &&  prettier --write \"*.{json,md}\"  \"src/**/*.{json,md}\""
+    "lint": "yarn run lint:eslint && yarn run lint:prettier",
+    "lint:eslint": "eslint ${AUTOFIX:+ --fix} ${SILENT:+ -o /dev/null} ${ERRORSONLY:+ --quiet} \"*.{mjs,js,ts,tsx}\" \"src/**/*.{mjs,js,ts,tsx}\"",
+    "lint:prettier": "prettier ${AUTOFIX:+ --write} ${AUTOFIX:- --check} ${SILENT:+ --loglevel=error} ${ERRORSONLY:+ --loglevel=error} --no-error-on-unmatched-pattern \"*.{json,md,yml}\" \"src/**/*.{json,md,yml,css,html}\"",
+    "check": "yarn run check:types  &&  yarn run check:eslint",
+    "check:eslint": "ERRORSONLY=true  yarn run lint:eslint",
+    "check:types": "tsc --project tsconfig.json --noEmit --pretty --incremental false",
+    "format": "AUTOFIX=true SILENT=true yarn run lint"
   },
   "dependencies": {
     "@reykjavik/hanna-utils": "^0.2.3"
@@ -29,16 +35,16 @@
     "react-dom": ">=16.8.0"
   },
   "devDependencies": {
-    "@hugsmidjan/hxmstyle": "^7.0.0",
+    "@hugsmidjan/hxmstyle": "^8.3.0",
     "@jest/globals": "^29.5.0",
     "@types/node": "^18.14.5",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
-    "eslint": "^8.35.0",
+    "eslint": "^8.41.0",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
     "next": "^12",
-    "prettier": "^2.8.2",
+    "prettier": "^2.8.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ts-jest": "^29.0.5",
