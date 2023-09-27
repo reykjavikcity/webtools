@@ -416,7 +416,7 @@ applications and perform custom event tracking.
 A component for loading a SiteImprove analytics script and set up page-view
 tracking across Next.js routes.
 
-It also automatically logs all out-öbound link clicks.
+It also automatically logs all out-bound link clicks.
 
 ```js
 import { SiteImprove } from '@reykjavik/webtools/next/SiteImprove';
