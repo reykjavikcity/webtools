@@ -3,8 +3,8 @@
 Miscellaneous JavaScript/TypeScript helpers used by Reykjavík City's web dev
 teams.
 
-This library is split up into multple individual modules to help keep your
-bundles slim and aid tree-shaking.
+This library is split up into multiple individual modules to help keep your
+bundles slim and allow tree-shaking.
 
 ```
 yarn add @reykjavik/webtools
