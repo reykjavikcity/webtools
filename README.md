@@ -418,10 +418,21 @@ tracking across Next.js routes.
 
 It also automatically logs all out-bound link clicks.
 
+Example usage in pages/\_app.tsx
+
 ```js
 import { SiteImprove } from '@reykjavik/webtools/next/SiteImprove';
 
 const siteImproveAccountId = '[ACCOUNT_ID]'; // e.g. "7654321"
+
+// Inside MyApp component
+<Component {...pageProps} />
+<SiteImprove
+  accountId={siteImproveAccountId}
+  onError={(error) =>
+    Logger('error', 'An error occured initializing siteimprove', error)
+  }
+/>;
 ```
 
 The component has an optional `hasConsented` prop which can be used to
