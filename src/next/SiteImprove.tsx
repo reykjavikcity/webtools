@@ -215,8 +215,8 @@ export type SiteImproveProps = EitherObj<
    *
    * A value of `false` prevents the analytics script being loaded.
    *
-   * Any other value causes the component to defer to the `CookieHubProvider`
-   * component, and only applies if the cookiehub flag is undefined.
+   * A value of `true` still defers to the 'analytics' consent state provided
+   * by the `CookieHubProvider` component (if present).
    */
   hasConstented?: boolean;
 

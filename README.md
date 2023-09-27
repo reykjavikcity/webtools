@@ -452,7 +452,7 @@ editor), but there's a brief summary:
   (alternative to `accountId` prop).
 - `hasConstented?: boolean` — Manual GDPR 'analytics' consent flag. Allows
   hard opt-out, but defers to
-  [`CookieHubProvider` values](#usecookiehubconsent) by default.
+  [`CookieHubProvider` values](#usecookiehubconsent) if they are available.
 - `onLoad?: (e: unknown) => void` — Fires when the script has loaded.
 - `onError?: (e: unknown) => void` — Fires if loading the script failed.
 
