@@ -4,7 +4,7 @@ Miscellaneous JavaScript/TypeScript helpers used by Reykjavík City's web dev
 teams.
 
 This library is split up into multiple individual modules to help keep your
-bundles slim and allow tree-shaking.
+bundles slim and aid tree-shaking.
 
 ```
 yarn add @reykjavik/webtools
@@ -158,8 +158,8 @@ behavior.
 
 ### `toSec` TTL helper
 
-**Syntax:** <code>toSec; (ttl: number | `${number}${'s'|'m'|'h'|'d'|'w'}`) =>
-number</code>
+**Syntax:**
+`` toSec; (ttl: number | `${number}${'s'|'m'|'h'|'d'|'w'}`) => number ``
 
 Converts a `TTL` (max-age) value into seconds, and returns `0` for bad and/or
 negative input values.
