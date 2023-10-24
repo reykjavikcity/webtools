@@ -111,7 +111,7 @@ export const makeErrorizeAppHOC = <EP extends Partial<ErrorProps>>(
 /**
  * Use this method to inside a `getServerSideProps` method (or API route)
  * to return an `HTTP_304_NotModified` response with an empty props object,
- * in a way that doesn't make TypeScript at you.
+ * in a way that doesn't make TypeScript shout at you.
  *
  * @see https://github.com/reykjavikcity/webtools/tree/v0.1#notmodified304-helper
  */
