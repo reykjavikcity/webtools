@@ -246,28 +246,29 @@ export const SiteImprove = (props: SiteImproveProps) => {
 
   useEffect(
     () => {
-      if (consented) {
-        if (process.env.NODE_ENV !== 'production') {
-          console.info(
-            'Mock loading SiteImprove in development mode.',
-            props.scriptUrl || props.accountId
-          );
-          if (!window._sz) {
-            setTimeout(() => {
-              window._sz = window._sz || [];
-            }, 300);
-          }
-        }
-        const routerEvents = Router.events;
-        routerEvents.on('routeChangeStart', captureRefUrl);
-        routerEvents.on('routeChangeComplete', sendRoutingEvent);
-        const stopLoggingOutboundLinks = logOutboundLinks();
-        return () => {
-          routerEvents.off('routeChangeStart', captureRefUrl);
-          routerEvents.off('routeChangeComplete', sendRoutingEvent);
-          stopLoggingOutboundLinks();
-        };
+      if (!consented) {
+        return;
       }
+      if (process.env.NODE_ENV !== 'production') {
+        console.info(
+          'Mock loading SiteImprove in development mode.',
+          props.scriptUrl || props.accountId
+        );
+        if (!window._sz) {
+          setTimeout(() => {
+            window._sz = window._sz || [];
+          }, 300);
+        }
+      }
+      const routerEvents = Router.events;
+      routerEvents.on('routeChangeStart', captureRefUrl);
+      routerEvents.on('routeChangeComplete', sendRoutingEvent);
+      const stopLoggingOutboundLinks = logOutboundLinks();
+      return () => {
+        routerEvents.off('routeChangeStart', captureRefUrl);
+        routerEvents.off('routeChangeComplete', sendRoutingEvent);
+        stopLoggingOutboundLinks();
+      };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [consented]
