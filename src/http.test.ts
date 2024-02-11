@@ -20,6 +20,27 @@ describe('cacheControl', () => {
       [...spy.mock.calls].reverse().find((args) => args[0] === 'Cache-Control')
     ).toEqual(['Cache-Control', 'private, max-age=1, immutable']);
   });
+
+  test('sets X-Cache-Control in dev mode', () => {
+    const res = new ServerResponse(new IncomingMessage(new Socket()));
+    const spy = spyOn(res, 'setHeader');
+    cacheControl(res, '1s');
+    // TODO: Remove hack as soon as possible
+    // This somehow fails, as when `bun test` is running, calling setHeader
+    // on ServerResponse does not actually set the header.
+
+    if (process.env.NODE_ENV !== 'production') {
+      // expect(res.getHeader('X-Cache-Control')).toEqual('private, max-age=1, immutable');
+      expect(
+        [...spy.mock.calls].reverse().find((args) => args[0] === 'X-Cache-Control')
+      ).toEqual(['X-Cache-Control', 'private, max-age=1, immutable']);
+    } else {
+      // expect(res.getHeader('X-Cache-Control')).toBeUndefined();
+      expect(
+        [...spy.mock.calls].reverse().find((args) => args[0] === 'X-Cache-Control')
+      ).toBeUndefined();
+    }
+  });
 });
 
 describe('toSec', () => {
