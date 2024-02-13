@@ -1,4 +1,4 @@
-import { expect, test } from '@jest/globals';
+import { expect, test } from 'bun:test';
 
 import { pingSiteImprove, SiteImprove } from './SiteImprove.js';
 
@@ -7,7 +7,7 @@ test('SiteImprove', () => {
 });
 
 test('pingSiteImprove', () => {
-  expect(window._sz).toBe(undefined);
+  expect(window._sz).toBeUndefined();
   pingSiteImprove('foo', 'submit', 'data');
   const _sz = window._sz || [];
   expect(_sz._jit_defined_).toBe(true);

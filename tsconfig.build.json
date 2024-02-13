@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2018",
+    "resolveJsonModule": false,
+    "noEmit": false,
+    "declaration": true
+  },
+
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["src/**/*.test.*", "src/**/*.privates.*", "src/**/_*/*", "src/**/*.d.ts"]
+}

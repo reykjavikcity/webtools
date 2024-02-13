@@ -2,8 +2,7 @@
 # deps and build/test results
 node_modules
 /.rpt2_cache
-/_npm-dist
-/tsconfig.build.*.json
+/_npm-lib
 
 # --------------------------------------------------------------------
 # junk

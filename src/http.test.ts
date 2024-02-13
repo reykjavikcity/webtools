@@ -1,37 +1,48 @@
-import { expect, jest, test } from '@jest/globals';
-import { IncomingMessage, ServerResponse } from 'http';
-import { Socket } from 'net';
+import { describe, expect, spyOn, test } from 'bun:test';
+import { IncomingMessage, ServerResponse } from 'node:http';
+import { Socket } from 'node:net';
 
 import { cacheControl, toSec } from './http.js';
 
-test('cacheControl', () => {
-  const res = new ServerResponse(new IncomingMessage(new Socket()));
-  const spy = jest.spyOn(res, 'setHeader');
+describe('cacheControl', () => {
+  test('works', () => {
+    const res = new ServerResponse(new IncomingMessage(new Socket()));
+    const spy = spyOn(res, 'setHeader');
 
-  expect(cacheControl(res, '1s')).toEqual(undefined);
-  expect(spy).toHaveBeenCalled();
-  expect(res.getHeader('Cache-Control')).toEqual('private, max-age=1, immutable');
+    expect(cacheControl(res, '1s')).toEqual(undefined);
+    expect(spy).toHaveBeenCalled();
+    // TODO: Remove hack as soon as possible
+    // This somehow fails, as when `bun test` is running, calling setHeader
+    // on ServerResponse does not actually set the header.
+
+    // expect(res.getHeader('Cache-Control')).toEqual('private, max-age=1, immutable');
+    expect(
+      [...spy.mock.calls].reverse().find((args) => args[0] === 'Cache-Control')
+    ).toEqual(['Cache-Control', 'private, max-age=1, immutable']);
+  });
 });
 
-test('toSec', () => {
-  expect(toSec(123)).toEqual(123);
-  expect(toSec(123.7)).toEqual(124);
-  expect(toSec(-1)).toEqual(0);
+describe('toSec', () => {
+  test('works', () => {
+    expect(toSec(123)).toEqual(123);
+    expect(toSec(123.7)).toEqual(124);
+    expect(toSec(-1)).toEqual(0);
 
-  expect(toSec('1s')).toEqual(1);
-  expect(toSec('-2s')).toEqual(0);
-  expect(toSec('2m')).toEqual(120);
-  expect(toSec('2.5m')).toEqual(150);
-  expect(toSec('2h')).toEqual(7200);
-  expect(toSec('3d')).toEqual(259200);
-  expect(toSec('4w')).toEqual(2419200);
+    expect(toSec('1s')).toEqual(1);
+    expect(toSec('-2s')).toEqual(0);
+    expect(toSec('2m')).toEqual(120);
+    expect(toSec('2.5m')).toEqual(150);
+    expect(toSec('2h')).toEqual(7200);
+    expect(toSec('3d')).toEqual(259200);
+    expect(toSec('4w')).toEqual(2419200);
 
-  // @ts-expect-error  (testing bad input)
-  const bad1: TTL = 'halló';
-  // @ts-expect-error  (testing bad input)
-  const bad2: TTL = undefined;
-  expect(toSec(bad1)).toEqual(0);
-  expect(toSec(bad2)).toEqual(0);
+    // @ts-expect-error  (testing bad input)
+    const bad1: TTL = 'halló';
+    // @ts-expect-error  (testing bad input)
+    const bad2: TTL = undefined;
+    expect(toSec(bad1)).toEqual(0);
+    expect(toSec(bad2)).toEqual(0);
+  });
 });
 
 // ---------------------------------------------------------------------------

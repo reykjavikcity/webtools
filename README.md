@@ -7,7 +7,9 @@ This library is split up into multiple individual modules to help keep your
 bundles slim and aid tree-shaking.
 
 ```
+npm install @reykjavik/webtools
 yarn add @reykjavik/webtools
+bun add @reykjavik/webtools
 ```
 
 **Table of Contents:**
@@ -31,6 +33,8 @@ yarn add @reykjavik/webtools
   - [`SiteImprove` component](#siteimprove-component)
   - [`pingSiteImprove` helper](#pingsiteimprove-helper)
   - [`pingSiteImproveOutbound` helper](#pingsiteimproveoutbound-helper)
+- [Contributing](#contributing)
+- [Changelog](#changelog)
 
 <!-- prettier-ignore-start -->
 
@@ -489,13 +493,21 @@ import { pingSiteImproveOutbound } from '@reykjavik/webtools/next/SiteImprove';
 const handleSubmit = () => {
   // perform submit action...
   if (success) {
-    const fileUrl ='/download/report.pdf'
+    const fileUrl = '/download/report.pdf';
     pingSiteImproveOutbound(fileUrl);
-    document.location.href = fileUrl
+    document.location.href = fileUrl;
   }
 };
+```
 
+---
 
+## Contributing
+
+This project uses the [Bun runtime](https://bun.sh) for development (tests,
+build, etc.)
+
+PRs are welcoms!
 
 ---
 
@@ -503,4 +515,7 @@ const handleSubmit = () => {
 
 See
 [CHANGELOG.md](https://github.com/reykjavikcity/webtools/blob/main/CHANGELOG.md)
+
+```
+
 ```

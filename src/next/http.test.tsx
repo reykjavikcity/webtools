@@ -1,9 +1,9 @@
-import React, { ComponentType } from 'react';
-import { expect, test } from '@jest/globals';
-import { Equals, Expect } from '@reykjavik/hanna-utils';
+import React, { ComponentType, ReactElement } from 'react';
+import { Equals, Expect } from '@maranomynet/libtools';
+import { expect, test } from 'bun:test';
 import { ServerResponse } from 'http';
-import { AppType } from 'next/app';
-import { NextRouter } from 'next/router';
+import { AppType } from 'next/app.js';
+import { NextRouter } from 'next/router.js';
 
 import { HTTP_400_BadRequest } from '../http.js';
 
@@ -18,10 +18,10 @@ test('showErrorPage', () => {
 //
 /* eslint-disable @typescript-eslint/no-unused-vars */
 declare const res: ServerResponse;
-declare const ErrPage1: (props: ErrorProps) => JSX.Element;
-declare const ErrPage2: (props: Partial<ErrorProps>) => JSX.Element;
-declare const ErrPage3: (props: ErrorProps & { foo: number }) => JSX.Element;
-declare const ErrPage4: (props: Partial<ErrorProps> & { foo: number }) => JSX.Element;
+declare const ErrPage1: (props: ErrorProps) => ReactElement;
+declare const ErrPage2: (props: Partial<ErrorProps>) => ReactElement;
+declare const ErrPage3: (props: ErrorProps & { foo: number }) => ReactElement;
+declare const ErrPage4: (props: Partial<ErrorProps> & { foo: number }) => ReactElement;
 declare const Page: ComponentType<{ data: boolean }>;
 declare const App: AppType<typeof Page extends ComponentType<infer P> ? P : never>;
 declare const router: NextRouter;

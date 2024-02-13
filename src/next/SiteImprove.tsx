@@ -1,9 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { EitherObj } from '@reykjavik/hanna-utils';
 import { Router } from 'next/router.js';
-import Script from 'next/script.js';
+import NextScript, { ScriptProps } from 'next/script.js';
 
 import { useCookieHubConsent } from '../CookieHubConsent.js';
+
+// Fixes an issue with `next/script` types when `pkgJson.type === "module"`
+const Script = NextScript as unknown as (props: ScriptProps) => ReactElement | null;
+
+// ---------------------------------------------------------------------------
 
 // Event tracking - https://help.siteimprove.com/support/solutions/articles/80000863895-getting-started-with-event-tracking
 // Custom page visit tracking - https://help.siteimprove.com/support/solutions/articles/80000448441-siteimprove-analytics-custom-visit-tracking

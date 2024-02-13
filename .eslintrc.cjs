@@ -11,5 +11,6 @@ module.exports = require('@hugsmidjan/hxmstyle')({
     // Otherwise tsc emits ESM modules that don't work with Next.js
     // (and possibly other bundlers)
     'import/extensions': ['error', 'ignorePackages'],
+    '@typescript-eslint/naming-convention': 'off',
   },
 });
