@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.10
+
+_2024-02-14_
+
 - `@reykjavik/webtools/http`
   - feat: Add the rest of the more obscure HTTP status constants (WebDAV,
     etc.)
