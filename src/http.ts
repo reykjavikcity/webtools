@@ -6,6 +6,10 @@ import { ServerResponse } from 'http';
 export const HTTP_100_Continue = 100;
 /** Response to an Upgrade request header from the client and indicates the protocol the server is switching to. */
 export const HTTP_101_SwitchingProtocols = 101;
+/** (WebDAV) The server has received and is processing the request, but no response is available yet. */
+export const HTTP_102_Processing = 102;
+/** This status code is primarily intended to be used with the Link header, letting the user agent start preloading resources while the server prepares a response or preconnect to an origin from which the page will need resources. */
+export const HTTP_103_EarlyHints = 103;
 
 // SUCCESS
 
@@ -19,8 +23,16 @@ export const HTTP_202_Accepted = 202;
 export const HTTP_203_NonAuthoritativeInformation = 203;
 /** The response body is empty. */
 export const HTTP_204_NoContent = 204;
+/** Tells the user agent to reset the document which sent this request. */
+export const HTTP_205_ResetContent = 205;
 /** The request succeeded, but the returned metadata is not necessarily complete. */
 export const HTTP_206_PartialContent = 206;
+/** (WebDAV) Conveys information about multiple resources, for situations where multiple status codes might be appropriate. */
+export const HTTP_207_MultiStatus = 207;
+/** (WebDAV) Used inside a `<dav:propstat>` response element to avoid repeatedly enumerating the internal members of multiple bindings to the same collection. */
+export const HTTP_208_AlreadyReported = 208;
+/** (HTTP Delta Encoding) The server has fulfilled a `GET` request for the resource, and the response is a representation of the result of one or more instance-manipulations applied to the current instance. */
+export const HTTP_226_IMUsed = 226;
 
 // REDIRECTION
 
@@ -83,6 +95,12 @@ export const HTTP_417_ExpectationFailed = 417;
 export const HTTP_418_ImATeapot = 418;
 /** The request was directed at a server that is not able to produce a response. */
 export const HTTP_421_MisdirectedRequest = 421;
+/** (WebDAV) The request was well-formed but was unable to be followed due to semantic errors. */
+export const HTTP_422_UnprocessableContent = 422;
+/** (WebDAV) The resource that is being accessed is locked. */
+export const HTTP_423_Locked = 423;
+/** (WebDAV) The request failed due to failure of a previous request. */
+export const HTTP_424_FailedDependency = 424;
 /** The server refuses to perform the request using the current protocol but might be willing to do so after the client upgrades to a different protocol. */
 export const HTTP_426_UpgradeRequired = 426;
 /** The origin server requires the request to be conditional. */
@@ -110,6 +128,10 @@ export const HTTP_504_GatewayTimeout = 504;
 export const HTTP_505_HTTPVersionNotSupported = 505;
 /** The server has an internal configuration error: the chosen variant resource is configured to engage in transparent content negotiation itself. */
 export const HTTP_506_VariantAlsoNegotiates = 506;
+/** (WebDAV) The method could not be performed on the resource because the server is unable to store the representation needed to successfully complete the request. */
+export const HTTP_507_InsufficientStorage = 507;
+/** (WebDAV) The server detected an infinite loop while processing the request. */
+export const HTTP_508_LoopDetected = 508;
 /** Further extensions to the request are required for the server to fulfill it. */
 export const HTTP_510_NotExtended = 510;
 /** The client needs to authenticate to gain network access. */
@@ -157,12 +179,19 @@ export type HTTP_STATUS =
 // ---------------------------------------------------------------------------
 // All HTTP Status codes, even the esoteric ones
 
-export type HTTP_INFO_ALL = HTTP_INFO;
+export type HTTP_INFO_ALL =
+  | HTTP_INFO
+  | typeof HTTP_102_Processing
+  | typeof HTTP_103_EarlyHints;
 export type HTTP_SUCCESS_ALL =
   | HTTP_SUCCESS
   | typeof HTTP_203_NonAuthoritativeInformation
   | typeof HTTP_204_NoContent
-  | typeof HTTP_206_PartialContent;
+  | typeof HTTP_205_ResetContent
+  | typeof HTTP_206_PartialContent
+  | typeof HTTP_207_MultiStatus
+  | typeof HTTP_208_AlreadyReported
+  | typeof HTTP_226_IMUsed;
 export type HTTP_REDIRECTION_ALL = HTTP_REDIRECTION;
 export type HTTP_CLIENT_ERROR_ALL =
   | HTTP_CLIENT_ERROR
@@ -180,8 +209,14 @@ export type HTTP_CLIENT_ERROR_ALL =
   | typeof HTTP_417_ExpectationFailed
   | typeof HTTP_418_ImATeapot
   | typeof HTTP_421_MisdirectedRequest
+  | typeof HTTP_422_UnprocessableContent
+  | typeof HTTP_423_Locked
+  | typeof HTTP_424_FailedDependency
   | typeof HTTP_426_UpgradeRequired
-  | typeof HTTP_428_PreconditionRequired;
+  | typeof HTTP_428_PreconditionRequired
+  | typeof HTTP_429_TooManyRequests
+  | typeof HTTP_431_RequestHeaderFieldsTooLarge
+  | typeof HTTP_451_UnavailableForLegalReasons;
 export type HTTP_SERVER_ERROR_ALL =
   | HTTP_SERVER_ERROR
   | typeof HTTP_501_NotImplemented
@@ -190,6 +225,8 @@ export type HTTP_SERVER_ERROR_ALL =
   | typeof HTTP_504_GatewayTimeout
   | typeof HTTP_505_HTTPVersionNotSupported
   | typeof HTTP_506_VariantAlsoNegotiates
+  | typeof HTTP_507_InsufficientStorage
+  | typeof HTTP_508_LoopDetected
   | typeof HTTP_510_NotExtended
   | typeof HTTP_511_NetworkAuthenticationRequired;
 export type HTTP_ERROR_ALL = HTTP_CLIENT_ERROR_ALL | HTTP_SERVER_ERROR_ALL;

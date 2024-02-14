@@ -3,6 +3,10 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/http`
+  - feat: Add the rest of the more obscure HTTP status constants (WebDAV,
+    etc.)
+  - fix: Add `429`, `432`, `451` to `HTTP_CLIENT_ERROR_ALL` type
 
 ## 0.1.9
 
