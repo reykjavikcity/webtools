@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
-import { Cleanup } from '@reykjavik/hanna-utils';
-import { ServerResponse } from 'http';
+import type { Cleanup } from '@reykjavik/hanna-utils';
+import type { ServerResponse } from 'http';
 import type { AppProps, AppType } from 'next/app.js';
 
 import type { HTTP_ERROR_ALL, TTLConfig } from '../http.js';
