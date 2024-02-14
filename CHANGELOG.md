@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.11
+
+_2024-02-14_
+
 - fix: Issue with `SiteImprove` import `next/script` in Next.js < 13
 
 ## 0.1.10
