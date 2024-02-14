@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Issue with `SiteImprove` import `next/script` in Next.js < 13
 
 ## 0.1.10
 

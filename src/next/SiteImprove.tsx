@@ -1,12 +1,18 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { EitherObj } from '@reykjavik/hanna-utils';
 import { Router } from 'next/router.js';
 import NextScript, { ScriptProps } from 'next/script.js';
 
 import { useCookieHubConsent } from '../CookieHubConsent.js';
 
-// Fixes an issue with `next/script` types when `pkgJson.type === "module"`
-const Script = NextScript as unknown as (props: ScriptProps) => ReactElement | null;
+type ScriptType = (props: ScriptProps) => JSX.Element | null;
+
+// Fixes an issue with `next/script`'s types and mixture of default and named exports.
+// This workaround doesn't seem to be necessary in Next.js 13.5 (pages router), but
+// is definitely needed for the webpack bundler used by Next.js 11. (v12 is untested.)
+const Script = ('__esModule' in NextScript && 'default' in NextScript
+  ? NextScript.default
+  : NextScript) as unknown as ScriptType;
 
 // ---------------------------------------------------------------------------
 
