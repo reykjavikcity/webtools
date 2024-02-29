@@ -33,6 +33,12 @@ bun add @reykjavik/webtools
   - [`SiteImprove` component](#siteimprove-component)
   - [`pingSiteImprove` helper](#pingsiteimprove-helper)
   - [`pingSiteImproveOutbound` helper](#pingsiteimproveoutbound-helper)
+- [`@reykjavik/webtools/vanillaExtract`](#reykjavikwebtoolsvanillaextract)
+  - [`vanillaGlobal`](#vanillaglobal)
+  - [`vanillaProps`](#vanillaprops)
+  - [`vanillaClass`](#vanillaclass)
+  - [`vanillaClassNested`](#vanillaclassnested)
+  - [`vanillaNest`](#vanillanest)
 - [Contributing](#contributing)
 - [Changelog](#changelog)
 
@@ -502,6 +508,170 @@ const handleSubmit = () => {
 
 ---
 
+## `@reykjavik/webtools/vanillaExtract`
+
+Contains helpers for writing [vanilla-extract](https://vanilla-extract.style)
+styles using plain CSS styntax.
+
+This provides an "escape hatch" into regular CSS, when you're willing to trade
+local type-safety for access to the full features and expressiveness of real
+CSS.
+([Background info](https://github.com/vanilla-extract-css/vanilla-extract/discussions/898#discussioncomment-7125457).)
+
+### `vanillaGlobal`
+
+**Syntax:** `vanillaGlobal: (css: string) => void`
+
+Inserts free-form CSS as a vanilla-extract `globalStyle`.
+
+```ts
+import { vanillaGlobal } from '@reykjavik/webtools/vanillaExtract';
+
+vanillaGlobal(`
+  body {
+    background-color: rebeccapurple;
+  }
+`);
+```
+
+### `vanillaProps`
+
+**Syntax:** `vanillaProps: (css: string) => GlobalStyleRule`
+
+Spreads the return value into a style object, to inject free-form CSS
+properties (or nested blocks)
+
+```ts
+import { style } from '@vanilla-extract/css';
+import { vanillaProps } from '@reykjavik/webtools/vanillaExtract';
+
+const myStyle = style({
+  color: 'darksalmon',
+  // ...other style props...
+
+  ...vanillaProps(`
+    /* Plain CSS that's injected into the "myStyle" style block */
+    border-bottom: 1px solid red;
+    color: ${theme.color.primary}; /* I can still use typesafe values */
+    random-css-prop-normally-rejected-by-vanilla-extract: 'YOLO!';
+  `),
+});
+```
+
+### `vanillaClass`
+
+**Syntax:** `vanillaClass: (css: string) => string`  
+**Syntax:** `vanillaClass: (debugId: string, css: string) => string`
+
+Returns a scoped cssClassName styled with free-form CSS. This function is a
+thin wrapper around vanilla-extract's `style` function.
+
+```ts
+import { vanillaClass } from '@reykjavik/webtools/vanillaExtract';
+
+export const myClass = vanillaClass(`
+  background-color: #ccc;
+  padding: .5em 1em;
+`);
+
+export const humanReadableClass = vanillaClass(
+  'HumanReadable',
+  `
+    border: 1px dashed hotpink;
+    cursor: pointer;
+  `
+);
+```
+
+### `vanillaClassNested`
+
+**Syntax:** `vanillaClassNested: (css: string) => string`  
+**Syntax:** `vanillaClassNested: (debugId: string, css: string) => string`
+
+Returns a scoped cssClassName styled with free-form CSS.
+
+It also automatically replaces all `&`-tokens with the selector for the
+auto-generated class-name.
+
+```ts
+import { vanillaClassNested } from '@reykjavik/webtools/vanillaExtract';
+
+export const myClass = vanillaClassNested(`
+  background-color: #ccc;
+  padding: .5em 1em;
+
+  /* Nested blocks begin: */
+  &:hover {
+    background-color: #666;
+    color: white;
+  }
+  & > strong {
+    color: maroon;
+  }
+  html[data-color-theme="unicorn"] & {
+    background-color: pink;
+  }
+`);
+```
+
+**NOTE:** All "bare" (un-nested) style properties **must come first**, before
+any nested blocks.
+
+**NOTE 2:** `vanillaClassNested` does NOT support deeply nested blocks, or
+anything so fancy. It will also replace `&` characters inside values,
+comments, etc. If you need something more sophisticated, use a custom
+`postcss` config.
+
+### `vanillaNest`
+
+**Syntax:** `vanillaNest: (ampSelector: string, css: string) => string`
+
+Replaces all `&` tokens with the given selector string, in a direct (read.
+"dumb") way. It's mainly useful when used with style-mixins, etc.
+
+This low-level utility function is used internally by
+[`vanillaClassNested`](#vanillaclassnested).
+
+```ts
+import { vanillaNest } from '@reykjavik/webtools/vanillaExtract';
+
+const hoverGlow = (ampSelector: string, glowiness?: 'normal' | 'insane') =>
+  vanillaNest(
+    ampSelector,
+    `
+    &:hover {
+      box-shadow: 0 0 20px 5px ${
+        glowiness === 'insane' ? 'hotpink' : 'salmon'
+      };
+    }
+  `
+  );
+
+// ...then, somewhere else
+
+import { vanillaGlobal } from '@reykjavik/webtools/vanillaExtract';
+
+vanillaGlobal(`
+  .MyComponent {
+    border: 1px solid #ccc;
+    padding: 1em;
+  }
+  ${hoverGlow('.MyComponent')}
+
+  .MyOtherComponent {
+    border: 1px solid #ccc;
+    padding: 1em;
+  }
+  ${hoverGlow('.MyOtherComponent', 'insane')}
+`);
+```
+
+**NOTE:** `vanillaNest` does NOT support deeply nested blocks, or anything so
+fancy. It will also replace `&` characters inside values, comments, etc. If
+you need something more sophisticated, use a custom `postcss` config.
+
+---
+
 ## Contributing
 
 This project uses the [Bun runtime](https://bun.sh) for development (tests,
@@ -515,6 +685,10 @@ PRs are welcoms!
 
 See
 [CHANGELOG.md](https://github.com/reykjavikcity/webtools/blob/main/CHANGELOG.md)
+
+```
+
+```
 
 ```
 

@@ -21,11 +21,15 @@
     "@reykjavik/hanna-utils": "^0.2.3"
   },
   "peerDependencies": {
+    "@vanilla-extract/css": "^1.14.1",
     "next": ">=11",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
   },
   "peerDependenciesMeta": {
+    "@vanilla-extract/css": {
+      "optional": true
+    },
     "next": {
       "optional": true
     },
@@ -39,10 +43,11 @@
   "devDependencies": {
     "@happy-dom/global-registrator": "^13.3.8",
     "@hugsmidjan/hxmstyle": "^8.5.1",
-    "@maranomynet/libtools": "^0.1.4",
+    "@maranomynet/libtools": "^0.1.8",
     "@types/bun": "^1.0.5",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@vanilla-extract/css": "^1.14.1",
     "eslint": "^8.56.0",
     "next": "^12",
     "prettier": "^2.8.8",
