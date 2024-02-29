@@ -25,6 +25,17 @@
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
   },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@happy-dom/global-registrator": "^13.3.8",
     "@hugsmidjan/hxmstyle": "^8.5.1",

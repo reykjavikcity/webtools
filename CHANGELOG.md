@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Mark `peerDependencies` as optional
 
 ## 0.1.11
 
