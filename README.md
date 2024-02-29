@@ -525,6 +525,7 @@ CSS.
 Inserts free-form CSS as a vanilla-extract `globalStyle`.
 
 ```ts
+// someFile.css.ts
 import { vanillaGlobal } from '@reykjavik/webtools/vanillaExtract';
 
 vanillaGlobal(`
@@ -542,6 +543,7 @@ Spreads the return value into a style object, to inject free-form CSS
 properties (or nested blocks)
 
 ```ts
+// someFile.css.ts
 import { style } from '@vanilla-extract/css';
 import { vanillaProps } from '@reykjavik/webtools/vanillaExtract';
 
@@ -567,6 +569,7 @@ Returns a scoped cssClassName styled with free-form CSS. This function is a
 thin wrapper around vanilla-extract's `style` function.
 
 ```ts
+// someFile.css.ts
 import { vanillaClass } from '@reykjavik/webtools/vanillaExtract';
 
 export const myClass = vanillaClass(`
@@ -594,6 +597,7 @@ It also automatically replaces all `&`-tokens with the selector for the
 auto-generated class-name.
 
 ```ts
+// someFile.css.ts
 import { vanillaClassNested } from '@reykjavik/webtools/vanillaExtract';
 
 export const myClass = vanillaClassNested(`
@@ -633,9 +637,13 @@ This low-level utility function is used internally by
 [`vanillaClassNested`](#vanillaclassnested).
 
 ```ts
+// someCssHelper.ts
 import { vanillaNest } from '@reykjavik/webtools/vanillaExtract';
 
-const hoverGlow = (ampSelector: string, glowiness?: 'normal' | 'insane') =>
+export const hoverGlow = (
+  ampSelector: string,
+  glowiness?: 'normal' | 'insane'
+) =>
   vanillaNest(
     ampSelector,
     `
@@ -647,8 +655,9 @@ const hoverGlow = (ampSelector: string, glowiness?: 'normal' | 'insane') =>
   `
   );
 
-// ...then, somewhere else
+// ...then, somewhere else in a *.css.ts file:
 
+import { hoverGlow } from '~/someCssHelper.js';
 import { vanillaGlobal } from '@reykjavik/webtools/vanillaExtract';
 
 vanillaGlobal(`
