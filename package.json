@@ -12,7 +12,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "bun install  &&  bun run test --watch",
+    "dev": "bun scripts/dev.ts",
     "build": "bun scripts/build.ts",
     "publish:lib": "bun scripts/publish.ts",
     "prepublishOnly": "echo \"\nRun 'bun run publish:list' to publish this package\n\n\"  && exit 1"
