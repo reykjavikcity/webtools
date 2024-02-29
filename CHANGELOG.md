@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.12
+
+_2024-02-29_
+
 - feat: Add `@reykjavik/webtools/next/vanillaExtract` component — with
   plain-CSS injection helpers
 - fix: Mark `peerDependencies` as optional
