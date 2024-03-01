@@ -252,7 +252,7 @@ type TTLObj = {
 /**
  * Configures quick TTL-related settings for a HTTP request object
  *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1#type-ttlconfig
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#type-ttlconfig
  */
 export type TTLConfig = TTL | TTLKeywords | TTLObj;
 
@@ -268,7 +268,7 @@ const unitToSeconds: Record<TimeUnit, number> = {
  * Converts a `TTL` (max-age) value into seconds, and returns `0` for bad
  * and/or negative input values.
  *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1#tosec-ttl-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#tosec-ttl-helper
  */
 export const toSec = (ttl: TTL): number => {
   if (typeof ttl === 'string') {
@@ -303,7 +303,7 @@ const setCC = (response: ServerResponse, cc: string | undefined) => {
  * Use this function to quickly set the `Cache-Control` header with a `max-age=`
  * on a HTTP response
  *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1#getcssbundleurl
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#getcssbundleurl
  */
 // eslint-disable-next-line complexity
 export const cacheControl = (

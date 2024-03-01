@@ -3,7 +3,7 @@ import { globalStyle, GlobalStyleRule, style } from '@vanilla-extract/css';
 /**
  * Adds free-form CSS as a globalStyle
  *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1#vanillaglobal
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#vanillaglobal
  */
 export const vanillaGlobal = (css: string) =>
   globalStyle('x', { x: `} ${css} x{x:` } as GlobalStyleRule);
@@ -14,7 +14,7 @@ export const vanillaGlobal = (css: string) =>
  * Spreads the return value into a style object, to inject free-form CSS
  * properties (or nested blocks)
  *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1#vanillaprops
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#vanillaprops
  */
 export const vanillaProps = (css: string) => ({ x: `; ${css}` } as GlobalStyleRule);
 
@@ -23,7 +23,7 @@ export const vanillaProps = (css: string) => ({ x: `; ${css}` } as GlobalStyleRu
 /**
  * Returns a scoped cssClassName styled with free-form CSS
  *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1#vanillaclass
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#vanillaclass
  */
 export function vanillaClass(css: string): string;
 export function vanillaClass(debugId: string, css: string): string;
@@ -45,7 +45,7 @@ export function vanillaClass(cssOrDebugId: string, css?: string): string {
  * If you need something more sophisticated, use a custom `postcss` config.
  *
  *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1#vanillanest
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#vanillanest
  */
 export const vanillaNest = (ampSelector: string, css: string): string =>
   css.replace(/&/g, ampSelector);
@@ -61,7 +61,7 @@ export const vanillaNest = (ampSelector: string, css: string): string =>
  * NOTE: All "bare" (un-nested) style properties must come first,
  * before any nested blocks.
  *
- * @see https://github.com/reykjavikcity/webtools/tree/v0.1#vanillaclassnested
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#vanillaclassnested
  */
 export function vanillaClassNested(css: string): string;
 export function vanillaClassNested(debugId: string, css: string): string;
