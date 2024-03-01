@@ -633,8 +633,9 @@ comments, etc. If you need something more sophisticated, use a custom
 Replaces all `&` tokens with the given selector string, in a direct (read.
 "dumb") way. It's mainly useful when used with style-mixins, etc.
 
-This low-level utility function is used internally by
-[`vanillaClassNested`](#vanillaclassnested).
+`vanillaNest` does NOT support deeply nested blocks, or anything so fancy. It
+will also replace `&` characters inside values, comments, etc. If you need
+something more sophisticated, use a custom `postcss` config.
 
 ```ts
 // someCssHelper.ts
@@ -675,9 +676,8 @@ vanillaGlobal(`
 `);
 ```
 
-**NOTE:** `vanillaNest` does NOT support deeply nested blocks, or anything so
-fancy. It will also replace `&` characters inside values, comments, etc. If
-you need something more sophisticated, use a custom `postcss` config.
+(This low-level utility function is used internally by
+[`vanillaClassNested`](#vanillaclassnested).)
 
 ---
 
@@ -686,7 +686,7 @@ you need something more sophisticated, use a custom `postcss` config.
 This project uses the [Bun runtime](https://bun.sh) for development (tests,
 build, etc.)
 
-PRs are welcoms!
+PRs are welcome!
 
 ---
 
@@ -694,11 +694,3 @@ PRs are welcoms!
 
 See
 [CHANGELOG.md](https://github.com/reykjavikcity/webtools/blob/main/CHANGELOG.md)
-
-```
-
-```
-
-```
-
-```
