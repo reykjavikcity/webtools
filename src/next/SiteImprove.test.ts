@@ -35,4 +35,5 @@ test('pingSiteImprove', () => {
   expect(_sz.at(-1)).toEqual(['event', 'foo', 'submit', 'data']);
   pingSiteImprove('foo', 'reset');
   expect(_sz.at(-1)).toEqual(['event', 'foo', 'reset']);
+  delete window._sz;
 });
