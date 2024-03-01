@@ -1,6 +1,27 @@
 import { expect, test } from 'bun:test';
 
+import type { SiteImproveProps } from './SiteImprove.js';
 import { pingSiteImprove, SiteImprove } from './SiteImprove.js';
+import * as moduleExports from './SiteImprove.js';
+
+// ---------------------------------------------------------------------------
+// Test exports
+
+if (false as boolean) {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const exports: Record<keyof typeof moduleExports, true> = {
+    SiteImprove: true,
+    pingSiteImprove: true,
+    pingSiteImproveOutbound: true,
+  };
+
+  type SiteImproveProps_is_exported = SiteImproveProps;
+
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+}
+
+// ---------------------------------------------------------------------------
+// Test methods
 
 test('SiteImprove', () => {
   expect(!SiteImprove).toEqual(false);
@@ -15,19 +36,3 @@ test('pingSiteImprove', () => {
   pingSiteImprove('foo', 'reset');
   expect(_sz.at(-1)).toEqual(['event', 'foo', 'reset']);
 });
-
-// ---------------------------------------------------------------------------
-// Testing exports
-
-/* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first */
-import * as moduleExports from './SiteImprove.js';
-
-if (false as boolean) {
-  const exports: Record<keyof typeof moduleExports, true> = {
-    SiteImprove: true,
-    pingSiteImprove: true,
-    pingSiteImproveOutbound: true,
-  };
-}
-import type { SiteImproveProps } from './SiteImprove.js';
-/* eslint-enable */

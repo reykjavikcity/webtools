@@ -6,15 +6,32 @@ import { AppType } from 'next/app.js';
 import { NextRouter } from 'next/router.js';
 
 import { HTTP_400_BadRequest } from '../http.js';
+import * as vannillaHttpExports from '../http.js';
 
-import { ErrorProps, InferErrorPageProps, makeErrorizeAppHOC } from './http.js';
-
-test('showErrorPage', () => {
-  expect(3).toEqual(3);
-});
+import type { ErrorProps, InferErrorPageProps } from './http.js';
+import { makeErrorizeAppHOC } from './http.js';
+import * as moduleExports from './http.js';
 
 // ---------------------------------------------------------------------------
-// Type Tests
+// Test exports
+
+if (false as boolean) {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const exports: Record<keyof typeof moduleExports, true> = {
+    makeErrorizeAppHOC: true,
+    notModified304: true,
+    ...({} as Record<keyof typeof vannillaHttpExports, true>),
+  };
+
+  type _Any = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  type ErrorProps_is_exported = ErrorProps;
+  type InferErrorPageProps_is_exported = InferErrorPageProps<_Any>;
+
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+}
+
+// ---------------------------------------------------------------------------
+// Test types
 //
 /* eslint-disable @typescript-eslint/no-unused-vars */
 declare const res: ServerResponse;
@@ -26,7 +43,6 @@ declare const Page: ComponentType<{ data: boolean }>;
 declare const App: AppType<typeof Page extends ComponentType<infer P> ? P : never>;
 declare const router: NextRouter;
 
-// `false` condition guarantees that the following code is never executed
 if (false as boolean) {
   const hoc1 = makeErrorizeAppHOC(ErrPage1);
   const hoc2 = makeErrorizeAppHOC(ErrPage2);
@@ -95,24 +111,11 @@ if (false as boolean) {
     >
   >;
 }
-/* eslint-enable */
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 // ---------------------------------------------------------------------------
-// Testing exports
+// Tests methods
 
-/* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first, simple-import-sort/imports */
-import * as vannillaHttpExports from '../http.js';
-import * as moduleExports from './http.js';
-
-declare const vanillaHttpReExports: Record<keyof typeof vannillaHttpExports, true>;
-
-if (false as boolean) {
-  const exports: Record<keyof typeof moduleExports, true> = {
-    makeErrorizeAppHOC: true,
-    notModified304: true,
-    ...vanillaHttpReExports,
-  };
-}
-
-import type { ErrorProps as T1, InferErrorPageProps as T2 } from './http.js';
-/* eslint-enable */
+test('showErrorPage', () => {
+  expect(3).toBe(3);
+});

@@ -3,8 +3,8 @@ import * as moduleExports from './vanillaExtract.js';
 // ---------------------------------------------------------------------------
 // Testing exports
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 if (false as boolean) {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const exports: Record<keyof typeof moduleExports, true> = {
     vanillaClass: true,
     vanillaClassNested: true,
@@ -12,5 +12,6 @@ if (false as boolean) {
     vanillaNest: true,
     vanillaProps: true,
   };
+
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 }
-/* eslint-enable @typescript-eslint/no-unused-vars */

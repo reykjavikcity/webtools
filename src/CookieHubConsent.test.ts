@@ -1,22 +1,27 @@
 import { expect, test } from 'bun:test';
 
+import type { CookieHubProviderProps } from './CookieHubConsent.js';
 import { CookieHubProvider } from './CookieHubConsent.js';
-
-test('CookieHubProvider', () => {
-  expect(!CookieHubProvider).toEqual(false);
-});
-
-// ---------------------------------------------------------------------------
-// Testing exports
-
-/* eslint-disable @typescript-eslint/no-unused-vars, unused-imports/no-unused-imports-ts, import/first */
 import * as moduleExports from './CookieHubConsent.js';
 
+// ---------------------------------------------------------------------------
+// Test exports
+
 if (false as boolean) {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const exports: Record<keyof typeof moduleExports, true> = {
     CookieHubProvider: true,
     useCookieHubConsent: true,
   };
+
+  type CookieHubProviderProps_is_exported = CookieHubProviderProps;
+
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 }
-import type { CookieHubProviderProps } from './CookieHubConsent.js';
-/* eslint-enable */
+
+// ---------------------------------------------------------------------------
+// Test methods
+
+test('CookieHubProvider', () => {
+  expect(!CookieHubProvider).toEqual(false);
+});
