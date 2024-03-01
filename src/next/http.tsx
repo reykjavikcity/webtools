@@ -38,7 +38,7 @@ type ShowErrorPageFn<EP extends ErrorProps = ErrorProps> = (
  * Use this method inside a `getServerSideProps` method (or API route)
  * to return an error page with proper HTTP status code and all the shit.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#showerrorpage-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-nextjs.md#showerrorpage-helper
  */
 const showErrorPage: ShowErrorPageFn = (response, error, ttl = '2s') => {
   error =
@@ -68,7 +68,7 @@ export type InferErrorPageProps<
  * cases when `getServerSideProps` returns an `__error` prop with `statusCode`
  * and optional friendly `message`.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#makeerrorizeapphoc
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-nextjs.md#makeerrorizeapphoc
  */
 export const makeErrorizeAppHOC = <EP extends Partial<ErrorProps>>(
   ErrorPage: FunctionComponent<EP>
@@ -113,7 +113,7 @@ export const makeErrorizeAppHOC = <EP extends Partial<ErrorProps>>(
  * to return an `HTTP_304_NotModified` response with an empty props object,
  * in a way that doesn't make TypeScript shout at you.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#notmodified304-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-nextjs.md#notmodified304-helper
  */
 export const notModified304 = (response: ServerResponse | NextContextLike) => {
   response = 'res' in response ? response.res : response;

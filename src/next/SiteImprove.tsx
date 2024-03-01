@@ -95,7 +95,7 @@ const _emitEvent =
 /**
  * A small helper for tracking custom UI events and reporting them to SiteImrove.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#pingsiteimprove-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-nextjs.md#pingsiteimprove-helper
  */
 export const pingSiteImprove = (category: string, action: string, label?: string) => {
   if (
@@ -113,7 +113,7 @@ export const pingSiteImprove = (category: string, action: string, label?: string
  * A small helper for reporting to SiteImrove when the user is programmatically
  * being sent to a different URL/resource.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#pingsiteimproveoutbound-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-nextjs.md#pingsiteimproveoutbound-helper
  */
 export const pingSiteImproveOutbound = (ourl: string) => {
   if (
@@ -246,7 +246,7 @@ export type SiteImproveProps = EitherObj<
  * A component for loading a SiteImprove analytics script and set up page-view
  * tracking across Next.js routes.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#siteimprove-component
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-nextjs.md#siteimprove-component
  */
 export const SiteImprove = (props: SiteImproveProps) => {
   const { analytics } = useCookieHubConsent();
