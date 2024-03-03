@@ -191,7 +191,23 @@ tracking across Next.js routes.
 
 It also automatically logs all out-bound link clicks.
 
-Example usage in pages/\_app.tsx
+**Props:**
+
+The Component's props have detailed JSDoc comments (displayed in your code
+editor), but there's a brief summary:
+
+- `accountId?: string` — Your SiteImprove account ID. (alternative to
+  `scriptUrl` prop).
+- `scriptUrl?: string` — The full SiteImprove analytics script URL.
+  (alternative to `accountId` prop).
+- `hasConstented?: boolean` — Manual GDPR 'analytics' consent flag. Allows
+  hard opt-out, but defers to
+  [`CookieHubProvider` values](./README.md#usecookiehubconsent) if they are
+  available.
+- `onLoad?: (e: unknown) => void` — Fires when the script has loaded.
+- `onError?: (e: unknown) => void` — Fires if loading the script failed.
+
+Example usage in `pages/\_app.tsx`:
 
 ```js
 import { SiteImprove } from '@reykjavik/webtools/next/SiteImprove';
@@ -208,27 +224,8 @@ const siteImproveAccountId = '[ACCOUNT_ID]'; // e.g. "7654321"
 />;
 ```
 
-The component has an optional `hasConsented` prop which can be used to
-forcefully suppress loading the analytics script.
-
 In dev mode it does NOT load the SiteImprove script and only logs page-view
 events to the console.
-
-**Props:**
-
-The Component's props have detailed JSDoc comments (displayed in your code
-editor), but there's a brief summary:
-
-- `accountId?: string` — Your SiteImprove account ID. (alternative to
-  `scriptUrl` prop).
-- `scriptUrl?: string` — The full SiteImprove analytics script URL.
-  (alternative to `accountId` prop).
-- `hasConstented?: boolean` — Manual GDPR 'analytics' consent flag. Allows
-  hard opt-out, but defers to
-  [`CookieHubProvider` values](./README.md#usecookiehubconsent) if they are
-  available.
-- `onLoad?: (e: unknown) => void` — Fires when the script has loaded.
-- `onError?: (e: unknown) => void` — Fires if loading the script failed.
 
 ### `pingSiteImprove` helper
 
