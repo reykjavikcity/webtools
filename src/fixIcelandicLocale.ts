@@ -18,7 +18,8 @@
 */
 
 const locAliases: Record<string, string> = {
-  // Danish is good enough substitution for Icelandic
+  // Danish feels like a "good enough" substitution for Icelandic.
+  // It seems to just the internal order of `Ø` and `Ö` that's different.
   is: 'da',
   'is-is': 'da',
 };
@@ -34,8 +35,8 @@ if ('ö'.localeCompare('p', 'is') < 0) {
   const _localeCompare = String.prototype.localeCompare;
 
   /**
-   * Polyfill for String.prototype.localeCompare for the 'is' locale
-   * in browsers that don't support it (\*cough* Chrome \*cough*).
+   * Patching `String.prototype.localeCompare` to support Icelandic in browsers
+   * (\*cough* Chrome \*cough*) that don't support the 'is'/'is-IS' locale.
    */
   String.prototype.localeCompare = function (
     this: string,
