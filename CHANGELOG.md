@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Remove unneccessary `@__PURE__` pragma
 
 ## 0.1.13
 

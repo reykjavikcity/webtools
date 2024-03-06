@@ -30,7 +30,7 @@ const mapLocales = (locales: string | Array<string> | undefined) => {
 
 // ---------------------------------------------------------------------------
 
-if (/*#__PURE__*/ 'ö'.localeCompare('p', 'is') < 0) {
+if ('ö'.localeCompare('p', 'is') < 0) {
   const _localeCompare = String.prototype.localeCompare;
 
   /**
