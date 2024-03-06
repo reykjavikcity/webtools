@@ -4,11 +4,12 @@ import type { SiteImproveProps } from './SiteImprove.js';
 import { pingSiteImprove, SiteImprove } from './SiteImprove.js';
 import * as moduleExports from './SiteImprove.js';
 
-// ---------------------------------------------------------------------------
-// Test exports
-
 if (false as boolean) {
   /* eslint-disable @typescript-eslint/no-unused-vars */
+
+  // ---------------------------------------------------------------------------
+  // Test exports
+
   const exports: Record<keyof typeof moduleExports, true> = {
     SiteImprove: true,
     pingSiteImprove: true,
@@ -16,6 +17,16 @@ if (false as boolean) {
   };
 
   type SiteImproveProps_is_exported = SiteImproveProps;
+
+  // ---------------------------------------------------------------------------
+  // Test types
+
+  const P1: SiteImproveProps = { accountId: '1234' };
+  const P2: SiteImproveProps = { scriptUrl: 'asdfasf' };
+  // @ts-expect-error  (at least one must be provided)
+  const P3: SiteImproveProps = {};
+  // @ts-expect-error  (both accountId and scriptUrl are not allowed)
+  const P4: SiteImproveProps = { accountId: '1234', scriptUrl: 'asdfasf' };
 
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }
