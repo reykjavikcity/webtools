@@ -1,3 +1,22 @@
+/*
+  TODO: Also attempt to patch these Classes:
+
+  - `Intl.Collator`
+    Same kind of magic as `String.prototype.localeCompare`
+
+  - `Intl.NumberFormat`
+    Only support default plain-number and percent formatting,
+    not currency or unit — UNLESS we do some string-replacement hackery,
+    and then we may need to handle the possibility of locales arrays
+    already containing Danish ahead of "is".
+
+  - `Intl.DateTimeFormat`
+    Possible with some mad-scientist string-replacement hackery and
+    the `locales` array detection magic, as mentioned above.
+
+  Mantra: Partial Icelandic suppoort is better than no Icelandic support.
+*/
+
 const locAliases: Record<string, string> = {
   // Danish is good enough substitution for Icelandic
   is: 'da',
