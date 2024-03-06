@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - fix: Remove unneccessary `@__PURE__` pragma
+- fix: List `fixIcelandicLocale.js` in `pkg.sideEffects`
 
 ## 0.1.13
 
