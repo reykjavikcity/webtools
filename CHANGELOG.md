@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- feat: Add `@reykjavik/webtools/fixIcelandicLocale` polyfill module
 
 ## 0.1.12
 

@@ -31,6 +31,7 @@ bun add @reykjavik/webtools
   - [`vanillaClass`](#vanillaclass)
   - [`vanillaClassNested`](#vanillaclassnested)
   - [`vanillaNest`](#vanillanest)
+- [`@reykjavik/webtools/fixIcelandicLocale`](#reykjavikwebtoolsfixicelandiclocale)
 - [Framework Specific Tools](#framework-specific-tools)
   - [Next.js Tools](#nextjs-tools)
 - [Contributing](#contributing)
@@ -421,6 +422,26 @@ vanillaGlobal(`
 
 (This low-level utility function is used internally by
 [`vanillaClassNested`](#vanillaclassnested).)
+
+---
+
+## `@reykjavik/webtools/fixIcelandicLocale`
+
+Polyfill for `String.prototype.localeCompare` to provide support for the
+`'is'` locale in browsers that don't support it (\*cough* Chrome \*cough*).
+
+At the top of your app's entry point, "side-effect import" this module to
+apply the polyfill:
+
+```ts
+import '@reykjavik/webtools/fixIcelandicLocale';
+
+// Then continue with your day
+// and use `localeCompare` as you normally would...
+```
+
+**NOTE** The polyfill is only applied in engines that fail a simple feature
+test.
 
 ---
 
