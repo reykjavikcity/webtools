@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.13
+
+_2024-03-06_
+
 - feat: Add `@reykjavik/webtools/fixIcelandicLocale` polyfill module
 
 ## 0.1.12
