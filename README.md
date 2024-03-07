@@ -427,8 +427,9 @@ vanillaGlobal(`
 
 ## `@reykjavik/webtools/fixIcelandicLocale`
 
-Polyfill for `String.prototype.localeCompare` to provide support for the
-`'is'` locale in browsers that don't support it (\*cough* Chrome \*cough*).
+Polyfill for `String.prototype.localeCompare` to provide usable (but not
+perfect) support for the `'is'` locale in browsers that don't support it
+(\*cough* Chrome \*cough*).
 
 At the top of your app's entry point, "side-effect import" this module to
 apply the polyfill:
@@ -437,11 +438,17 @@ apply the polyfill:
 import '@reykjavik/webtools/fixIcelandicLocale';
 
 // Then continue with your day
-// and use `localeCompare` as you normally would...
+// and use `localeCompare` as you normally would[^1]...
 ```
 
 **NOTE** The polyfill is only applied in engines that fail a simple feature
 test.
+
+**Limitations:**
+
+When the `sensitivty` option is set to `"base"` or `"accent"`, it will lump
+`ð` and `d` together, and the acute-accented characters (`áéíóúý`) get lumped
+in with their non-accented counterpart.
 
 ---
 

@@ -19,7 +19,11 @@
 
 const locAliases: Record<string, string> = {
   // Danish feels like a "good enough" substitution for Icelandic.
-  // It seems to just the internal order of `Ø` and `Ö` that's different.
+  // It seems to just the internal order of `Ø` and `Ö` that's different,
+  // and when the `sensitivity` option is set to "base" or "accent" then
+  // `ð` is consiered a variant of `d` and the letters á, é, í, ó, ú, and ý
+  // are not treated as separate letters but simply variants of
+  // a, e, i, o, u, and y.
   is: 'da',
   'is-is': 'da',
 };

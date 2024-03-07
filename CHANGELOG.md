@@ -8,7 +8,7 @@
 
 _2024-03-06_
 
-- feat: Add `@reykjavik/webtools/fixIcelandicLocale` polyfill module
+- feat: Add `@reykjavik/webtools/fixIcelandicLocale` Chrome paching module
 
 ## 0.1.12
 
