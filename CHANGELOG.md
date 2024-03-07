@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/fixIcelandicLocale`:
+  - feat: Patch `Intl.Collator`
 
 ## 0.1.13 – 0.1.14
 
@@ -28,7 +30,7 @@ _2024-02-14_
 
 _2024-02-14_
 
-- `@reykjavik/webtools/http`
+- `@reykjavik/webtools/http`:
   - feat: Add the rest of the more obscure HTTP status constants (WebDAV,
     etc.)
   - fix: Add `429`, `432`, `451` to `HTTP_CLIENT_ERROR_ALL` type
@@ -37,7 +39,7 @@ _2024-02-14_
 
 _2023-04-27_
 
-- `@reykjavik/webtools/http`
+- `@reykjavik/webtools/http`:
   - feat: Add `toSec` TTL helper
 
 ## 0.1.7 – 0.1.8

@@ -427,28 +427,39 @@ vanillaGlobal(`
 
 ## `@reykjavik/webtools/fixIcelandicLocale`
 
-Polyfill for `String.prototype.localeCompare` to provide usable (but not
-perfect) support for the `'is'` locale in browsers that don't support it
-(\*cough* Chrome \*cough*).
+As of early 2004, Google Chrome still does not support the Icelandic locale
+`is`/`is-IS` in any way. Meanwhile other browsers have supported it for over a
+decade.
 
-At the top of your app's entry point, "side-effect import" this module to
-apply the polyfill:
+This module does attempts to patches the following methods/classes by
+substituting the `is` locale with `da` (Danish) and apply a few post-hoc fixes
+to their return values.
+
+- `String.prototype.localeCompare`
+- `Intl.Collator`
+
+This provides usable (but not perfect) results, with some caveats listed
+below.
+
+To apply these patches, simply "side-effect import" this module at the top of
+your app's entry point:
 
 ```ts
 import '@reykjavik/webtools/fixIcelandicLocale';
 
-// Then continue with your day
-// and use `localeCompare` as you normally would[^1]...
+// Then continue with your day and use `localeCompare` and Intl.Collator,
+// as you normally would. (See "limitations" below.)
 ```
 
-**NOTE** The polyfill is only applied in engines that fail a simple feature
-test.
+(**NOTE** The patch is only applied in engines that fail a simple feature
+detection test.)
 
-**Limitations:**
+**`localeCompare` and `Intl.Collator` Limitations:**
 
-When the `sensitivty` option is set to `"base"` or `"accent"`, it will lump
-`ð` and `d` together, and the acute-accented characters (`áéíóúý`) get lumped
-in with their non-accented counterpart.
+- When the `sensitivty` option is set to `"base"` or `"accent"`, it will
+  incorrectly treat `ð` and `d` as the same letter, and the acute-accented
+  characters `á`, `é`, `í`, `ó`, `ú` and `ý` get lumped in with their
+  non-accented counterparts.
 
 ---
 

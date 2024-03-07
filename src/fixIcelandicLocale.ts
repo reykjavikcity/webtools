@@ -1,8 +1,11 @@
 /*
-  TODO: Also attempt to patch these Classes:
+  Mantra: Partial Icelandic suppoort is better than none. Partial Icelandic
+  suppoort is better than none. Partial Icelandic suppoort is better than
+  none. Partial Icelandic suppoort is better than none. Partial Icelandic...
 
-  - `Intl.Collator`
-    Same kind of magic as `String.prototype.localeCompare`
+
+  TODO:
+  Also attempt to patch:
 
   - `Intl.NumberFormat`
     Only support default plain-number and percent formatting,
@@ -14,7 +17,6 @@
     Possible with some mad-scientist string-replacement hackery and
     the `locales` array detection magic, as mentioned above.
 
-  Mantra: Partial Icelandic suppoort is better than no Icelandic support.
 */
 
 const locAliases: Record<string, string> = {
@@ -50,4 +52,25 @@ if ('ö'.localeCompare('p', 'is') < 0) {
   ) {
     return _localeCompare.call(this, that, mapLocales(locales), options);
   };
+}
+
+// ---------------------------------------------------------------------------
+
+if (Intl.Collator.supportedLocalesOf('is').length === 0) {
+  const _Collator = Intl.Collator;
+
+  const Patched = function Collator(
+    locales?: string | Array<string>,
+    options?: Intl.CollatorOptions
+  ) {
+    const instance = new _Collator(mapLocales(locales), options);
+    Object.setPrototypeOf(instance, Patched.prototype);
+    return instance;
+  };
+  Patched.prototype = Object.create(_Collator.prototype) as Intl.Collator;
+  Patched.prototype.constructor = Patched;
+  // Static methods
+  Patched.supportedLocalesOf = _Collator.supportedLocalesOf;
+
+  Intl.Collator = Patched as typeof Intl.Collator;
 }
