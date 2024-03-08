@@ -437,7 +437,7 @@ substituting the `is` locale with `da` (Danish) and apply a few post-hoc fixes
 to their return values.
 
 - `Intl.Collator` and `String.prototype.localeCompare`
-- `Intl.NumzberFormat` and `Number.prototype.toLocaleString`
+- `Intl.NumberFormat` and `Number.prototype.toLocaleString`
 - `Intl.DateTimeFormat` and `Date.prototype.toLocaleDateString`
 
 This provides usable (but not perfect) results, with some caveats listed
