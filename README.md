@@ -32,6 +32,7 @@ bun add @reykjavik/webtools
   - [`vanillaClassNested`](#vanillaclassnested)
   - [`vanillaNest`](#vanillanest)
 - [`@reykjavik/webtools/fixIcelandicLocale`](#reykjavikwebtoolsfixicelandiclocale)
+  - [Limitations](#limitations)
 - [Framework Specific Tools](#framework-specific-tools)
   - [Next.js Tools](#nextjs-tools)
 - [Contributing](#contributing)
@@ -437,6 +438,7 @@ to their return values.
 
 - `String.prototype.localeCompare`
 - `Intl.Collator`
+- `Intl.NumberFormat`
 
 This provides usable (but not perfect) results, with some caveats listed
 below.
@@ -454,12 +456,21 @@ import '@reykjavik/webtools/fixIcelandicLocale';
 (**NOTE** The patch is only applied in engines that fail a simple feature
 detection test.)
 
-**`localeCompare` and `Intl.Collator` Limitations:**
+### Limitations
+
+**`Intl.Collator` and `localeCompare`:**
 
 - When the `sensitivty` option is set to `"base"` or `"accent"`, it will
   incorrectly treat `ð` and `d` as the same letter, and the acute-accented
   characters `á`, `é`, `í`, `ó`, `ú` and `ý` get lumped in with their
   non-accented counterparts.
+
+**`Intl.NumberFormat` and `toLocaleString`:**
+
+- The `style: "unit"` option is not supported and prints units in Danish. (Soo
+  many units and unit-variants…)
+- The `currencyDisplay: "name"` option is not supported and prints the
+  currency's full name in Danish.
 
 ---
 

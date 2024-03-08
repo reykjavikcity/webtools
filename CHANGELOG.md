@@ -5,6 +5,7 @@
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/fixIcelandicLocale`:
   - feat: Patch `Intl.Collator`
+  - feat: Patch `Intl.NumberFormat` and `Number.prototype.toLocaleString`
 
 ## 0.1.13 – 0.1.14
 
