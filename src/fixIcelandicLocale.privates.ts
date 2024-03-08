@@ -23,21 +23,6 @@ const mapLocales = (
 
 // ---------------------------------------------------------------------------
 
-const _localeCompare = String.prototype.localeCompare;
-
-export const _patchedLocaleCompare = function (
-  this: string,
-  that: string,
-  locales?: string | Array<string>,
-  options?: Intl.CollatorOptions
-) {
-  locales = mapLocales(locales) || locales;
-  return _localeCompare.call(this, that, locales, options);
-};
-_patchedLocaleCompare.$original = _localeCompare;
-
-// ---------------------------------------------------------------------------
-
 const PatchedCollator = function Collator(
   locales?: string | Array<string>,
   options?: Intl.CollatorOptions
@@ -56,6 +41,20 @@ PatchedCollator.$original = _Collator;
 export const _PatchedCollator = PatchedCollator as typeof Intl.Collator & {
   $original: typeof Intl.Collator;
 };
+
+// ---------------------------------------------------------------------------
+
+const _localeCompare = String.prototype.localeCompare;
+
+export const _patchedLocaleCompare = function localeCompare(
+  this: string,
+  that: string,
+  locales?: string | Array<string>,
+  options?: Intl.CollatorOptions
+) {
+  return _PatchedCollator(locales, options).compare(this, that);
+};
+_patchedLocaleCompare.$original = _localeCompare;
 
 // ---------------------------------------------------------------------------
 

@@ -20,11 +20,9 @@ import {
   _patchedToLocaleString,
 } from './fixIcelandicLocale.privates.js';
 
-if ('ö'.localeCompare('p', 'is') < 0) {
-  String.prototype.localeCompare = _patchedLocaleCompare;
-}
 if (Intl.Collator.supportedLocalesOf(['is']).length < 1) {
   Intl.Collator = _PatchedCollator;
+  String.prototype.localeCompare = _patchedLocaleCompare;
 
   Intl.NumberFormat = _PatchedNumberFormat;
   Number.prototype.toLocaleString = _patchedToLocaleString;
