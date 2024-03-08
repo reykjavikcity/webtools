@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.15
+
+_2024-03-08_
+
 - `@reykjavik/webtools/fixIcelandicLocale`:
   - feat: Patch `Intl.Collator`
   - feat: Patch `Intl.NumberFormat` and `Number.prototype.toLocaleString`
