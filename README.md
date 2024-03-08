@@ -436,9 +436,9 @@ This module does attempts to patches the following methods/classes by
 substituting the `is` locale with `da` (Danish) and apply a few post-hoc fixes
 to their return values.
 
-- `String.prototype.localeCompare`
-- `Intl.Collator`
-- `Intl.NumberFormat`
+- `Intl.Collator` and `String.prototype.localeCompare`
+- `Intl.NumzberFormat` and `Number.prototype.toLocaleString`
+- `Intl.DateTimeFormat` and `Date.prototype.toLocaleDateString`
 
 This provides usable (but not perfect) results, with some caveats listed
 below.
@@ -471,6 +471,17 @@ detection test.)
   many units and unit-variants…)
 - The `currencyDisplay: "name"` option is not supported and prints the
   currency's full name in Danish.
+
+**`Intl.DateTimeFormat` and `toLocaleDateString`:**
+
+- The `month: 'narrow'` and `weekday: 'narrow'` options are not supported, and
+  print the corresponding Danish initials
+- For `timeZoneName` the values `"long"`, `"shortGeneric"` and `"longGeneric"`
+  will appear in Danish.
+- The `timeStyle: 'full'` option prints timezone will appear in Danish
+- The `dayPeriod` option is not supported and prints the day-period in Danish.
+- Custom formatted `DD.MM.YY` (2-digit year) dates turn into time-like
+  `DD:MM:YY` strings.
 
 ---
 

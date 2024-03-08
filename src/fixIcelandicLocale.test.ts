@@ -1,7 +1,10 @@
 import { describe, expect, test } from 'bun:test';
 
 import * as moduleExports from './fixIcelandicLocale.js';
-import { _PatchedNumberFormat } from './fixIcelandicLocale.privates.js';
+import {
+  _PatchedDateTimeFormat,
+  _PatchedNumberFormat,
+} from './fixIcelandicLocale.privates.js';
 
 // ---------------------------------------------------------------------------
 // Test exports
@@ -85,7 +88,7 @@ describe('_PatchedNumberFormat', () => {
   // Proves that the this is actually a patched instance,
   // Also makes it clear what's not supported (yet).
   test('Not supported features', () => {
-    // currncyDisplay: 'name';
+    // currncyDisplay: 'name'
     expect(
       _PatchedNumberFormat('is', {
         style: 'currency',
@@ -93,7 +96,7 @@ describe('_PatchedNumberFormat', () => {
         currencyDisplay: 'name',
       }).format(-123)
     ).toBe('-123 islandske kroner');
-    // style: 'unit';
+    // style: 'unit'
     expect(
       new _PatchedNumberFormat('is', {
         style: 'unit',
@@ -101,5 +104,172 @@ describe('_PatchedNumberFormat', () => {
         unitDisplay: 'long',
       }).format(1234)
     ).toBe('1.234 kilometer pr. grad');
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe('_PatchedDateTimeFormat', () => {
+  test('Can be called with and without `new`', () => {
+    const d = new Date('2024-02-29T12:34:56Z');
+
+    expect(new _PatchedDateTimeFormat('is').format(d)).toBe('29.2.2024');
+    // Can be called without `new`
+    expect(_PatchedDateTimeFormat('is').format(d)).toBe('29.2.2024');
+    // Accepts timestamps
+    expect(_PatchedDateTimeFormat('is').format(d.getTime())).toBe('29.2.2024');
+    // Defaults to Date.now()
+    expect(_PatchedDateTimeFormat('is').format()).toBe(
+      _PatchedDateTimeFormat('is').format(Date.now())
+    );
+
+    // respects preceding locales ...including "da"
+    expect(new _PatchedDateTimeFormat(['en', 'is']).format(d)).toBe(`2/29/2024`);
+    expect(new _PatchedDateTimeFormat(['da', 'is'], { weekday: 'long' }).format(d)).toBe(
+      'torsdag'
+    );
+  });
+
+  test('Has static methods', () => {
+    expect(_PatchedDateTimeFormat.supportedLocalesOf(['da'])).toEqual(['da']);
+  });
+
+  test('Translates month names', () => {
+    const monthLong = _PatchedDateTimeFormat('is', { month: 'long' });
+    const monthShort = _PatchedDateTimeFormat('is', { month: 'short' });
+    [
+      'janúar',
+      'febrúar',
+      'mars',
+      'apríl',
+      'maí',
+      'júní',
+      'júlí',
+      'ágúst',
+      'september',
+      'október',
+      'nóvember',
+      'desember',
+    ].forEach((month, idx) => {
+      const d = new Date(2024, idx, 1);
+      expect(monthLong.format(d)).toBe(month);
+      expect(monthShort.format(d)).toBe(
+        month.length > 3 ? `${month.slice(0, 3)}.` : month
+      );
+    });
+  });
+
+  test('Translates month names', () => {
+    const weekdayLong = _PatchedDateTimeFormat('is', { weekday: 'long' });
+    const weekdayShort = _PatchedDateTimeFormat('is', { weekday: 'short' });
+    [
+      'mánudagur',
+      'þriðjudagur',
+      'miðvikudagur',
+      'fimmtudagur',
+      'föstudagur',
+      'laugardagur',
+      'sunnudagur',
+    ].forEach((weekday, idx) => {
+      const d = new Date(2024, 1, 5 + idx);
+      expect(weekdayLong.format(d)).toBe(weekday);
+      expect(weekdayShort.format(d)).toBe(
+        weekday.length > 3 ? `${weekday.slice(0, 3)}.` : weekday
+      );
+    });
+  });
+
+  test('Translates month names', () => {
+    const eraLong = _PatchedDateTimeFormat('is', { era: 'long' });
+    const eraShort = _PatchedDateTimeFormat('is', { era: 'short' });
+    const eraNarrow = _PatchedDateTimeFormat('is', { era: 'narrow' });
+    (
+      [
+        [new Date(-999, 1, 1), 'fyrir'],
+        [new Date(1000, 1, 1), 'eftir'],
+      ] as const
+    ).forEach(([date, era]) => {
+      expect(eraLong.format(date)).toBe(`1.2.1000 ${era} Krist`);
+      expect(eraShort.format(date)).toBe(`1.2.1000 ${era[0]!}.Kr.`);
+      expect(eraNarrow.format(date)).toBe(`1.2.1000 ${era[0]!}.k.`);
+    });
+  });
+
+  test('Dates are fine', () => {
+    expect(
+      _PatchedDateTimeFormat('is', { dateStyle: 'full' }).format(new Date('2024-08-03'))
+    ).toBe('laugardagurinn 3. ágúst 2024');
+    expect(
+      _PatchedDateTimeFormat('is', { dateStyle: 'long' }).format(
+        new Date('2024-08-03T12:34:56Z')
+      )
+    ).toBe('3. ágúst 2024');
+    expect(
+      _PatchedDateTimeFormat('is', { dateStyle: 'medium' }).format(
+        new Date('2024-08-03T12:34:56Z')
+      )
+    ).toBe('3. ágú. 2024');
+    expect(
+      _PatchedDateTimeFormat('is', { dateStyle: 'short' }).format(
+        new Date('2024-08-03T12:34:56Z')
+      )
+    ).toBe('03.08.2024');
+  });
+
+  test('Times are fine', () => {
+    expect(
+      _PatchedDateTimeFormat('is', {
+        minute: '2-digit',
+        hour: '2-digit',
+        second: '2-digit',
+        fractionalSecondDigits: 3,
+      }).format(new Date('2024-08-03T12:34:01.2345Z'))
+    ).toBe('12:34:01,234');
+    expect(
+      _PatchedDateTimeFormat('is', {
+        minute: '2-digit',
+        hour: '2-digit',
+      }).format(new Date('2024-08-03T12:34:01.2345Z'))
+    ).toBe('12:34');
+  });
+
+  test('Fixes AM/PM', () => {
+    const hour12 = _PatchedDateTimeFormat('is', { hour12: true, timeStyle: 'short' });
+    expect(hour12.format(new Date('2024-08-03T15:34'))).toBe('03:34 e.h.');
+    // 12 hour clock defaults to h11
+    expect(hour12.format(new Date('2024-08-03T00:34'))).toBe('00:34 f.h.');
+    // 24 hour clock is fine
+    expect(
+      _PatchedDateTimeFormat('is', {
+        timeStyle: 'long',
+        timeZone: 'America/Los_Angeles',
+      }).format(new Date('2024-08-03T07:34'))
+    ).toBe('00:34:00 GMT-7');
+  });
+
+  // Proves that the this is actually a patched instance,
+  // Also makes it clear what's not supported (yet).
+  test('Not supported features', () => {
+    // month: 'narrow'
+    expect(
+      _PatchedDateTimeFormat('is', { month: 'narrow' }).format(new Date('2024-08-03'))
+    ).toBe('A');
+    // weekday: 'narrow'
+    expect(
+      _PatchedDateTimeFormat('is', { weekday: 'narrow' }).format(new Date('2024-07-24'))
+    ).toBe('O');
+    // timeZoneStyle: 'narrow'
+    expect(
+      _PatchedDateTimeFormat('is', {
+        timeZone: 'America/Los_Angeles',
+        timeStyle: 'full',
+      }).format(new Date('2024-08-03T13:01:00Z'))
+    ).toBe('06:01:00 Pacific-sommertid');
+    // dayPeriod: *
+    expect(
+      _PatchedDateTimeFormat('is', { dayPeriod: 'short' }).format(
+        new Date('2024-08-03T00:01:00Z')
+      )
+    ).toBe('om natten');
   });
 });

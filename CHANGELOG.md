@@ -6,6 +6,7 @@
 - `@reykjavik/webtools/fixIcelandicLocale`:
   - feat: Patch `Intl.Collator`
   - feat: Patch `Intl.NumberFormat` and `Number.prototype.toLocaleString`
+  - feat: Patch `Intl.DateTimeFormat` and `Date.prototype.toLocaleDateString`
 
 ## 0.1.13 – 0.1.14
 
