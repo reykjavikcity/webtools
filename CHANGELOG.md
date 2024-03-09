@@ -3,10 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- `@reykjavik/webtools/fixIcelandicLocale`:
-  - feat: Add support for `DateTimeFormat`'s `dayPeriod` option
 
-## 0.1.16
+## 0.1.16 – 0.1.17
 
 _2024-03-09_
 
