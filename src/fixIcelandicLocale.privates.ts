@@ -198,38 +198,41 @@ const reformatDateTime = function (this: PatchedDateTimeFormatInstance, result: 
     return result;
   }
   const options = this.super.resolvedOptions();
-  let mappedResult = result;
 
   let monthMatches = 0;
   for (let i = 0, month; (month = months[i]); i++) {
     const [da, is, checkShort] = month;
-    mappedResult = mappedResult.replace(da, is);
+    let mappedResult = result.replaceAll(da, is);
     if (checkShort && mappedResult === result) {
-      mappedResult = mappedResult.replace(da.slice(0, 3), is.slice(0, 3));
+      mappedResult = mappedResult.replaceAll(da.slice(0, 3), is.slice(0, 3));
     }
     if (mappedResult !== result) {
       monthMatches++;
+      result = mappedResult;
       if (monthMatches >= 2) {
         break;
       }
     }
   }
-  result = mappedResult; // reset result
+
   let weekdayMatches = 0;
   for (let i = 0, weekday; (weekday = weekdays[i]); i++) {
     const [da, is, shortLength] = weekday;
-    mappedResult = mappedResult.replace(da, is);
+    let mappedResult = result.replaceAll(da, is);
     if (mappedResult === result) {
-      mappedResult = mappedResult.replace(da.slice(0, shortLength || 3), is.slice(0, 3));
+      mappedResult = mappedResult.replaceAll(
+        da.slice(0, shortLength || 3),
+        is.slice(0, 3)
+      );
     }
     if (mappedResult !== result) {
       weekdayMatches++;
+      result = mappedResult;
       if (weekdayMatches >= 2) {
         break;
       }
     }
   }
-  result = mappedResult;
 
   if (/Kristus/.test(result)) {
     result = result.replace(/før Kristus/g, 'fyrir Krist');

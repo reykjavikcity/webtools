@@ -133,7 +133,9 @@ describe('_PatchedDateTimeFormat', () => {
   test('Has static methods', () => {
     expect(_PatchedDateTimeFormat.supportedLocalesOf(['da'])).toEqual(['da']);
   });
+});
 
+describe('_PatchedDateTimeFormat.format', () => {
   test('Translates month names', () => {
     const monthLong = _PatchedDateTimeFormat('is', { month: 'long' });
     const monthShort = _PatchedDateTimeFormat('is', { month: 'short' });
@@ -159,7 +161,7 @@ describe('_PatchedDateTimeFormat', () => {
     });
   });
 
-  test('Translates month names', () => {
+  test('Translates weekday names', () => {
     const weekdayLong = _PatchedDateTimeFormat('is', { weekday: 'long' });
     const weekdayShort = _PatchedDateTimeFormat('is', { weekday: 'short' });
     [
@@ -173,9 +175,7 @@ describe('_PatchedDateTimeFormat', () => {
     ].forEach((weekday, idx) => {
       const d = new Date(2024, 1, 5 + idx);
       expect(weekdayLong.format(d)).toBe(weekday);
-      expect(weekdayShort.format(d)).toBe(
-        weekday.length > 3 ? `${weekday.slice(0, 3)}.` : weekday
-      );
+      expect(weekdayShort.format(d)).toBe(`${weekday.slice(0, 3)}.`);
     });
   });
 
@@ -271,5 +271,42 @@ describe('_PatchedDateTimeFormat', () => {
         new Date('2024-08-03T00:01:00Z')
       )
     ).toBe('om natten');
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe('_PatchedDateTimeFormat.formatRange', () => {
+  test('Translates month names', () => {
+    const d1 = new Date(2024, 4, 2);
+    const d2 = new Date(2024, 11, 2);
+    expect(_PatchedDateTimeFormat('is', { month: 'long' }).formatRange(d1, d2)).toBe(
+      'maí–desember'
+    );
+    expect(_PatchedDateTimeFormat('is', { month: 'short' }).formatRange(d1, d2)).toBe(
+      'maí–des.'
+    );
+  });
+
+  test('Translates weekday names', () => {
+    const d1 = new Date(2024, 1, 5);
+    const d2 = new Date(2024, 1, 6);
+    expect(_PatchedDateTimeFormat('is', { weekday: 'long' }).formatRange(d1, d2)).toBe(
+      'mánudagur – þriðjudagur'
+    );
+    expect(_PatchedDateTimeFormat('is', { weekday: 'short' }).formatRange(d1, d2)).toBe(
+      'mán. – þri.'
+    );
+  });
+
+  test('Fixes AM/PM', () => {
+    const hour12 = _PatchedDateTimeFormat('is', { hour12: true, timeStyle: 'short' });
+    expect(
+      hour12.formatRange(new Date('2024-08-03T15:34'), new Date('2024-08-03T16:34'))
+    ).toBe('3.34–4.34 e.h.'); // FIXME: use colons
+    // 12 hour clock defaults to h11
+    expect(
+      hour12.formatRange(new Date('2024-08-03T00:34'), new Date('2024-08-03T13:34'))
+    ).toBe('0.34 f.h. – 1.34 e.h.'); // FIXME: use colons
   });
 });
