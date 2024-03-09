@@ -180,17 +180,32 @@ const weekdays: Record<string, string> = {
   lør: 'laugardagur',
   søn: 'sunnudagur',
 };
+const dayPeriods: Record<string, [long: string, narrow?: string]> = {
+  AM: ['f.h.'],
+  PM: ['e.h.'],
+  'om natten': ['að nóttu', 'n.'],
+  // Mismatch at 05:00 — da: 'om morgenen', is: 'að nóttu'
+  'om morgenen': ['að morgni', 'mrg.'],
+  'om formiddagen': ['að morgni', 'mrg.'],
+  // Mismatch at 12:00 — da: 'om eftermiddagen', is: 'hádegi'
+  'om eftermiddagen': ['síðdegis', 'sd.'],
+  'om aftenen': ['að kvöldi', 'kv.'],
+};
 
 const partMappers: Partial<
   Record<
     Intl.DateTimeFormatPartTypes,
-    (value: string, lastType: string | undefined) => string | undefined
+    (
+      value: string,
+      lastType: string | undefined,
+      option: Intl.ResolvedDateTimeFormatOptions
+    ) => string | undefined
   >
 > = {
   month: (value) => {
-    const islMonth = months[value.slice(0, 3)];
-    if (islMonth) {
-      return value.endsWith('.') ? `${islMonth.slice(0, 3)}.` : islMonth;
+    const isl = months[value.slice(0, 3)];
+    if (isl) {
+      return value.endsWith('.') ? `${isl.slice(0, 3)}.` : isl;
     }
   },
   weekday: (value) => {
@@ -208,8 +223,12 @@ const partMappers: Partial<
         : 'eftir Krist';
     }
   },
-  dayPeriod: (value) => {
-    return { AM: 'f.h.', PM: 'e.h.' }[value] || value;
+  dayPeriod: (value, _, options) => {
+    const isl = dayPeriods[value];
+    if (isl) {
+      const [long, narrow] = isl;
+      return options.dayPeriod === 'narrow' ? narrow : long;
+    }
   },
   literal: (value, lastType) => {
     if (value === ' den ') {
@@ -227,9 +246,10 @@ const reformatDateTimeParts = function (
   if (!this.mapped) {
     return parts;
   }
+  const options = this.super.resolvedOptions();
   parts.forEach((part, idx) => {
     const mapper = partMappers[part.type];
-    const newValue = mapper && mapper(part.value, parts[idx - 1]?.type);
+    const newValue = mapper && mapper(part.value, parts[idx - 1]?.type, options);
     if (newValue != null) {
       part.value = newValue;
     }

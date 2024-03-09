@@ -479,7 +479,8 @@ detection test.)
 - For `timeZoneName` the values `"long"`, `"shortGeneric"` and `"longGeneric"`
   will appear in Danish.
 - The `timeStyle: 'full'` option prints the timezone names in Danish
-- The `dayPeriod` option is not supported and prints the day-period in Danish.
+- The `dayPeriod` option has a couple of slight mismatches, at 5 am and 12
+  noon.
 
 ---
 
