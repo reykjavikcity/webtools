@@ -303,10 +303,10 @@ describe('_PatchedDateTimeFormat.formatRange', () => {
     const hour12 = _PatchedDateTimeFormat('is', { hour12: true, timeStyle: 'short' });
     expect(
       hour12.formatRange(new Date('2024-08-03T15:34'), new Date('2024-08-03T16:34'))
-    ).toBe('3.34–4.34 e.h.'); // FIXME: use colons
+    ).toBe('3:34–4:34 e.h.');
     // 12 hour clock defaults to h11
     expect(
       hour12.formatRange(new Date('2024-08-03T00:34'), new Date('2024-08-03T13:34'))
-    ).toBe('0.34 f.h. – 1.34 e.h.'); // FIXME: use colons
+    ).toBe('0:34 f.h. – 1:34 e.h.');
   });
 });

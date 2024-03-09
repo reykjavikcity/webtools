@@ -23,6 +23,9 @@ const mapLocales = (
   }
 };
 
+const combineParts = (parts: Array<{ value: string }>) =>
+  parts.map(({ value }) => value).join('');
+
 // ===========================================================================
 // Collator
 // ===========================================================================
@@ -63,22 +66,6 @@ _patchedLocaleCompare.$original = _localeCompare;
 // ===========================================================================
 // NumberFormat
 // ===========================================================================
-
-const reformatNumber = function (this: PatchedNumberFormatInstance, result: string) {
-  if (!this.mapped) {
-    return result;
-  }
-  const options = this.super.resolvedOptions();
-  if (options.style === 'currency' && options.currencyDisplay === 'symbol') {
-    if (options.currency === 'DKK') {
-      return result.replace(/kr\./g, 'DKK');
-    }
-    if (options.currency === 'ISK') {
-      return result.replace(/ISK/g, 'kr.');
-    }
-  }
-  return result;
-};
 
 const reformatNumberParts = function (
   this: PatchedNumberFormatInstance,
@@ -127,10 +114,10 @@ const PatchedNumberFormat = function NumberFormat(
 const numberFormatProto: PatchedNumberFormatInstance = {
   constructor: PatchedNumberFormat,
   format(value) {
-    return reformatNumber.call(this, this.super.format(value));
+    return combineParts(this.formatToParts(value));
   },
   formatRange(value1, value2) {
-    return reformatNumber.call(this, this.super.formatRange(value1, value2));
+    return combineParts(this.formatRangeToParts(value1, value2));
   },
   formatToParts(value) {
     return reformatNumberParts.call(this, this.super.formatToParts(value));
@@ -170,86 +157,67 @@ _patchedToLocaleString.$original = _toLocaleString;
 // DateTimeFormat
 // ===========================================================================
 
-const months: Array<[da: string, en: string, checkShort?: true]> = [
-  ['januar', 'janúar', true],
-  ['februar', 'febrúar'],
-  ['marts', 'mars'],
-  ['april', 'apríl'],
-  ['maj', 'maí'],
-  ['juni', 'júní', true],
-  ['juli', 'júlí', true],
-  ['august', 'ágúst', true],
-  // ['september', 'september'],
-  ['oktober', 'október'],
-  ['november', 'nóvember', true],
-  ['december', 'desember', true],
-];
-const weekdays: Array<[da: string, is: string, shortLength?: number]> = [
-  ['mandag', 'mánudagur'],
-  ['tirsdag', 'þriðjudagur', 4],
-  ['onsdag', 'miðvikudagur'],
-  ['torsdag', 'fimmtudagur', 4],
-  ['fredag', 'föstudagur'],
-  ['lørdag', 'laugardagur'],
-  ['søndag', 'sunnudagur'],
-];
-const reformatDateTime = function (this: PatchedDateTimeFormatInstance, result: string) {
-  if (!this.mapped) {
-    return result;
-  }
-  const options = this.super.resolvedOptions();
+const months: Record<string, string> = {
+  jan: 'janúar',
+  feb: 'febrúar',
+  mar: 'mars',
+  apr: 'apríl',
+  maj: 'maí',
+  jun: 'júní',
+  jul: 'júlí',
+  aug: 'ágúst',
+  // sep: 'september', // is the same
+  okt: 'október',
+  nov: 'nóvember',
+  dec: 'desember',
+};
+const weekdays: Record<string, string> = {
+  man: 'mánudagur',
+  tir: 'þriðjudagur',
+  ons: 'miðvikudagur',
+  tor: 'fimmtudagur',
+  fre: 'föstudagur',
+  lør: 'laugardagur',
+  søn: 'sunnudagur',
+};
 
-  let monthMatches = 0;
-  for (let i = 0, month; (month = months[i]); i++) {
-    const [da, is, checkShort] = month;
-    let mappedResult = result.replaceAll(da, is);
-    if (checkShort && mappedResult === result) {
-      mappedResult = mappedResult.replaceAll(da.slice(0, 3), is.slice(0, 3));
+const partMappers: Partial<
+  Record<
+    Intl.DateTimeFormatPartTypes,
+    (value: string, lastType: string | undefined) => string | undefined
+  >
+> = {
+  month: (value) => {
+    const islMonth = months[value.slice(0, 3)];
+    if (islMonth) {
+      return value.endsWith('.') ? `${islMonth.slice(0, 3)}.` : islMonth;
     }
-    if (mappedResult !== result) {
-      monthMatches++;
-      result = mappedResult;
-      if (monthMatches >= 2) {
-        break;
-      }
+  },
+  weekday: (value) => {
+    const isl = weekdays[value.slice(0, 3)];
+    if (isl) {
+      return value.endsWith('.') ? `${isl.slice(0, 3)}.` : isl;
     }
-  }
-
-  let weekdayMatches = 0;
-  for (let i = 0, weekday; (weekday = weekdays[i]); i++) {
-    const [da, is, shortLength] = weekday;
-    let mappedResult = result.replaceAll(da, is);
-    if (mappedResult === result) {
-      mappedResult = mappedResult.replaceAll(
-        da.slice(0, shortLength || 3),
-        is.slice(0, 3)
-      );
+  },
+  era: (value) => {
+    if (!value.endsWith('.')) {
+      return value.length === 3
+        ? `${value[0]!}.k.`
+        : value[0] === 'f'
+        ? 'fyrir Krist'
+        : 'eftir Krist';
     }
-    if (mappedResult !== result) {
-      weekdayMatches++;
-      result = mappedResult;
-      if (weekdayMatches >= 2) {
-        break;
-      }
+  },
+  dayPeriod: (value) => {
+    return { AM: 'f.h.', PM: 'e.h.' }[value] || value;
+  },
+  literal: (value, lastType) => {
+    if (value === ' den ') {
+      return 'inn ';
+    } else if (value === '.' && (lastType === 'hour' || lastType === 'minute')) {
+      return ':';
     }
-  }
-
-  if (/Kristus/.test(result)) {
-    result = result.replace(/før Kristus/g, 'fyrir Krist');
-    result = result.replace(/efter Kristus/g, 'eftir Krist');
-  }
-  result = result.replace(/(f|e)Kr/g, '$1.k.');
-
-  result = result.replace(/AM/g, 'f.h.');
-  result = result.replace(/PM/g, 'e.h.');
-
-  // convert timestamps from `00.00` to `00:00`
-  result = result.replace(/(?:^|\s)\d\d\.\d\d(?:\.\d\d)?(?:,|\s|$)/g, (match) =>
-    match.replace(/\./g, ':')
-  );
-  result = result.replace(/ den/g, 'inn');
-
-  return result;
+  },
 };
 
 const reformatDateTimeParts = function (
@@ -259,8 +227,14 @@ const reformatDateTimeParts = function (
   if (!this.mapped) {
     return parts;
   }
-  const options = this.super.resolvedOptions();
-  // reformat
+  parts.forEach((part, idx) => {
+    const mapper = partMappers[part.type];
+    const newValue = mapper && mapper(part.value, parts[idx - 1]?.type);
+    if (newValue != null) {
+      part.value = newValue;
+    }
+  });
+
   return parts;
 };
 
@@ -297,10 +271,10 @@ const PatchedDateTimeFormat = function DateTimeFormat(
 const dateTimeFormatProto: PatchedDateTimeFormatInstance = {
   constructor: PatchedDateTimeFormat,
   format(value) {
-    return reformatDateTime.call(this, this.super.format(value));
+    return combineParts(this.formatToParts(value));
   },
   formatRange(value1, value2) {
-    return reformatDateTime.call(this, this.super.formatRange(value1, value2));
+    return combineParts(this.formatRangeToParts(value1, value2));
   },
   formatToParts(value) {
     return reformatDateTimeParts.call(this, this.super.formatToParts(value));

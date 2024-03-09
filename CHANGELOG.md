@@ -3,6 +3,10 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/fixIcelandicLocale`:
+  - fix: Add missing `DateTimeFormat.format*ToParts` methods, fix bugs
+  - refctor: Reduce code-size and simplify logic by dog-fooding `*ToParts`
+    methods internally
 
 ## 0.1.15
 

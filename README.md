@@ -475,13 +475,11 @@ detection test.)
 **`Intl.DateTimeFormat` and `toLocaleDateString`:**
 
 - The `month: 'narrow'` and `weekday: 'narrow'` options are not supported, and
-  print the corresponding Danish initials
+  print the corresponding Danish initials.
 - For `timeZoneName` the values `"long"`, `"shortGeneric"` and `"longGeneric"`
   will appear in Danish.
-- The `timeStyle: 'full'` option prints timezone will appear in Danish
+- The `timeStyle: 'full'` option prints the timezone names in Danish
 - The `dayPeriod` option is not supported and prints the day-period in Danish.
-- Custom formatted `DD.MM.YY` (2-digit year) dates turn into time-like
-  `DD:MM:YY` strings.
 
 ---
 
