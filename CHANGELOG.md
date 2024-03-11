@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Make all pached `Intl.*` methods bound to their instances
 
 ## 0.1.18 – 0.1.19
 

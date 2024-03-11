@@ -32,8 +32,6 @@ const combineParts = (parts: Array<{ value: string }>) =>
 
 type PatchedCollatorInstance = Intl.Collator & {
   constructor: typeof PatchedCollator;
-  mapped: boolean;
-  super: Intl.Collator;
 };
 
 const PatchedCollator = function Collator(
@@ -46,31 +44,26 @@ const PatchedCollator = function Collator(
     return new PatchedCollator(locales, options);
   }
   const mappedLocales = mapLocales(locales);
-  this.super = _Collator(mappedLocales || locales, options);
-  this.mapped = !!mappedLocales;
-};
+  const parent = _Collator(mappedLocales || locales, options);
+  const mapped = !!mappedLocales;
 
-// This is all very hacky, but extending the class *AND* preseving the
-// ability to instantiate without `new` is a bit of a pain.
-// Eagerly interested in finding a better way to do this.
-const CollatorProto: PatchedCollatorInstance = {
-  constructor: PatchedCollator,
-  compare(a, b) {
-    const res1 = this.super.compare(a, b);
+  this.compare = (a, b) => {
+    const res1 = parent.compare(a, b);
+    if (!mapped) {
+      return res1;
+    }
     const a0 = a.charAt(0);
     const b0 = b.charAt(0);
     if (/\d/.test(a0 + b0)) {
       return res1;
     }
-    const res2 = this.super.compare(a0, b0);
+    const res2 = parent.compare(a0, b0);
     return res2 !== 0 ? res2 : res1;
-  },
-  resolvedOptions() {
-    return this.super.resolvedOptions();
-  },
-} as PatchedCollatorInstance;
+  };
+  this.resolvedOptions = () => parent.resolvedOptions();
+};
 
-PatchedCollator.prototype = CollatorProto;
+PatchedCollator.prototype = { constructor: PatchedCollator };
 // Static methods (not patched since "is" is not ACTUALLY supported.)
 PatchedCollator.supportedLocalesOf = _Collator.supportedLocalesOf;
 PatchedCollator.$original = _Collator;
@@ -99,14 +92,11 @@ _patchedLocaleCompare.$original = _localeCompare;
 
 const _NumberFormat = Intl.NumberFormat;
 
-const reformatNumberParts = function (
-  this: PatchedNumberFormatInstance,
-  parts: Array<Intl.NumberFormatPart>
-) {
-  if (!this.mapped) {
-    return parts;
-  }
-  const options = this.super.resolvedOptions();
+const reformatNumberParts = function <Parts extends Array<Intl.NumberFormatPart>>(
+  parent: Intl.NumberFormat,
+  parts: Parts
+): Parts {
+  const options = parent.resolvedOptions();
   if (options.style === 'currency' && options.currencyDisplay === 'symbol') {
     const currency = options.currency;
     if (currency === 'DKK' || currency === 'ISK') {
@@ -122,8 +112,6 @@ const reformatNumberParts = function (
 
 type PatchedNumberFormatInstance = Intl.NumberFormat & {
   constructor: typeof PatchedNumberFormat;
-  mapped: boolean;
-  super: Intl.NumberFormat;
 };
 
 const PatchedNumberFormat = function NumberFormat(
@@ -136,33 +124,24 @@ const PatchedNumberFormat = function NumberFormat(
     return new PatchedNumberFormat(locales, options);
   }
   const mappedLocales = mapLocales(locales);
-  this.super = _NumberFormat(mappedLocales || locales, options);
-  this.mapped = !!mappedLocales;
+  const parent = _NumberFormat(mappedLocales || locales, options);
+  const mapped = !!mappedLocales;
+
+  this.format = (value) => combineParts(this.formatToParts(value));
+  this.formatRange = (value1, value2) =>
+    combineParts(this.formatRangeToParts(value1, value2));
+  this.formatToParts = (value) => {
+    const parts = parent.formatToParts(value);
+    return mapped ? reformatNumberParts(parent, parts) : parts;
+  };
+  this.formatRangeToParts = (value1, value2) => {
+    const parts = parent.formatRangeToParts(value1, value2);
+    return mapped ? reformatNumberParts(parent, parts) : parts;
+  };
+  this.resolvedOptions = () => parent.resolvedOptions();
 };
 
-// This is all very hacky, but extending the class *AND* preseving the
-// ability to instantiate without `new` is a bit of a pain.
-// Eagerly interested in finding a better way to do this.
-const numberFormatProto: PatchedNumberFormatInstance = {
-  constructor: PatchedNumberFormat,
-  format(value) {
-    return combineParts(this.formatToParts(value));
-  },
-  formatRange(value1, value2) {
-    return combineParts(this.formatRangeToParts(value1, value2));
-  },
-  formatToParts(value) {
-    return reformatNumberParts.call(this, this.super.formatToParts(value));
-  },
-  formatRangeToParts(value1, value2) {
-    return reformatNumberParts.call(this, this.super.formatRangeToParts(value1, value2));
-  },
-  resolvedOptions() {
-    return this.super.resolvedOptions();
-  },
-} as PatchedNumberFormatInstance;
-
-PatchedNumberFormat.prototype = numberFormatProto;
+PatchedNumberFormat.prototype = { constructor: PatchedNumberFormat };
 // Static methods (not patched since "is" is not ACTUALLY supported.)
 PatchedNumberFormat.supportedLocalesOf = _NumberFormat.supportedLocalesOf;
 PatchedNumberFormat.$original = _NumberFormat;
@@ -271,14 +250,11 @@ const partMappers: Partial<
   },
 };
 
-const reformatDateTimeParts = function (
-  this: PatchedDateTimeFormatInstance,
-  parts: Array<Intl.DateTimeFormatPart>
-) {
-  if (!this.mapped) {
-    return parts;
-  }
-  const options = this.super.resolvedOptions();
+const reformatDateTimeParts = function <Parts extends Array<Intl.DateTimeFormatPart>>(
+  parent: Intl.DateTimeFormat,
+  parts: Parts
+): Parts {
+  const options = parent.resolvedOptions();
   parts.forEach((part, idx) => {
     const mapper = partMappers[part.type];
     const newValue = mapper && mapper(part.value, parts[idx - 1]?.type, options);
@@ -292,8 +268,6 @@ const reformatDateTimeParts = function (
 
 type PatchedDateTimeFormatInstance = Intl.DateTimeFormat & {
   constructor: typeof PatchedDateTimeFormat;
-  mapped: boolean;
-  super: Intl.DateTimeFormat;
 };
 
 const _DateTimeFormat = Intl.DateTimeFormat;
@@ -315,36 +289,25 @@ const PatchedDateTimeFormat = function DateTimeFormat(
       hourCycle: 'h11',
     };
   }
-  this.super = _DateTimeFormat(mappedLocales || locales, options);
-  this.mapped = !!mappedLocales;
+  const parent = _DateTimeFormat(mappedLocales || locales, options);
+  const mapped = !!mappedLocales;
+
+  this.format = (value) => combineParts(this.formatToParts(value));
+  this.formatRange = (value1, value2) =>
+    combineParts(this.formatRangeToParts(value1, value2));
+
+  this.formatToParts = (value) => {
+    const parts = parent.formatToParts(value);
+    return mapped ? reformatDateTimeParts(parent, parts) : parts;
+  };
+  this.formatRangeToParts = (value1, value2) => {
+    const parts = parent.formatRangeToParts(value1, value2);
+    return mapped ? reformatDateTimeParts(parent, parts) : parts;
+  };
+  this.resolvedOptions = () => parent.resolvedOptions();
 };
 
-// This is all very hacky, but extending the class *AND* preseving the
-// ability to instantiate without `new` is a bit of a pain.
-// Eagerly interested in finding a better way to do this.
-const dateTimeFormatProto: PatchedDateTimeFormatInstance = {
-  constructor: PatchedDateTimeFormat,
-  format(value) {
-    return combineParts(this.formatToParts(value));
-  },
-  formatRange(value1, value2) {
-    return combineParts(this.formatRangeToParts(value1, value2));
-  },
-  formatToParts(value) {
-    return reformatDateTimeParts.call(this, this.super.formatToParts(value));
-  },
-  formatRangeToParts(value1, value2) {
-    return reformatDateTimeParts.call(
-      this,
-      this.super.formatRangeToParts(value1, value2)
-    );
-  },
-  resolvedOptions() {
-    return this.super.resolvedOptions();
-  },
-} as PatchedDateTimeFormatInstance;
-
-PatchedDateTimeFormat.prototype = dateTimeFormatProto;
+PatchedDateTimeFormat.prototype = { constructor: PatchedDateTimeFormat };
 // Static methods (not patched since "is" is not ACTUALLY supported.)
 PatchedDateTimeFormat.supportedLocalesOf = _DateTimeFormat.supportedLocalesOf;
 PatchedDateTimeFormat.$original = _DateTimeFormat;
@@ -388,6 +351,9 @@ if (_PluralRules) {
       super(mappedLocales || locales, options);
       this.mapped = !!mappedLocales;
       this.ord = options?.type === 'ordinal';
+
+      this.select = this.select.bind(this);
+      this.selectRange = this.selectRange.bind(this);
     }
     select(n: number): Intl.LDMLPluralRule {
       if (this.mapped) {
@@ -430,6 +396,9 @@ if (_ListFormat) {
       const mappedLocales = mapLocales(locales);
       super(mappedLocales || locales, options);
       this.mapped = !!mappedLocales;
+
+      this.format = this.format.bind(this);
+      this.formatToParts = this.formatToParts.bind(this);
     }
     format(list: Iterable<string>) {
       return this.mapped ? combineParts(this.formatToParts(list)) : super.format(list);

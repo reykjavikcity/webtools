@@ -23,6 +23,10 @@ describe('_PatchedCollator', () => {
     // respects preceding locales ...including "da"
     expect(new _PatchedCollator(['en', 'is']).compare('ö', 'p')).toBe(-1);
     expect(new _PatchedCollator(['da', 'is']).compare('ø', 'ö')).toBe(-1);
+
+    // Certain methods are instance bound and can be called without throwing
+    const { compare } = new _PatchedCollator('is');
+    expect(() => compare('a', 'á')).not.toThrow();
   });
 
   test('Has static methods', () => {
@@ -65,6 +69,14 @@ describe('_PatchedNumberFormat', () => {
     expect(
       new _PatchedNumberFormat(['da', 'is'], { style: 'unit', unit: 'hour' }).format(1)
     ).toBe('1 t.');
+
+    // Certain methods are instance bound and can be called without throwing
+    const { format, formatRange, formatToParts, formatRangeToParts } =
+      new _PatchedNumberFormat('is');
+    expect(() => format(123)).not.toThrow();
+    expect(() => formatRange(123, 234)).not.toThrow();
+    expect(() => formatToParts(123)).not.toThrow();
+    expect(() => formatRangeToParts(123, 234)).not.toThrow();
   });
 
   test('Has static methods', () => {
@@ -164,6 +176,14 @@ describe('_PatchedDateTimeFormat', () => {
     expect(new _PatchedDateTimeFormat(['da', 'is'], { weekday: 'long' }).format(d)).toBe(
       'torsdag'
     );
+
+    // Certain methods are instance bound and can be called without throwing
+    const { format, formatRange, formatToParts, formatRangeToParts } =
+      new _PatchedDateTimeFormat('is');
+    expect(() => format(d)).not.toThrow();
+    expect(() => formatRange(d, d)).not.toThrow();
+    expect(() => formatToParts(d)).not.toThrow();
+    expect(() => formatRangeToParts(d, d)).not.toThrow();
   });
 
   test('Has static methods', () => {
@@ -390,6 +410,15 @@ describe('_PatchedPluralRules', () => {
     // respects preceding locales ...including "da"
     expect(new _PatchedPluralRules(['en', 'is']).select(21)).toBe('other');
     expect(new _PatchedPluralRules(['da', 'is']).select(21)).toBe('other');
+
+    // Certain methods are instance bound and can be called without throwing
+    const {
+      select,
+      // @ts-expect-error  (TS doesn't know about the .selectRange() method ...yet?)
+      selectRange,
+    } = new _PatchedPluralRules('is');
+    expect(() => select(21)).not.toThrow();
+    expect(() => selectRange(21, 22)).not.toThrow();
   });
 
   test('Has static methods', () => {
@@ -441,6 +470,11 @@ describe('_PatchedListFormat', () => {
     // respects preceding locales ...including "da"
     expect(new _PatchedListFormat(['en', 'is'], opts).format(input)).toBe('a or b');
     expect(new _PatchedListFormat(['da', 'is'], opts).format(input)).toBe('a eller b');
+
+    // Certain methods are instance bound and can be called without throwing
+    const { format, formatToParts } = new _PatchedListFormat('is', opts);
+    expect(() => format(input)).not.toThrow();
+    expect(() => formatToParts(input)).not.toThrow();
   });
 
   test('Has static methods', () => {
