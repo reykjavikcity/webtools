@@ -1,6 +1,4 @@
 const _Collator = Intl.Collator;
-const _NumberFormat = Intl.NumberFormat;
-const _DateTimeFormat = Intl.DateTimeFormat;
 
 const mapLocales = (
   locales: string | Array<string> | undefined
@@ -66,6 +64,8 @@ _patchedLocaleCompare.$original = _localeCompare;
 // ===========================================================================
 // NumberFormat
 // ===========================================================================
+
+const _NumberFormat = Intl.NumberFormat;
 
 const reformatNumberParts = function (
   this: PatchedNumberFormatInstance,
@@ -264,6 +264,8 @@ type PatchedDateTimeFormatInstance = Intl.DateTimeFormat & {
   super: Intl.DateTimeFormat;
 };
 
+const _DateTimeFormat = Intl.DateTimeFormat;
+
 const PatchedDateTimeFormat = function DateTimeFormat(
   this: PatchedDateTimeFormatInstance,
   locales?: string | Array<string>,
@@ -332,3 +334,95 @@ export const _patchedToLocaleDateString = function toLocaleDateString(
   return _PatchedDateTimeFormat(locales, options).format(this);
 };
 _patchedToLocaleDateString.$original = _toLocaleDateString;
+
+// ===========================================================================
+// PluralRules
+// ===========================================================================
+
+const _PluralRules = Intl.PluralRules;
+let PatchedPluralRules;
+
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+if (_PluralRules) {
+  PatchedPluralRules = class PluralRules extends _PluralRules {
+    private mapped: boolean;
+    private ord: boolean;
+    private pluralIsl(n: number) {
+      return this.ord ? 'other' : n % 10 !== 1 || n % 100 === 11 ? 'other' : 'one';
+    }
+
+    constructor(locales: string | Array<string>, options?: Intl.PluralRulesOptions) {
+      const mappedLocales = mapLocales(locales);
+      super(mappedLocales || locales, options);
+      this.mapped = !!mappedLocales;
+      this.ord = options?.type === 'ordinal';
+    }
+    select(n: number): Intl.LDMLPluralRule {
+      if (this.mapped) {
+        // Pluralization function for Icelandic
+        // Copied over from https://www.npmjs.com/package/translate.js
+        return this.pluralIsl(n);
+      }
+      return super.select(n);
+    }
+    selectRange(n: number, n2: number): Intl.LDMLPluralRule {
+      if (this.mapped) {
+        return this.pluralIsl(n2);
+      }
+      // @ts-expect-error  (TS doesn't know about the .selectRange() method ...yet?)
+      return super.selectRange(n, n2);
+    }
+
+    static $original = _PluralRules;
+  };
+}
+
+export const _PatchedPluralRules =
+  PatchedPluralRules as unknown as typeof Intl.PluralRules & {
+    $original: typeof Intl.PluralRules;
+  };
+
+// ===========================================================================
+// ListFormat
+// ===========================================================================
+
+const _ListFormat = Intl.ListFormat;
+let PatchedListFormat;
+
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+if (_ListFormat) {
+  PatchedListFormat = class ListFormat extends _ListFormat {
+    private mapped: boolean;
+
+    constructor(locales: string | Array<string>, options?: Intl.ListFormatOptions) {
+      const mappedLocales = mapLocales(locales);
+      super(mappedLocales || locales, options);
+      this.mapped = !!mappedLocales;
+    }
+    format(list: Iterable<string>) {
+      return this.mapped ? combineParts(this.formatToParts(list)) : super.format(list);
+    }
+
+    formatToParts(
+      list: Iterable<string>
+    ): Array<{ type: 'element' | 'literal'; value: string }> {
+      const parts = super.formatToParts(list);
+      if (this.mapped) {
+        for (const item of parts) {
+          const { value } = item;
+          if (item.type === 'literal' && (value === ', el.' || value === ', eller')) {
+            item.value = ', eða';
+          }
+        }
+      }
+      return parts;
+    }
+
+    $original = _ListFormat;
+  };
+}
+
+export const _PatchedListFormat =
+  PatchedListFormat as unknown as typeof Intl.ListFormat & {
+    $original: typeof Intl.ListFormat;
+  };

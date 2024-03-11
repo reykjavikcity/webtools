@@ -439,6 +439,8 @@ to their return values.
 - `Intl.Collator` and `String.prototype.localeCompare`
 - `Intl.NumberFormat` and `Number.prototype.toLocaleString`
 - `Intl.DateTimeFormat` and `Date.prototype.toLocaleDateString`
+- `Intl.PluralRules`
+- `Intl.ListFormat`
 
 This provides usable (but not perfect) results, with some caveats listed
 below.
@@ -449,7 +451,7 @@ your app's entry point:
 ```ts
 import '@reykjavik/webtools/fixIcelandicLocale';
 
-// Then continue with your day and use `localeCompare` and Intl.Collator,
+// Then continue with your day and use `localeCompare` and other Intl.* methods
 // as you normally would. (See "limitations" below.)
 ```
 

@@ -3,7 +3,9 @@ import { describe, expect, test } from 'bun:test';
 import * as moduleExports from './fixIcelandicLocale.js';
 import {
   _PatchedDateTimeFormat,
+  _PatchedListFormat,
   _PatchedNumberFormat,
+  _PatchedPluralRules,
 } from './fixIcelandicLocale.privates.js';
 
 // ---------------------------------------------------------------------------
@@ -340,5 +342,87 @@ describe.skip('_PatchedDateTimeFormat.formatRange', () => {
     expect(
       hour12.formatRange(new Date('2024-08-03T00:34'), new Date('2024-08-03T13:34'))
     ).toBe('0:34 f.h. – 1:34 e.h.');
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe.skip('_PatchedPluralRules', () => {
+  test('Can be called with `new`', () => {
+    expect(new _PatchedPluralRules('is').select(21)).toBe('one');
+    // Throws if called without `new`
+    expect(() => _PatchedPluralRules('is')).toThrow(TypeError);
+
+    // respects preceding locales ...including "da"
+    expect(new _PatchedPluralRules(['en', 'is']).select(21)).toBe('other');
+    expect(new _PatchedPluralRules(['da', 'is']).select(21)).toBe('other');
+  });
+
+  test('Has static methods', () => {
+    expect(_PatchedPluralRules.supportedLocalesOf(['da'])).toEqual(['da']);
+  });
+
+  const islPlural = new _PatchedPluralRules('is');
+  const islPluralReal = new _PatchedPluralRules.$original('is');
+
+  test('.select() handles icelandic', () => {
+    [-1, 1].forEach((f) => {
+      [0, 1, 2, 11, 17, 21, 91, 101, 111, 121, 100011, 101234].forEach((n) => {
+        expect(islPlural.select(n)).toEqual(islPluralReal.select(n));
+        expect(new _PatchedPluralRules('is', { type: 'ordinal' }).select(n)).toEqual(
+          new _PatchedPluralRules.$original('is', { type: 'ordinal' }).select(n)
+        );
+      });
+    });
+  });
+
+  test('.selectRange() handles icelandic', () => {
+    (
+      [
+        [0, 3],
+        [1, 3],
+        [2, 21],
+        [11, 21],
+        [17, 31],
+        [21, 101],
+        [91, 92],
+      ] as const
+    ).forEach(([a, b]) => {
+      // @ts-expect-error  (TS doesn't know about the .selectRange() method ...yet?)
+      expect(islPlural.selectRange(a, b)).toEqual(islPluralReal.selectRange(a, b));
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe.skip('_PatchedListFormat', () => {
+  test('Can be called with `new`', () => {
+    const input = ['a', 'b'];
+    const opts: Intl.ListFormatOptions = { type: 'disjunction' };
+    expect(new _PatchedListFormat('is', opts).format(input)).toBe('a eða b');
+    // @ts-expect-error  (Throws if called without `new`)
+    expect(() => _PatchedListFormat('is')).toThrow(TypeError);
+
+    // respects preceding locales ...including "da"
+    expect(new _PatchedListFormat(['en', 'is'], opts).format(input)).toBe('a or b');
+    expect(new _PatchedListFormat(['da', 'is'], opts).format(input)).toBe('a eller b');
+  });
+
+  test('Has static methods', () => {
+    expect(_PatchedListFormat.supportedLocalesOf(['da'])).toEqual(['da']);
+  });
+
+  test('Supports both conjunction and disjunction', () => {
+    (['conjunction', 'disjunction', 'unit'] as const).forEach((type) => {
+      (['long', 'short', 'narrow'] as const).forEach((style) => {
+        [['a', 'b', 'c'], ['a', 'b'], ['a']].forEach((input) => {
+          const opts = { style, type };
+          expect(new _PatchedListFormat('is', opts).format(input)).toEqual(
+            new _PatchedListFormat.$original('is', opts).format(input)
+          );
+        });
+      });
+    });
   });
 });
