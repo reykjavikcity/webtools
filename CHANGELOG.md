@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.18
+
+_2024-03-11_
+
 - `@reykjavik/webtools/fixIcelandicLocale`:
   - feat: Patch `Intl.PluralRules` and `Intl.ListFormat`
 
