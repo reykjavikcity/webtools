@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Incorrect `Intl.ListFormat` format in narrow+unit mode
 
 ## 0.1.18
 

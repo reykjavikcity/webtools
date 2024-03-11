@@ -410,15 +410,15 @@ if (_ListFormat) {
       if (this.mapped) {
         for (const item of parts) {
           const { value } = item;
-          if (item.type === 'literal' && (value === ', el.' || value === ', eller')) {
-            item.value = ', eða';
+          if (item.type === 'literal' && (value === ' el. ' || value === ' eller ')) {
+            item.value = ' eða ';
           }
         }
       }
       return parts;
     }
 
-    $original = _ListFormat;
+    static $original = _ListFormat;
   };
 }
 
