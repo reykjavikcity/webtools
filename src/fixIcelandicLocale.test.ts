@@ -249,7 +249,7 @@ describe('_PatchedDateTimeFormat.format', () => {
     ).toBe('00:34:00 GMT-7');
   });
 
-  test.only('dayPeriod', () => {
+  test('dayPeriod', () => {
     const dpLong = _PatchedDateTimeFormat('is', { dayPeriod: 'long' });
     const dpShort = _PatchedDateTimeFormat('is', { dayPeriod: 'short' });
     const dpNarrow = _PatchedDateTimeFormat('is', { dayPeriod: 'narrow' });
@@ -310,7 +310,7 @@ describe('_PatchedDateTimeFormat.format', () => {
 
 // ---------------------------------------------------------------------------
 
-describe.skip('_PatchedDateTimeFormat.formatRange', () => {
+describe('_PatchedDateTimeFormat.formatRange', () => {
   test('Translates month names', () => {
     const d1 = new Date(2024, 4, 2);
     const d2 = new Date(2024, 11, 2);
@@ -347,7 +347,7 @@ describe.skip('_PatchedDateTimeFormat.formatRange', () => {
 
 // ---------------------------------------------------------------------------
 
-describe.skip('_PatchedPluralRules', () => {
+describe('_PatchedPluralRules', () => {
   test('Can be called with `new`', () => {
     expect(new _PatchedPluralRules('is').select(21)).toBe('one');
     // Throws if called without `new`
@@ -396,7 +396,7 @@ describe.skip('_PatchedPluralRules', () => {
 
 // ---------------------------------------------------------------------------
 
-describe.skip('_PatchedListFormat', () => {
+describe('_PatchedListFormat', () => {
   test('Can be called with `new`', () => {
     const input = ['a', 'b'];
     const opts: Intl.ListFormatOptions = { type: 'disjunction' };
