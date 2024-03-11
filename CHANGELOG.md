@@ -3,6 +3,10 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Incorrect alphabetization of accented characters as part of a word …
+  (not just a single character) This fix corrects the sorting of initial
+  letters, but characters inside the string stay mixed in with their
+  unaccented base character.
 - fix: Incorrect `Intl.ListFormat` format in narrow+unit mode
 
 ## 0.1.18

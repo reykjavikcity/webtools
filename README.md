@@ -462,10 +462,11 @@ detection test.)
 
 **`Intl.Collator` and `localeCompare`:**
 
-- When the `sensitivty` option is set to `"base"` or `"accent"`, it will
-  incorrectly treat `ð` and `d` as the same letter, and the acute-accented
-  characters `á`, `é`, `í`, `ó`, `ú` and `ý` get lumped in with their
-  non-accented counterparts.
+- It incorrectly treats `ð` and `d` as the same letter (most of the time), and
+  the acute-accented characters `á`, `é`, `í`, `ó`, `ú` and `ý` get lumped in
+  with their non-accented counterparts (unless the compared).  
+  We fix this only for the first letter in the string, but not for the rest of
+  it.
 
 **`Intl.NumberFormat` and `toLocaleString`:**
 

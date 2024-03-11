@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 
-import * as moduleExports from './fixIcelandicLocale.js';
 import {
+  _PatchedCollator,
   _PatchedDateTimeFormat,
   _PatchedListFormat,
   _PatchedNumberFormat,
@@ -11,14 +11,48 @@ import {
 // ---------------------------------------------------------------------------
 // Test exports
 
-describe('fixIcelandicLocale', () => {
-  test('has no exports', () => {
-    expect(Object.keys(moduleExports).length).toBe(0);
+// ---------------------------------------------------------------------------
+// Test methods
+
+describe('_PatchedCollator', () => {
+  test('Can be called with and without `new`', () => {
+    expect(new _PatchedCollator('is').compare('ö', 'p')).toBe(1);
+    // Can be called without `new`
+    expect(_PatchedCollator('is').compare('ö', 'p')).toBe(1);
+
+    // respects preceding locales ...including "da"
+    expect(new _PatchedCollator(['en', 'is']).compare('ö', 'p')).toBe(-1);
+    expect(new _PatchedCollator(['da', 'is']).compare('ø', 'ö')).toBe(-1);
+  });
+
+  test('Has static methods', () => {
+    expect(_PatchedCollator.supportedLocalesOf(['da'])).toEqual(['da']);
+  });
+
+  test('Handles numeric sorting', () => {
+    const collator = new _PatchedCollator('is', { numeric: true });
+    expect(collator.compare('1', '2')).toBe(-1);
+    expect(collator.compare('2', '1')).toBe(1);
+    expect(collator.compare('2', '10')).toBe(-1);
+    expect(collator.compare('10', '2')).toBe(1);
+    expect(collator.compare('a 10 a', 'a 2 b')).toBe(1);
+  });
+
+  test('Sorts accented letter right', () => {
+    const collator = new _PatchedCollator('is');
+    expect(collator.compare('a', 'á')).toBe(-1);
+    expect(collator.compare('o', 'ó')).toBe(-1);
+    expect(collator.compare('ab', 'áa')).toBe(-1);
+    expect(collator.compare('ða', 'd')).toBe(1);
+    expect(collator.compare('oza', 'ósa')).toBe(-1);
+    // ...testing the incorrect behavior for incorrect sorting of strings
+    // with internal accented characters. (we only fix initials, at the moment)
+    expect(collator.compare('aða', 'adb')).toBe(-1);
+    expect(collator.compare('a ð a', 'a d b')).toBe(-1);
   });
 });
 
 // ---------------------------------------------------------------------------
-// Test methods
 
 describe('_PatchedNumberFormat', () => {
   test('Can be called with and without `new`', () => {

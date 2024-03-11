@@ -13,6 +13,8 @@ const mapLocales = (
       // or "accent" then `ð` is consiered a variant of `d` and the letters
       // á, é, í, ó, ú, and ý are not treated as separate letters but simply
       // variants of a, e, i, o, u, and y.
+      // Also when the accented characters are part of a word, they are treated
+      // as fully equal to the base letter.
       return ['da'];
     }
     if (_Collator.supportedLocalesOf(loc).length) {
@@ -28,22 +30,52 @@ const combineParts = (parts: Array<{ value: string }>) =>
 // Collator
 // ===========================================================================
 
+type PatchedCollatorInstance = Intl.Collator & {
+  constructor: typeof PatchedCollator;
+  mapped: boolean;
+  super: Intl.Collator;
+};
+
 const PatchedCollator = function Collator(
+  this: PatchedCollatorInstance,
   locales?: string | Array<string>,
   options?: Intl.CollatorOptions
 ) {
-  locales = mapLocales(locales) || locales;
-  const instance = new _Collator(locales, options);
-  Object.setPrototypeOf(instance, PatchedCollator.prototype);
-  return instance;
+  if (!(this instanceof PatchedCollator)) {
+    // @ts-expect-error  (YOLO! Can't be arsed)
+    return new PatchedCollator(locales, options);
+  }
+  const mappedLocales = mapLocales(locales);
+  this.super = _Collator(mappedLocales || locales, options);
+  this.mapped = !!mappedLocales;
 };
-PatchedCollator.prototype = Object.create(_Collator.prototype) as Intl.Collator;
-PatchedCollator.prototype.constructor = PatchedCollator;
+
+// This is all very hacky, but extending the class *AND* preseving the
+// ability to instantiate without `new` is a bit of a pain.
+// Eagerly interested in finding a better way to do this.
+const CollatorProto: PatchedCollatorInstance = {
+  constructor: PatchedCollator,
+  compare(a, b) {
+    const res1 = this.super.compare(a, b);
+    const a0 = a.charAt(0);
+    const b0 = b.charAt(0);
+    if (/\d/.test(a0 + b0)) {
+      return res1;
+    }
+    const res2 = this.super.compare(a0, b0);
+    return res2 !== 0 ? res2 : res1;
+  },
+  resolvedOptions() {
+    return this.super.resolvedOptions();
+  },
+} as PatchedCollatorInstance;
+
+PatchedCollator.prototype = CollatorProto;
 // Static methods (not patched since "is" is not ACTUALLY supported.)
 PatchedCollator.supportedLocalesOf = _Collator.supportedLocalesOf;
 PatchedCollator.$original = _Collator;
 
-export const _PatchedCollator = PatchedCollator as typeof Intl.Collator & {
+export const _PatchedCollator = PatchedCollator as unknown as typeof Intl.Collator & {
   $original: typeof Intl.Collator;
 };
 
