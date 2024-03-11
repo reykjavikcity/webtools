@@ -3,18 +3,17 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- fix: Incorrect alphabetization of accented characters as part of a word …
-  (not just a single character) This fix corrects the sorting of initial
-  letters, but characters inside the string stay mixed in with their
-  unaccented base character.
-- fix: Incorrect `Intl.ListFormat` format in narrow+unit mode
 
-## 0.1.18
+## 0.1.18 – 0.1.19
 
 _2024-03-11_
 
 - `@reykjavik/webtools/fixIcelandicLocale`:
   - feat: Patch `Intl.PluralRules` and `Intl.ListFormat`
+  - fix: Incorrect alphabetization of accented characters as part of a word …
+    (not just a single character) This fix corrects the sorting of initial
+    letters, but characters inside the string stay mixed in with their
+    unaccented base character.
 
 ## 0.1.16 – 0.1.17
 
