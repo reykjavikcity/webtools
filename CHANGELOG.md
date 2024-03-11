@@ -3,9 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- fix: Make all pached `Intl.*` methods bound to their instances
 
-## 0.1.18 – 0.1.19
+## 0.1.18 – 0.1.20
 
 _2024-03-11_
 
@@ -15,6 +14,7 @@ _2024-03-11_
     (not just a single character) This fix corrects the sorting of initial
     letters, but characters inside the string stay mixed in with their
     unaccented base character.
+  - fix: Make all pached `Intl.*` methods bound to their instances
 
 ## 0.1.16 – 0.1.17
 
