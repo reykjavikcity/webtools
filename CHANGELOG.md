@@ -3,9 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
-- fix: Relax unnecessary restriction on fallback props
 
-## 0.1.21
+## 0.1.21 – 0.1.22
 
 _2024-03-14_
 
