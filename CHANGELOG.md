@@ -6,6 +6,7 @@
 - feat: Add `@reykjavik/webtools/remix/Wait` component
 - feat: Add `@reykjavik/webtools/remix/http` module — with `isClientFetch`
   helper
+- feat: Add `@reykjavik/webtools/remix/async` module with promise helpers
 
 ## 0.1.18 – 0.1.20
 

@@ -25,6 +25,9 @@ bun add @reykjavik/webtools
 - [`@reykjavik/webtools/CookieHubConsent`](#reykjavikwebtoolscookiehubconsent)
   - [`CookieHubProvider` component](#cookiehubprovider-component)
   - [`useCookieHubConsent`](#usecookiehubconsent)
+- [`@reykjavik/webtools/async`](#reykjavikwebtoolsasync)
+  - [`promiseAllObject`](#promiseallobject)
+  - [`maxWait`](#maxwait)
 - [`@reykjavik/webtools/vanillaExtract`](#reykjavikwebtoolsvanillaextract)
   - [`vanillaGlobal`](#vanillaglobal)
   - [`vanillaProps`](#vanillaprops)
@@ -251,6 +254,62 @@ export const AnalyticsStuff = (props) => {
 
 If the `CookieHubProvider` is missing from the VDOM tree above your component,
 this hook will return an empty object.
+
+---
+
+## `@reykjavik/webtools/async`
+
+Contains a few small helpers for working with async functions and promises.
+
+---
+
+### `promiseAllObject`
+
+**Syntax:**
+`promiseAllObject<T extends PlainObj>(promisesMap: T>): Promise<{ [K in keyof T]: Awaited<T[K]>; }>`
+
+A variation of `Promise.all()` that accepts an object with named promises and
+returns a same-shaped object with the resolved values.
+
+```ts
+import { promiseAllObject } from '@reykjavik/webtools/async';
+
+const { user, posts } = await promiseAllObject({
+  user: fetchUser(),
+  posts: fetchPosts(),
+});
+```
+
+---
+
+### `maxWait`
+
+**Syntax:** `maxWait(timeout: number, promises: Array<any>): Promise<void>`  
+**Syntax:**
+`maxWait<T extends PlainObj>(timeout: number, promises: T): Promise<{ [K in keyof T]: { value: Awaited<T[K]> } | undefined }>`
+
+This somewhat esoteric helper resolves soon as all of the passed `promises`
+have resolved, or after `timeout` milliseconds — whichever comes first.
+
+If an object is passed, the resolved value will be an object with the same
+keys, with undefined values for any promises that didn't resolve in time, and
+the resolved values in a `value` container object.
+
+```ts
+import { maxWait } from '@reykjavik/webtools/async';
+
+const user = fetchUser();
+const posts = fetchPosts();
+
+// Array of promises resolves to void
+await maxWait(500, [user, posts]);
+
+// Object of promises resolves to an object with any resolved values at that time
+const { user, posts } = await maxWait(500, { user, posts });
+
+console.log(user?.value); // undefined | User
+console.log(posts?.value); // undefined | Array<Post>
+```
 
 ---
 
