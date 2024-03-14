@@ -165,7 +165,7 @@ behavior.
 ### `toSec` TTL helper
 
 **Syntax:**
-`` toSec; (ttl: number | `${number}${'s'|'m'|'h'|'d'|'w'}`) => number ``
+`` toSec(ttl: number | `${number}${'s'|'m'|'h'|'d'|'w'}`): number ``
 
 Converts a `TTL` (max-age) value into seconds, and returns `0` for bad and/or
 negative input values.
@@ -265,7 +265,7 @@ CSS.
 
 ### `vanillaGlobal`
 
-**Syntax:** `vanillaGlobal: (css: string) => void`
+**Syntax:** `vanillaGlobal(css: string): void`
 
 Inserts free-form CSS as a vanilla-extract `globalStyle`.
 
@@ -282,7 +282,7 @@ vanillaGlobal(`
 
 ### `vanillaProps`
 
-**Syntax:** `vanillaProps: (css: string) => GlobalStyleRule`
+**Syntax:** `vanillaProps(css: string): GlobalStyleRule`
 
 Spreads the return value into a style object, to inject free-form CSS
 properties (or nested blocks)
@@ -307,8 +307,8 @@ const myStyle = style({
 
 ### `vanillaClass`
 
-**Syntax:** `vanillaClass: (css: string) => string`  
-**Syntax:** `vanillaClass: (debugId: string, css: string) => string`
+**Syntax:** `vanillaClass(css: string): string`  
+**Syntax:** `vanillaClass(debugId: string, css: string): string`
 
 Returns a scoped cssClassName styled with free-form CSS. This function is a
 thin wrapper around vanilla-extract's `style` function.
@@ -333,8 +333,8 @@ export const humanReadableClass = vanillaClass(
 
 ### `vanillaClassNested`
 
-**Syntax:** `vanillaClassNested: (css: string) => string`  
-**Syntax:** `vanillaClassNested: (debugId: string, css: string) => string`
+**Syntax:** `vanillaClassNested(css: string): string`  
+**Syntax:** `vanillaClassNested(debugId: string, css: string): string`
 
 Returns a scoped cssClassName styled with free-form CSS.
 
@@ -373,7 +373,7 @@ comments, etc. If you need something more sophisticated, use a custom
 
 ### `vanillaNest`
 
-**Syntax:** `vanillaNest: (ampSelector: string, css: string) => string`
+**Syntax:** `vanillaNest(ampSelector: string, css: string): string`
 
 Replaces all `&` tokens with the given selector string, in a direct (read.
 "dumb") way. It's mainly useful when used with style-mixins, etc.

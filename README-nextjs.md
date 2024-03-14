@@ -120,7 +120,7 @@ See more below
 ### `showErrorPage` helper
 
 **Syntax:**
-`showErrorPage = (response: ServerResponse | NextContext, error: HTTP_ERROR | ErrorProps, ttl?: TTL | TTLConfig): void`
+`showErrorPage(response: ServerResponse | NextContext, error: HTTP_ERROR | ErrorProps, ttl?: TTL | TTLConfig): void`
 
 This method is attached to the HOC returned by
 [`makeErrorizeAppHOC`](#makeerrorizeapphoc). Use it inside your pages'
