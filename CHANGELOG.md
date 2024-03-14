@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.21
+
+_2024-03-14_
+
 - feat: Add `@reykjavik/webtools/remix/Wait` component
 - feat: Add `@reykjavik/webtools/remix/http` module — with `isClientFetch`
   helper
