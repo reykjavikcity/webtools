@@ -19,12 +19,12 @@ type WaitFallbacks = {
   /**
    * Custom loading/spinner component.
    */
-  meanwhile?: Exclude<ReactNode, number>;
+  meanwhile?: ReactNode;
   /**
    * Custom error component if the promise is rejected or if it resolves to an
    * object with an `error` property.
    */
-  error?: Exclude<ReactNode, number>;
+  error?: ReactNode;
 };
 
 // ---------------------------------------------------------------------------
