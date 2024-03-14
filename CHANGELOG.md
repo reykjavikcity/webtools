@@ -3,6 +3,9 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- feat: Add `@reykjavik/webtools/remix/Wait` component
+- feat: Add `@reykjavik/webtools/remix/http` module — with `isClientFetch`
+  helper
 
 ## 0.1.18 – 0.1.20
 
@@ -44,8 +47,8 @@ _2024-03-06_
 
 _2024-02-29_
 
-- feat: Add `@reykjavik/webtools/next/vanillaExtract` component — with
-  plain-CSS injection helpers
+- feat: Add `@reykjavik/webtools/next/vanillaExtract` module — with plain-CSS
+  injection helpers
 - fix: Mark `peerDependencies` as optional
 
 ## 0.1.11

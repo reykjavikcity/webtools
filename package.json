@@ -21,12 +21,16 @@
     "@reykjavik/hanna-utils": "^0.2.3"
   },
   "peerDependencies": {
+    "@remix-run/react": "^2.6.0",
     "@vanilla-extract/css": "^1.14.1",
     "next": ">=11",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
   },
   "peerDependenciesMeta": {
+    "@remix-run/react": {
+      "optional": true
+    },
     "@vanilla-extract/css": {
       "optional": true
     },
@@ -44,6 +48,7 @@
     "@happy-dom/global-registrator": "^13.3.8",
     "@hugsmidjan/hxmstyle": "^8.6.1",
     "@maranomynet/libtools": "^0.1.8",
+    "@remix-run/react": "^2.8.0",
     "@types/bun": "^1.0.5",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",

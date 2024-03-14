@@ -35,6 +35,7 @@ bun add @reykjavik/webtools
   - [Limitations](#limitations)
 - [Framework Specific Tools](#framework-specific-tools)
   - [Next.js Tools](#nextjs-tools)
+  - [Remix.run Tools](#remixrun-tools)
 - [Contributing](#contributing)
 - [Changelog](#changelog)
 
@@ -504,7 +505,16 @@ detection test.)
 This package contains some helpers and components that are specifically
 designed for use in [Next.js](https://nextjs.org/) projects.
 
-See [README-nextjs.md](README-nextjs.md) for more info.
+See [README-nextjs.md](./README-nextjs.md) for more info.
+
+---
+
+### Remix.run Tools
+
+This package contains some helpers and components that are specifically
+designed for use in [Remix.run](https://remix.run) projects.
+
+See [README-remix.md](./README-remix.md) for more info.
 
 ---
 
