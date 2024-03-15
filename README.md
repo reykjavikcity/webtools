@@ -22,20 +22,20 @@ bun add @reykjavik/webtools
   - [`cacheControl` helper](#cachecontrol-helper)
     - [Type `TTLConfig`](#type-ttlconfig)
   - [`toSec` TTL helper](#tosec-ttl-helper)
-- [`@reykjavik/webtools/CookieHubConsent`](#reykjavikwebtoolscookiehubconsent)
-  - [`CookieHubProvider` component](#cookiehubprovider-component)
-  - [`useCookieHubConsent`](#usecookiehubconsent)
 - [`@reykjavik/webtools/async`](#reykjavikwebtoolsasync)
   - [`promiseAllObject`](#promiseallobject)
   - [`maxWait`](#maxwait)
+- [`@reykjavik/webtools/fixIcelandicLocale`](#reykjavikwebtoolsfixicelandiclocale)
+  - [Limitations](#limitations)
+- [`@reykjavik/webtools/CookieHubConsent`](#reykjavikwebtoolscookiehubconsent)
+  - [`CookieHubProvider` component](#cookiehubprovider-component)
+  - [`useCookieHubConsent`](#usecookiehubconsent)
 - [`@reykjavik/webtools/vanillaExtract`](#reykjavikwebtoolsvanillaextract)
   - [`vanillaGlobal`](#vanillaglobal)
   - [`vanillaProps`](#vanillaprops)
   - [`vanillaClass`](#vanillaclass)
   - [`vanillaClassNested`](#vanillaclassnested)
   - [`vanillaNest`](#vanillanest)
-- [`@reykjavik/webtools/fixIcelandicLocale`](#reykjavikwebtoolsfixicelandiclocale)
-  - [Limitations](#limitations)
 - [Framework Specific Tools](#framework-specific-tools)
   - [Next.js Tools](#nextjs-tools)
   - [Remix.run Tools](#remixrun-tools)
@@ -184,6 +184,123 @@ const ttlSec = toSec(ttl);
 
 ---
 
+## `@reykjavik/webtools/async`
+
+Contains a few small helpers for working with async functions and promises.
+
+---
+
+### `promiseAllObject`
+
+**Syntax:**
+`promiseAllObject<T extends PlainObj>(promisesMap: T>): Promise<{ [K in keyof T]: Awaited<T[K]>; }>`
+
+A variation of `Promise.all()` that accepts an object with named promises and
+returns a same-shaped object with the resolved values.
+
+```ts
+import { promiseAllObject } from '@reykjavik/webtools/async';
+
+const { user, posts } = await promiseAllObject({
+  user: fetchUser(),
+  posts: fetchPosts(),
+});
+```
+
+---
+
+### `maxWait`
+
+**Syntax:** `maxWait(timeout: number, promises: Array<any>): Promise<void>`  
+**Syntax:**
+`maxWait<T extends PlainObj>(timeout: number, promises: T): Promise<{ [K in keyof T]: { value: Awaited<T[K]> } | undefined }>`
+
+This somewhat esoteric helper resolves soon as all of the passed `promises`
+have resolved, or after `timeout` milliseconds — whichever comes first.
+
+If an object is passed, the resolved value will be an object with the same
+keys, with undefined values for any promises that didn't resolve in time, and
+the resolved values in a `value` container object.
+
+```ts
+import { maxWait } from '@reykjavik/webtools/async';
+
+const user = fetchUser();
+const posts = fetchPosts();
+
+// Array of promises resolves to void
+await maxWait(500, [user, posts]);
+
+// Object of promises resolves to an object with any resolved values at that time
+const { user, posts } = await maxWait(500, { user, posts });
+
+console.log(user?.value); // undefined | User
+console.log(posts?.value); // undefined | Array<Post>
+```
+
+---
+
+## `@reykjavik/webtools/fixIcelandicLocale`
+
+As of early 2004, Google Chrome still does not support the Icelandic locale
+`is`/`is-IS` in any way. Meanwhile other browsers have supported it for over a
+decade.
+
+This module does attempts to patches the following methods/classes by
+substituting the `is` locale with `da` (Danish) and apply a few post-hoc fixes
+to their return values.
+
+- `Intl.Collator` and `String.prototype.localeCompare`
+- `Intl.NumberFormat` and `Number.prototype.toLocaleString`
+- `Intl.DateTimeFormat` and `Date.prototype.toLocaleDateString`
+- `Intl.PluralRules`
+- `Intl.ListFormat`
+
+This provides usable (but not perfect) results, with some caveats listed
+below.
+
+To apply these patches, simply "side-effect import" this module at the top of
+your app's entry point:
+
+```ts
+import '@reykjavik/webtools/fixIcelandicLocale';
+
+// Then continue with your day and use `localeCompare` and other Intl.* methods
+// as you normally would. (See "limitations" below.)
+```
+
+(**NOTE** The patch is only applied in engines that fail a simple feature
+detection test.)
+
+### Limitations
+
+**`Intl.Collator` and `localeCompare`:**
+
+- It incorrectly treats `ð` and `d` as the same letter (most of the time), and
+  the acute-accented characters `á`, `é`, `í`, `ó`, `ú` and `ý` get lumped in
+  with their non-accented counterparts (unless the compared).  
+  We fix this only for the first letter in the string, but not for the rest of
+  it.
+
+**`Intl.NumberFormat` and `toLocaleString`:**
+
+- The `style: "unit"` option is not supported and prints units in Danish. (Soo
+  many units and unit-variants…)
+- The `currencyDisplay: "name"` option is not supported and prints the
+  currency's full name in Danish.
+
+**`Intl.DateTimeFormat` and `toLocaleDateString`:**
+
+- The `month: 'narrow'` and `weekday: 'narrow'` options are not supported, and
+  print the corresponding Danish initials.
+- For `timeZoneName` the values `"long"`, `"shortGeneric"` and `"longGeneric"`
+  will appear in Danish.
+- The `timeStyle: 'full'` option prints the timezone names in Danish
+- The `dayPeriod` option has a couple of slight mismatches, at 5 am and 12
+  noon.
+
+---
+
 ## `@reykjavik/webtools/CookieHubConsent`
 
 Contains React helpers for loading CookieHub's consent manager and reading
@@ -254,62 +371,6 @@ export const AnalyticsStuff = (props) => {
 
 If the `CookieHubProvider` is missing from the VDOM tree above your component,
 this hook will return an empty object.
-
----
-
-## `@reykjavik/webtools/async`
-
-Contains a few small helpers for working with async functions and promises.
-
----
-
-### `promiseAllObject`
-
-**Syntax:**
-`promiseAllObject<T extends PlainObj>(promisesMap: T>): Promise<{ [K in keyof T]: Awaited<T[K]>; }>`
-
-A variation of `Promise.all()` that accepts an object with named promises and
-returns a same-shaped object with the resolved values.
-
-```ts
-import { promiseAllObject } from '@reykjavik/webtools/async';
-
-const { user, posts } = await promiseAllObject({
-  user: fetchUser(),
-  posts: fetchPosts(),
-});
-```
-
----
-
-### `maxWait`
-
-**Syntax:** `maxWait(timeout: number, promises: Array<any>): Promise<void>`  
-**Syntax:**
-`maxWait<T extends PlainObj>(timeout: number, promises: T): Promise<{ [K in keyof T]: { value: Awaited<T[K]> } | undefined }>`
-
-This somewhat esoteric helper resolves soon as all of the passed `promises`
-have resolved, or after `timeout` milliseconds — whichever comes first.
-
-If an object is passed, the resolved value will be an object with the same
-keys, with undefined values for any promises that didn't resolve in time, and
-the resolved values in a `value` container object.
-
-```ts
-import { maxWait } from '@reykjavik/webtools/async';
-
-const user = fetchUser();
-const posts = fetchPosts();
-
-// Array of promises resolves to void
-await maxWait(500, [user, posts]);
-
-// Object of promises resolves to an object with any resolved values at that time
-const { user, posts } = await maxWait(500, { user, posts });
-
-console.log(user?.value); // undefined | User
-console.log(posts?.value); // undefined | Array<Post>
-```
 
 ---
 
@@ -483,67 +544,6 @@ vanillaGlobal(`
 
 (This low-level utility function is used internally by
 [`vanillaClassNested`](#vanillaclassnested).)
-
----
-
-## `@reykjavik/webtools/fixIcelandicLocale`
-
-As of early 2004, Google Chrome still does not support the Icelandic locale
-`is`/`is-IS` in any way. Meanwhile other browsers have supported it for over a
-decade.
-
-This module does attempts to patches the following methods/classes by
-substituting the `is` locale with `da` (Danish) and apply a few post-hoc fixes
-to their return values.
-
-- `Intl.Collator` and `String.prototype.localeCompare`
-- `Intl.NumberFormat` and `Number.prototype.toLocaleString`
-- `Intl.DateTimeFormat` and `Date.prototype.toLocaleDateString`
-- `Intl.PluralRules`
-- `Intl.ListFormat`
-
-This provides usable (but not perfect) results, with some caveats listed
-below.
-
-To apply these patches, simply "side-effect import" this module at the top of
-your app's entry point:
-
-```ts
-import '@reykjavik/webtools/fixIcelandicLocale';
-
-// Then continue with your day and use `localeCompare` and other Intl.* methods
-// as you normally would. (See "limitations" below.)
-```
-
-(**NOTE** The patch is only applied in engines that fail a simple feature
-detection test.)
-
-### Limitations
-
-**`Intl.Collator` and `localeCompare`:**
-
-- It incorrectly treats `ð` and `d` as the same letter (most of the time), and
-  the acute-accented characters `á`, `é`, `í`, `ó`, `ú` and `ý` get lumped in
-  with their non-accented counterparts (unless the compared).  
-  We fix this only for the first letter in the string, but not for the rest of
-  it.
-
-**`Intl.NumberFormat` and `toLocaleString`:**
-
-- The `style: "unit"` option is not supported and prints units in Danish. (Soo
-  many units and unit-variants…)
-- The `currencyDisplay: "name"` option is not supported and prints the
-  currency's full name in Danish.
-
-**`Intl.DateTimeFormat` and `toLocaleDateString`:**
-
-- The `month: 'narrow'` and `weekday: 'narrow'` options are not supported, and
-  print the corresponding Danish initials.
-- For `timeZoneName` the values `"long"`, `"shortGeneric"` and `"longGeneric"`
-  will appear in Danish.
-- The `timeStyle: 'full'` option prints the timezone names in Danish
-- The `dayPeriod` option has a couple of slight mismatches, at 5 am and 12
-  noon.
 
 ---
 
