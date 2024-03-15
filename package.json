@@ -47,7 +47,7 @@
   "devDependencies": {
     "@happy-dom/global-registrator": "^13.3.8",
     "@hugsmidjan/hxmstyle": "^8.6.1",
-    "@maranomynet/libtools": "^0.1.8",
+    "@maranomynet/libtools": "^0.1.9",
     "@remix-run/react": "^2.8.0",
     "@types/bun": "^1.0.5",
     "@types/react": "^18.0.28",

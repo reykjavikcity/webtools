@@ -1,5 +1,5 @@
-import { publishToNpm, updatePkgVersion } from '@maranomynet/libtools';
+import { argStrings, publishToNpm, updatePkgVersion } from '@maranomynet/libtools';
 
-await updatePkgVersion();
+await updatePkgVersion({ preReleaseName: argStrings.name });
 await import('./build.js');
 await publishToNpm();
