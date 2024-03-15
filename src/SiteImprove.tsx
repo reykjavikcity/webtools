@@ -1,10 +1,14 @@
+import React, { useEffect } from 'react';
 import { EitherObj } from '@reykjavik/hanna-utils';
 
-// ---------------------------------------------------------------------------
+import { useCookieHubConsent } from './CookieHubConsent.js';
 
+// ---------------------------------------------------------------------------
 // Event tracking - https://help.siteimprove.com/support/solutions/articles/80000863895-getting-started-with-event-tracking
 // Custom page visit tracking - https://help.siteimprove.com/support/solutions/articles/80000448441-siteimprove-analytics-custom-visit-tracking
-// Since SiteImprove does not track route changes in NextJS via Link routing, we must manually track them
+// Since SiteImprove does not track client-side route changes in frameworks
+// that perform client-side (`pushState`) routing, such as Remix and Next.js,
+// we must manually track them by monitoring document.location changes.
 
 // --------------------------------------------------------------------------
 // BEGIN: Mock typing of SiteImprove's event tracking API
@@ -24,12 +28,10 @@ declare global {
     };
   }
 }
-export type SiteImproveEvent =
-  | SiteImprovePageView
-  | SiteImproveRequest
-  | SiteImproveCustomEvent;
 
-export type SiteImprovePageView = [
+type SiteImproveEvent = SiteImprovePageView | SiteImproveRequest | SiteImproveCustomEvent;
+
+type SiteImprovePageView = [
   type: 'trackdynamic',
   data: {
     /** New page URL */
@@ -40,7 +42,7 @@ export type SiteImprovePageView = [
     title?: string;
   }
 ];
-export type SiteImproveRequest = [
+type SiteImproveRequest = [
   type: 'request',
   data: {
     /** Outbound URL */
@@ -51,7 +53,7 @@ export type SiteImproveRequest = [
     autoonclick?: 1;
   }
 ];
-export type SiteImproveCustomEvent = [
+type SiteImproveCustomEvent = [
   type: 'event',
   category: string,
   action: string,
@@ -84,10 +86,8 @@ const _emitEvent =
 
 /**
  * A small helper to send "trackdynamic" page view/load events to SiteImrove.
- *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-nextjs.md#pingsiteimprove-helper
  */
-export const trackDynamicPageView = (url: string, refUrl?: string, title?: string) =>
+const trackDynamicPageView = (url: string, refUrl?: string, title?: string) =>
   _emitEvent(['trackdynamic', { url, ref: refUrl, title }]);
 
 // ---------------------------------------------------------------------------
@@ -95,7 +95,7 @@ export const trackDynamicPageView = (url: string, refUrl?: string, title?: strin
 /**
  * A small helper for tracking custom UI events and reporting them to SiteImrove.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-nextjs.md#pingsiteimprove-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#pingsiteimprove-helper
  */
 export const pingSiteImprove = (category: string, action: string, label?: string) => {
   if (
@@ -113,7 +113,7 @@ export const pingSiteImprove = (category: string, action: string, label?: string
  * A small helper for reporting to SiteImrove when the user is programmatically
  * being sent to a different URL/resource.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-nextjs.md#pingsiteimproveoutbound-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#pingsiteimproveoutbound-helper
  */
 export const pingSiteImproveOutbound = (ourl: string) => {
   if (
@@ -129,7 +129,9 @@ export const pingSiteImproveOutbound = (ourl: string) => {
 
 // ---------------------------------------------------------------------------
 
-export const logOutboundLinks = () => {
+const logOutboundLinks = () => {
+  // NOTE: It's normal for SiteImprove's outbound logging to happen also for internal
+  // links, but it's not a problem since SiteImprove filter the results themselves.
   const captureLinkClicks = (e: MouseEvent) => {
     const link = (e.target as Element).closest<HTMLAnchorElement & { $$bound?: boolean }>(
       'a[href]'
@@ -163,7 +165,7 @@ export const logOutboundLinks = () => {
 
 // ---------------------------------------------------------------------------
 
-export const makeScriptUrl = (accountId: string) =>
+const makeScriptUrl = (accountId: string) =>
   `https://siteimproveanalytics.com/js/siteanalyze_${accountId}.js`;
 
 // ---------------------------------------------------------------------------
@@ -196,7 +198,15 @@ export type SiteImproveProps = EitherObj<
    * A value of `true` still defers to the 'analytics' consent state provided
    * by the `CookieHubProvider` component (if present).
    */
-  hasConstented?: boolean;
+  hasConsented?: boolean;
+
+  // /**
+  //  * The path name of the current page. \
+  //  * When this value changes a `trackdynamic` (page view) event is sent to
+  //  * SiteImprove.
+  //  *
+  //  */
+  // pathname: string;
 
   /**
    * Custom callback for when the SiteImprove script has loaded.
@@ -207,4 +217,88 @@ export type SiteImproveProps = EitherObj<
    * Error callback for if the SiteImprove script fails to load.
    */
   onError?: (e: unknown) => void;
+};
+
+// ---------------------------------------------------------------------------
+
+const useResolvedAnalyticsConsent = (hasConsented: boolean | undefined) => {
+  const { analytics } = useCookieHubConsent();
+
+  return (
+    (analytics && hasConsented !== false) || (analytics === undefined && hasConsented)
+  );
+};
+
+// ---------------------------------------------------------------------------
+
+const mockSIGlobalIfNeeded = (props: SiteImproveProps) => {
+  if (process.env.NODE_ENV !== 'production') {
+    setTimeout(() => {
+      if (!window._sz) {
+        console.info(
+          'Mock loading SiteImprove in development mode.',
+          props.scriptUrl || props.accountId
+        );
+        window._sz = [];
+      }
+    }, 300);
+  }
+};
+
+// ===========================================================================
+
+let lastUrl: string | undefined;
+const loc =
+  typeof document !== 'undefined' ? document.location : ({} as Record<string, undefined>);
+
+/**
+ * A component for loading a SiteImprove analytics script and set up page-view
+ * tracking across client-side (pushState, replaceState) routing.
+ *
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#siteimprove-component
+ */
+export const SiteImprove = (props: SiteImproveProps) => {
+  const consented = useResolvedAnalyticsConsent(props.hasConsented);
+
+  const thisUrl = `${loc.pathname}${loc.search}${loc.hash}`;
+
+  useEffect(() => {
+    if (!consented) {
+      lastUrl = thisUrl;
+      return;
+    }
+    if (lastUrl === undefined) {
+      lastUrl = thisUrl;
+    }
+    const checkCurrentUrl = () => {
+      if (thisUrl !== lastUrl) {
+        trackDynamicPageView(thisUrl, lastUrl, document.title);
+        lastUrl = thisUrl;
+      }
+    };
+    checkCurrentUrl();
+    window.addEventListener('popstate', checkCurrentUrl);
+
+    return () => window.removeEventListener('popstate', checkCurrentUrl);
+  }, [consented, thisUrl]);
+
+  useEffect(
+    () => {
+      if (!consented) {
+        return;
+      }
+      mockSIGlobalIfNeeded(props);
+      return logOutboundLinks();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [consented]
+  );
+
+  if (!consented || process.env.NODE_ENV !== 'production') {
+    return null;
+  }
+
+  const scriptUrl = props.scriptUrl ?? makeScriptUrl(props.accountId);
+
+  return <script defer src={scriptUrl} onLoad={props.onLoad} onError={props.onError} />;
 };

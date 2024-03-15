@@ -11,10 +11,7 @@ These are the [Next.js](https://nextjs.org/)-specific utilities in the
   - [`makeErrorizeAppHOC`](#makeerrorizeapphoc)
   - [`showErrorPage` helper](#showerrorpage-helper)
   - [`notModified304` helper](#notmodified304-helper)
-- [`@reykjavik/webtools/next/SiteImprove`](#reykjavikwebtoolsnextsiteimprove)
-  - [`SiteImprove` component](#siteimprove-component)
-  - [`pingSiteImprove` helper](#pingsiteimprove-helper)
-  - [`pingSiteImproveOutbound` helper](#pingsiteimproveoutbound-helper)
+- [~~`@reykjavik/webtools/next/SiteImprove`~~ (deprecated)](#reykjavikwebtoolsnextsiteimprove-deprecated)
 
 <!-- prettier-ignore-end -->
 
@@ -179,90 +176,18 @@ if (notModified) {
 
 ---
 
-## `@reykjavik/webtools/next/SiteImprove`
+<!-- #fragment anchors to not break older v0.1 @see links -->
 
-Contains React helpers for loading SiteImprove's analytics scripts in Next.js
-applications and perform custom event tracking.
+<a name="reykjavikwebtoolsnextsiteimprove"></a>
+<a name="siteimprove-component"></a> <a name="pingsiteimprove-helper"></a>
+<a name="pingsiteimproveoutbound-helper"></a>
 
-### `SiteImprove` component
+## ~~`@reykjavik/webtools/next/SiteImprove`~~ (deprecated)
 
-A component for loading a SiteImprove analytics script and set up page-view
-tracking across Next.js routes.
+This Next.js-specific import path has been deprecated in favor of the
+framework-agnostic
+[`@reykjavik/webtools/SiteImprove` module](./README.md#reykjavikwebtoolssiteimprove)
+with the same features.
 
-It also automatically logs all out-bound link clicks.
-
-**Props:**
-
-The Component's props have detailed JSDoc comments (displayed in your code
-editor), but there's a brief summary:
-
-- `accountId?: string` — Your SiteImprove account ID. (alternative to
-  `scriptUrl` prop).
-- `scriptUrl?: string` — The full SiteImprove analytics script URL.
-  (alternative to `accountId` prop).
-- `hasConstented?: boolean` — Manual GDPR 'analytics' consent flag. Allows
-  hard opt-out, but defers to
-  [`CookieHubProvider` values](./README.md#usecookiehubconsent) if they are
-  available.
-- `onLoad?: (e: unknown) => void` — Fires when the script has loaded.
-- `onError?: (e: unknown) => void` — Fires if loading the script failed.
-
-Example usage in `pages/\_app.tsx`:
-
-```js
-import { SiteImprove } from '@reykjavik/webtools/next/SiteImprove';
-
-const siteImproveAccountId = '[ACCOUNT_ID]'; // e.g. "7654321"
-
-// Inside MyApp component
-<Component {...pageProps} />
-<SiteImprove
-  accountId={siteImproveAccountId}
-  onError={(error) =>
-    Logger('error', 'An error occured initializing siteimprove', error)
-  }
-/>;
-```
-
-In dev mode it does NOT load the SiteImprove script and only logs page-view
-events to the console.
-
-### `pingSiteImprove` helper
-
-**Syntax:**
-`pingSiteImprove(category: string, action: string, label?: string): void`
-
-A small helper for tracking custom UI events and reporting them to SiteImrove.
-
-It safely manages GDPR consent, so you can use it unconditionally.
-
-```js
-import { pingSiteImprove } from '@reykjavik/webtools/next/SiteImprove';
-
-const handleSubmit = () => {
-  // perform submit action...
-  if (success) {
-    pingSiteImprove('application', 'add_new');
-  }
-};
-```
-
-### `pingSiteImproveOutbound` helper
-
-**Syntax:** `pingSiteImproveOutbound(ourl: string): void`
-
-A small helper for reporting to SiteImrove when the user is programmatically
-being sent to a different URL/resource.
-
-```js
-import { pingSiteImproveOutbound } from '@reykjavik/webtools/next/SiteImprove';
-
-const handleSubmit = () => {
-  // perform submit action...
-  if (success) {
-    const fileUrl = '/download/report.pdf';
-    pingSiteImproveOutbound(fileUrl);
-    document.location.href = fileUrl;
-  }
-};
-```
+Update your import paths to use the new module, as this path will be removed
+in the next major release of the library.

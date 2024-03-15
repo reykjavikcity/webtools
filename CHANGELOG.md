@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- feat: Add framework agnostic `@reykjavik/webtools/SiteImprove` module —
+  deprecate `@reykjavik/webtools/next/SiteImprove` instead
 - `@reykjavik/webtools/remix/Wait`:
   - fix: Properly reject `data.$error`s as to not trigger error boundaries
 - `@reykjavik/webtools/async`:
