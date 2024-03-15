@@ -242,7 +242,7 @@ console.log(posts?.value); // undefined | Array<Post>
 
 ## `@reykjavik/webtools/fixIcelandicLocale`
 
-As of early 2004, Google Chrome still does not support the Icelandic locale
+As of early 2024, Google Chrome still does not support the Icelandic locale
 `is`/`is-IS` in any way. Meanwhile other browsers have supported it for over a
 decade.
 
