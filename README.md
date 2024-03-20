@@ -222,6 +222,9 @@ If an object is passed, the resolved value will be an object with the same
 keys, with undefined values for any promises that didn't resolve in time, and
 the resolved values in a `value` container object.
 
+If any of the promises reject, their values become undefined in the returned
+object.
+
 ```ts
 import { maxWait } from '@reykjavik/webtools/async';
 

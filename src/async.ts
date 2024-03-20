@@ -25,28 +25,29 @@ export function maxWait<PromiseMap extends PlainObj>(
 
 export function maxWait(timeout: number, promises: Array<unknown> | PlainObj) {
   if (Array.isArray(promises)) {
-    return Promise.race([sleep(timeout), Promise.all(promises).then(() => undefined)]);
+    return Promise.race([
+      sleep(timeout),
+      Promise.allSettled(promises).then(() => undefined),
+    ]);
   }
-  return Promise.race([sleep(timeout), Promise.all(Object.values(promises))]).then(() => {
-    Object.entries(promises).forEach(([key, value]) => {
-      if (value instanceof Promise) {
-        promises[key] = undefined;
-        value.then((value) => {
-          promises[key] = { value };
-        });
-      } else {
-        promises[key] = { value };
-      }
-    });
-    return sleep(0).then(
-      () =>
-        promises as {
-          -readonly [K in keyof typeof promises]:
-            | Awaited<(typeof promises)[K]>
-            | undefined;
+  return Promise.race([sleep(timeout), Promise.allSettled(Object.values(promises))]).then(
+    () => {
+      const retObj: Record<string, undefined | { value: unknown }> = {};
+      Object.entries(promises).forEach(([key, value]) => {
+        if (value instanceof Promise) {
+          retObj[key] = undefined;
+          value
+            .then((value) => {
+              retObj[key] = { value };
+            })
+            .catch(() => undefined);
+        } else {
+          retObj[key] = { value };
         }
-    );
-  });
+      });
+      return sleep(0).then(() => retObj);
+    }
+  );
 }
 
 // ---------------------------------------------------------------------------

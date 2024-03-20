@@ -3,6 +3,10 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/remix/Wait`:
+  - fix: Properly reject `data.$error`s as to not trigger error boundaries
+- `@reykjavik/webtools/async`:
+  - fix: `maxWait` should gracefully ignore rejecting promises
 
 ## 0.1.21 – 0.1.22
 

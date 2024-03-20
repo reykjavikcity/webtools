@@ -60,6 +60,7 @@ describe('sleep', () => {
 describe('maxWait', () => {
   test('works', () => {
     expect(maxWait(20, [Promise.resolve('A')])).resolves.toBeUndefined();
+    expect(maxWait(20, [Promise.reject('Rejected in array')])).resolves.toBeUndefined();
 
     expect(
       maxWait(20, {
@@ -93,6 +94,18 @@ describe('maxWait', () => {
       foo: undefined,
       bar: { value: 'B' },
       baz: { value: 'C' },
+    });
+
+    expect(
+      maxWait(20, {
+        foo: sleep(10).then(() => 'A'),
+        bar: 'B',
+        baz: Promise.reject('Rejected promise in maxwait'),
+      })
+    ).resolves.toEqual({
+      foo: { value: 'A' },
+      bar: { value: 'B' },
+      baz: undefined,
     });
   });
 });
