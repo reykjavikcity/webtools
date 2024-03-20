@@ -63,7 +63,7 @@ export const Wait: WaitComponent<WaitFallbacks> = (props) => (
           '$error' in value &&
           value.$error
         ) {
-          throw value.$error;
+          return <Wait {...props} for={Promise.reject(value.$error)} />;
         }
         return props.children(
           value as Exclude<typeof value, { $error: string | true | number | object }>
