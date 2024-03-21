@@ -249,9 +249,9 @@ As of early 2024, Google Chrome still does not support the Icelandic locale
 `is`/`is-IS` in any way. Meanwhile other browsers have supported it for over a
 decade.
 
-This module does attempts to patches the following methods/classes by
-substituting the `is` locale with `da` (Danish) and apply a few post-hoc fixes
-to their return values.
+This module patches the following methods/classes by substituting the `is`
+locale with `da` (Danish) and apply a few post-hoc fixes to their return
+values.
 
 - `Intl.Collator` and `String.prototype.localeCompare`
 - `Intl.NumberFormat` and `Number.prototype.toLocaleString`
@@ -259,11 +259,11 @@ to their return values.
 - `Intl.PluralRules`
 - `Intl.ListFormat`
 
-This provides usable (but not perfect) results, with some caveats listed
-below.
+This provides usable (but not perfect) results, with a few caveats that are
+listed below.
 
-To apply these patches, simply "side-effect import" this module at the top of
-your app's entry point:
+To apply the patch, simply "side-effect import" this module at the top of your
+app's entry point:
 
 ```ts
 import '@reykjavik/webtools/fixIcelandicLocale';
