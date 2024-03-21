@@ -56,7 +56,8 @@ Various framework agnostic helpers for leveraging HTTP magic.
 
 ### HTTP Status Codes
 
-All the web-related HTTP status codes are exported with human-readable names:
+All the web-related HTTP status codes are exported with human-readable names
+and a short JSDoc comment:
 
 - `HTTP_200_OK`
 - `HTTP_303_SeeOther`
@@ -71,34 +72,42 @@ All the web-related HTTP status codes are exported with human-readable names:
 - `HTTP_500_InternalServerError`
 - ...ad nauseum.
 
+These make your code more readable and less prone to accidental mistakes:
+
+```ts
+import { HTTP_200_OK, HTTP_404_NotFound } from '@reykjavik/webtools/http';
+
+console.log(HTTP_200_OK); // 200
+console.log(HTTP_404_NotFound); // 404
+```
+
 ### Types for HTTP Status code groups
 
 These type unions are useful when writing HTTP helper functions and error
-handling, etc.
+handlers, etc.
 
 Union Types for the more commonly occurrring HTTP Status codes:
 
-- `HTTP_STATUS` (all the status-codes!)
-  - `HTTP_INFO` (100, 101)
-  - `HTTP_SUCCESS` (200, 201, 202)
-  - `HTTP_REDIRECTION` (301, 302, 303, 304, 307, 308)
-    - `HTTP_NOTMODIFIED` (304)
-  - `HTTP_ERROR`
-    - `HTTP_CLIENT_ERROR`
-      - `HTTP_NOT_FOUND` (400, 404, 410)
-      - `HTTP_BANNED` (401, 403)
-    - `HTTP_SERVER_ERROR` (500)
+- `HTTP_INFO` (100, 101)
+- `HTTP_SUCCESS` (200, 201, 202)
+- `HTTP_REDIRECTION` (301, 302, 303, 304, 307, 308)
+  - `HTTP_NOTMODIFIED` (304)
+- `HTTP_ERROR` (400, 404, 410, 401, 403, 500)
+  - `HTTP_CLIENT_ERROR` (400, 404, 410, 401, 403)
+    - `HTTP_NOT_FOUND` (400, 404, 410)
+    - `HTTP_BANNED` (401, 403)
+  - `HTTP_SERVER_ERROR` (500)
 
-More complete union types, including all the esoteric status codes, are also
-available:
+It also offers more complete union types, including all the esoteric status
+codes, are also available:
 
-- `HTTP_STATUS` (all the status-codes!)
+- `HTTP_STATUS` (**all** the status-codes!)
   - `HTTP_INFO_ALL` (1\*\*)
   - `HTTP_SUCCESS_ALL` (2\*\*)
   - `HTTP_REDIRECTION_ALL` (3\*\*)
-  - `HTTP_ERROR_ALL`
+  - `HTTP_ERROR_ALL` (4\*\* and 5\*\*)
     - `HTTP_CLIENT_ERROR_ALL` (4\*\*)
-    - `HTTP_SERVER_ERROR_ALL` (4\*\*)
+    - `HTTP_SERVER_ERROR_ALL` (5\*\*)
 
 ### `cacheControl` helper
 
