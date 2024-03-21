@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.23
+
+_2024-03-21_
+
 - feat: Add framework agnostic `@reykjavik/webtools/SiteImprove` module —
   deprecate `@reykjavik/webtools/next/SiteImprove` instead
 - `@reykjavik/webtools/remix/Wait`:
