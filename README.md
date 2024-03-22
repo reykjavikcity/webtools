@@ -342,28 +342,20 @@ editor), but there's a brief summary:
 - `scriptUrl?: string` — The full SiteImprove analytics script URL.
   (alternative to `accountId` prop).
 - `hasConsented?: boolean` — Manual GDPR 'analytics' consent flag. Allows hard
-  opt-out, but defers to
-  [`CookieHubProvider` values](./README.md#usecookiehubconsent) if they are
-  available.
+  opt-out, but defers to [`CookieHubProvider` values](#usecookiehubconsent) if
+  they are available.
 - `onLoad?: (e: unknown) => void` — Fires when the script has loaded.
 - `onError?: (e: unknown) => void` — Fires if loading the script failed.
 
 Example usage somewhere in your application:
 
-```js
+```jsz
 import { SiteImprove } from '@reykjavik/webtools/SiteImprove';
 
-// ideally emit this from your loader function
 const siteImproveAccountId = '[ACCOUNT_ID]'; // e.g. "7654321"
 
-   const location = useRouter()
-// ...then Inside root.tsx component:
-  <SiteImprove
-    accountId={siteImproveAccountId}
-    onError={(error) =>
-      Logger('error', 'An error occured initializing siteimprove', error)
-    }
-  />;
+// ...then inside your main App component
+<SiteImprove accountId={siteImproveAccountId} />;
 ```
 
 In dev mode it does NOT load the SiteImprove script and merely logs page-view
