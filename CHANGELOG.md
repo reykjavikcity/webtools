@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.24
+
+_2024-03-22_
+
 - `@reykjavik/webtools/fixIcelandicLocale`:
   - fix: Add missing patches for `Date.prototype.toLocaleString` and
     `Date.prototype.toLocaleTimeString`
