@@ -74,9 +74,9 @@ export const _PatchedCollator = PatchedCollator as unknown as typeof Intl.Collat
 
 // ---------------------------------------------------------------------------
 
-const _localeCompare = String.prototype.localeCompare;
+const _stringLocaleCompare = String.prototype.localeCompare;
 
-export const _patchedLocaleCompare = function localeCompare(
+export const _patchedStringLocaleCompare = function localeCompare(
   this: string,
   that: string,
   locales?: string | Array<string>,
@@ -84,7 +84,7 @@ export const _patchedLocaleCompare = function localeCompare(
 ) {
   return _PatchedCollator(locales, options).compare(this, that);
 };
-_patchedLocaleCompare.$original = _localeCompare;
+_patchedStringLocaleCompare.$original = _stringLocaleCompare;
 
 // ===========================================================================
 // NumberFormat
@@ -153,16 +153,16 @@ export const _PatchedNumberFormat =
 
 // ---------------------------------------------------------------------------
 
-const _toLocaleString = Number.prototype.toLocaleString;
+const _numberToLocaleString = Number.prototype.toLocaleString;
 
-export const _patchedToLocaleString = function toLocaleString(
+export const _patchedNumberToLocaleString = function toLocaleString(
   this: number,
   locales?: string | Array<string>,
   options?: Intl.NumberFormatOptions
 ) {
   return _PatchedNumberFormat(locales, options).format(this);
 };
-_patchedToLocaleString.$original = _toLocaleString;
+_patchedNumberToLocaleString.$original = _numberToLocaleString;
 
 // ===========================================================================
 // DateTimeFormat
@@ -319,16 +319,95 @@ export const _PatchedDateTimeFormat =
 
 // ---------------------------------------------------------------------------
 
-const _toLocaleDateString = Date.prototype.toLocaleDateString;
+const _dateToLocaleString = Date.prototype.toLocaleString;
 
-export const _patchedToLocaleDateString = function toLocaleDateString(
+export const _patchedDateToLocaleString = function toLocaleString(
   this: Date,
   locales?: string | Array<string>,
   options?: Intl.DateTimeFormatOptions
 ) {
+  options = options || {};
+  if (
+    !options.weekday &&
+    !options.year &&
+    !options.month &&
+    !options.day &&
+    !options.dayPeriod &&
+    !options.hour &&
+    !options.minute &&
+    !options.second &&
+    !options.fractionalSecondDigits
+  ) {
+    options = {
+      ...options,
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    };
+  }
+
   return _PatchedDateTimeFormat(locales, options).format(this);
 };
-_patchedToLocaleDateString.$original = _toLocaleDateString;
+_patchedDateToLocaleString.$original = _dateToLocaleString;
+
+// ---------------------------------------------------------------------------
+
+const _dateToLocaleDateString = Date.prototype.toLocaleDateString;
+
+export const _patchedDateToLocaleDateString = function toLocaleDateString(
+  this: Date,
+  locales?: string | Array<string>,
+  options?: Intl.DateTimeFormatOptions
+) {
+  options = options || {};
+  if (options.timeStyle) {
+    throw new TypeError("can't set option timeStyle in Date.toLocaleDateString()");
+  }
+  if (!options.weekday && !options.year && !options.month && !options.day) {
+    options = {
+      ...options,
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    };
+  }
+  return _PatchedDateTimeFormat(locales, options).format(this);
+};
+_patchedDateToLocaleDateString.$original = _dateToLocaleDateString;
+
+// ---------------------------------------------------------------------------
+
+const _dateToLocaleTimeString = Date.prototype.toLocaleTimeString;
+
+export const _patchedDateToLocaleTimeString = function toLocaleTimeString(
+  this: Date,
+  locales?: string | Array<string>,
+  options?: Intl.DateTimeFormatOptions
+) {
+  options = options || {};
+  if (options.dateStyle) {
+    throw new TypeError("can't set option dateStyle in Date.toLocaleTimeString()");
+  }
+  if (
+    !options.dayPeriod &&
+    !options.hour &&
+    !options.minute &&
+    !options.second &&
+    !options.fractionalSecondDigits
+  ) {
+    options = {
+      ...options,
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    };
+  }
+  return _PatchedDateTimeFormat(locales, options).format(this);
+};
+_patchedDateToLocaleTimeString.$original = _dateToLocaleTimeString;
 
 // ===========================================================================
 // PluralRules

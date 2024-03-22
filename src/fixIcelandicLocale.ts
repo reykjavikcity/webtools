@@ -1,12 +1,14 @@
 import {
   _PatchedCollator,
   _PatchedDateTimeFormat,
+  _patchedDateToLocaleDateString,
+  _patchedDateToLocaleString,
+  _patchedDateToLocaleTimeString,
   _PatchedListFormat,
-  _patchedLocaleCompare,
   _PatchedNumberFormat,
+  _patchedNumberToLocaleString,
   _PatchedPluralRules,
-  _patchedToLocaleDateString,
-  _patchedToLocaleString,
+  _patchedStringLocaleCompare,
 } from './fixIcelandicLocale.privates.js';
 
 /*
@@ -17,13 +19,15 @@ import {
 
 if (Intl.Collator.supportedLocalesOf(['is']).length < 1) {
   Intl.Collator = _PatchedCollator;
-  String.prototype.localeCompare = _patchedLocaleCompare;
+  String.prototype.localeCompare = _patchedStringLocaleCompare;
 
   Intl.NumberFormat = _PatchedNumberFormat;
-  Number.prototype.toLocaleString = _patchedToLocaleString;
+  Number.prototype.toLocaleString = _patchedNumberToLocaleString;
 
   Intl.DateTimeFormat = _PatchedDateTimeFormat;
-  Date.prototype.toLocaleDateString = _patchedToLocaleDateString;
+  Date.prototype.toLocaleString = _patchedDateToLocaleString;
+  Date.prototype.toLocaleDateString = _patchedDateToLocaleDateString;
+  Date.prototype.toLocaleTimeString = _patchedDateToLocaleTimeString;
 }
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unnecessary-condition */
 if (Intl.ListFormat && Intl.ListFormat.supportedLocalesOf(['is']).length < 1) {
