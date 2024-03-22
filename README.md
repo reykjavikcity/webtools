@@ -268,7 +268,8 @@ values.
 
 - `Intl.Collator` and `String.prototype.localeCompare`
 - `Intl.NumberFormat` and `Number.prototype.toLocaleString`
-- `Intl.DateTimeFormat` and `Date.prototype.toLocaleDateString`
+- `Intl.DateTimeFormat` and `Date.prototype.toLocaleString`,
+  `.toLocaleDateString`, and `.toLocaleTimeString`
 - `Intl.PluralRules`
 - `Intl.ListFormat`
 
