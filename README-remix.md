@@ -19,7 +19,7 @@ These are the [Remix.run](https://remix.run)-specific utilities in the
 
 ## `@reykjavik/webtools/remix/Wait`
 
-Contains a wraoper around
+Contains a thin wrapper around
 [Remix's `Await` component](https://remix.run/docs/en/main/components/await),
 to provide a more ergonomic API.
 
@@ -27,8 +27,8 @@ to provide a more ergonomic API.
 
 ### `Wait` component
 
-Waits `for` a promise, renders a spinner `meanwhile` and `error` message if
-the promise rejects.
+It waits `for` a promise, renders a spinner `meanwhile`, and an `error`
+message if the promise rejects.
 
 If the awaited promise resolves to an object with a truthy `$error` property,
 the error will be thrown.

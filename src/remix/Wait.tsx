@@ -45,7 +45,7 @@ export type WaitComponent<
 };
 
 /**
- * Wrapper around [Remix's `Await`](https://remix.run/docs/en/2/components/await)
+ * A thin wrapper around [Remix's `Await`](https://remix.run/docs/en/2/components/await)
  * component, to provide a more ergonomic API.
  *
  * If the awaited promise (`props.for`) resolves to an object with a truthy
