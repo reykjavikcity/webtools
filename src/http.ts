@@ -1,4 +1,4 @@
-import type { ServerResponse } from 'http';
+import { ServerResponse } from 'node:http';
 
 // INFORMATION
 
@@ -279,24 +279,66 @@ export const toSec = (ttl: TTL): number => {
   return Math.max(0, Math.round(ttl)) || 0;
 };
 
+type ServerResponseStub = Pick<
+  ServerResponse,
+  'setHeader' | 'getHeader' | 'removeHeader'
+> & {
+  // bun's (v1.1.8) `ServerResponse` has an `headers` property that
+  // contains the currently set headers.
+  headers?: Record<string, string | Array<string>>;
+};
+type ResponseStub = {
+  headers: Pick<Headers, 'set' | 'get' | 'delete' | 'append'>;
+};
+
+const toRespnseStubHeaders = (
+  response: ServerResponseStub | ResponseStub
+): ResponseStub['headers'] => {
+  if ('headers' in response && !('setHeader' in response)) {
+    return response.headers;
+  }
+  return {
+    get: (name: string) => {
+      const val = response.getHeader(name);
+      if (Array.isArray(val)) {
+        return val.join(', ');
+      }
+      return val != null ? `${val}` : null;
+    },
+    set: (name: string, value: string) => response.setHeader(name, value),
+    append: (name: string, value: string) => {
+      const existing = response.getHeader(name);
+      if (existing) {
+        response.setHeader(name, `${existing}, ${value}`);
+      } else {
+        response.setHeader(name, value);
+      }
+    },
+    delete: (name: string) => response.removeHeader(name),
+  };
+};
+
 const stabilities: Record<NonNullable<TTLObj['stability']>, string> = {
   revalidate: ', must-revalidate',
   immutable: ', immutable',
   normal: '',
 };
 
-const setCC = (response: ServerResponse, cc: string | undefined) => {
+const setCC = (response: ServerResponseStub | ResponseStub, cc: string | undefined) => {
   const devModeHeader = 'X-Cache-Control';
+  const headers = toRespnseStubHeaders(response);
+
   // Also set `X-Cache-Control` in dev mode, because some frameworks
-  // **cough** **nextjs** **cough** forcefully override the `Cache-Control`
+  // **cough** **Nextjs** **cough** forcefully override the `Cache-Control`
   // header when the server is in dev mode.
+
   if (!cc) {
-    response.removeHeader('Cache-Control');
-    process.env.NODE_ENV !== 'production' && response.removeHeader(devModeHeader);
+    headers.delete('Cache-Control');
+    process.env.NODE_ENV !== 'production' && headers.delete(devModeHeader);
     return;
   }
-  response.setHeader('Cache-Control', cc);
-  process.env.NODE_ENV !== 'production' && response.setHeader(devModeHeader, cc);
+  headers.set('Cache-Control', cc);
+  process.env.NODE_ENV !== 'production' && headers.set(devModeHeader, cc);
 };
 
 /**
@@ -307,7 +349,10 @@ const setCC = (response: ServerResponse, cc: string | undefined) => {
  */
 // eslint-disable-next-line complexity
 export const cacheControl = (
-  response: ServerResponse | { res: ServerResponse },
+  response:
+    | ServerResponseStub
+    | ResponseStub
+    | { res: ServerResponseStub | ResponseStub },
   ttlCfg: TTLConfig,
   eTag?: string | number
 ) => {
@@ -328,7 +373,7 @@ export const cacheControl = (
     }
   }
   if (maxAge == null) {
-    response.removeHeader('Cache-Control');
+    toRespnseStubHeaders(response).delete('Cache-Control');
     return;
   }
 
@@ -350,5 +395,5 @@ export const cacheControl = (
 
   setCC(response, `${scope}, max-age=${maxAge + sWR + sIE + stability}`);
 
-  eTag != null && response.setHeader('ETag', eTag);
+  eTag != null && toRespnseStubHeaders(response).set('ETag', String(eTag));
 };

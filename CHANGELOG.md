@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/http`:
+  - feat: `cacheControl` now also accepts standard `Response` objects
 
 ## 0.1.24
 

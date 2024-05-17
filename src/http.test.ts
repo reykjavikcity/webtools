@@ -123,13 +123,32 @@ if (false as boolean) {
 // Test methods
 
 describe('cacheControl', () => {
-  test('works', () => {
+  test('works with `Response`', () => {
+    const res = new Response();
+    const spy = spyOn(res.headers, 'set');
+
+    expect(cacheControl(res, '1s')).toEqual(undefined);
+    expect(spy).toHaveBeenCalled();
+    expect(res.headers.get('Cache-Control')).toEqual('private, max-age=1, immutable');
+    // sets X-Cache-Control in dev mode
+    if (process.env.NODE_ENV !== 'production') {
+      expect(res.headers.get('X-Cache-Control')).toEqual('private, max-age=1, immutable');
+    } else {
+      expect(res.headers.get('X-Cache-Control')).toBeUndefined();
+    }
+
+    // repeat calls update the header
+    cacheControl(res, '2s');
+    expect(res.headers.get('Cache-Control')).toEqual('private, max-age=2, immutable');
+  });
+
+  test('works with `ServerResponse`', () => {
     const res = new ServerResponse(new IncomingMessage(new Socket()));
     const spy = spyOn(res, 'setHeader');
 
     expect(cacheControl(res, '1s')).toEqual(undefined);
     expect(spy).toHaveBeenCalled();
-    // TODO: Remove hack as soon as possible
+    // TODO: Remove these `spy.mock.calls` hacks as soon as possible
     // This somehow fails, as when `bun test` is running, calling setHeader
     // on ServerResponse does not actually set the header.
 
@@ -137,16 +156,8 @@ describe('cacheControl', () => {
     expect(
       [...spy.mock.calls].reverse().find((args) => args[0] === 'Cache-Control')
     ).toEqual(['Cache-Control', 'private, max-age=1, immutable']);
-  });
 
-  test('sets X-Cache-Control in dev mode', () => {
-    const res = new ServerResponse(new IncomingMessage(new Socket()));
-    const spy = spyOn(res, 'setHeader');
-    cacheControl(res, '1s');
-    // TODO: Remove hack as soon as possible
-    // This somehow fails, as when `bun test` is running, calling setHeader
-    // on ServerResponse does not actually set the header.
-
+    // sets X-Cache-Control in dev mode
     if (process.env.NODE_ENV !== 'production') {
       // expect(res.getHeader('X-Cache-Control')).toEqual('private, max-age=1, immutable');
       expect(
@@ -158,6 +169,13 @@ describe('cacheControl', () => {
         [...spy.mock.calls].reverse().find((args) => args[0] === 'X-Cache-Control')
       ).toBeUndefined();
     }
+
+    // repeat calls update the header
+    cacheControl(res, '2s');
+    // expect(res.getHeader('Cache-Control')).toEqual('private, max-age=2, immutable');
+    expect(
+      [...spy.mock.calls].reverse().find((args) => args[0] === 'X-Cache-Control')
+    ).toEqual(['X-Cache-Control', 'private, max-age=2, immutable']);
   });
 });
 
