@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/fixIcelandicLocale`:
+  - fix: Emit `"*dagur, "`, not `"*dagurinn "` from `Intl.DateTimeFormat`
 
 ## 0.1.25
 

@@ -243,7 +243,7 @@ const partMappers: Partial<
   },
   literal: (value, lastType) => {
     if (value === ' den ') {
-      return 'inn ';
+      return ', ';
     } else if (value === '.' && (lastType === 'hour' || lastType === 'minute')) {
       return ':';
     }
