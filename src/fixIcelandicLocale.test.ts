@@ -254,7 +254,7 @@ describe('_PatchedDateTimeFormat.format', () => {
   test('Dates are fine', () => {
     expect(
       _PatchedDateTimeFormat('is', { dateStyle: 'full' }).format(new Date('2024-08-03'))
-    ).toBe('laugardagurinn 3. ágúst 2024');
+    ).toBe('laugardagur, 3. ágúst 2024');
     expect(
       _PatchedDateTimeFormat('is', { dateStyle: 'long' }).format(
         new Date('2024-08-03T12:34:56Z')
