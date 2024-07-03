@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom"],
     "allowSyntheticDefaultImports": true,
     "module": "NodeNext",
     "target": "ES2017",
