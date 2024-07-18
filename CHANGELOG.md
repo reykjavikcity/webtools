@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.27
+
+_2024-07-18_
+
 - `@reykjavik/webtools/next/vanillaExtract`:
   - feat: `vanillaClass` now accepts a function that receives the generated
     `className` as parameter
