@@ -530,8 +530,10 @@ const myStyle = style({
 
 ### `vanillaClass`
 
-**Syntax:** `vanillaClass(css: string): string`  
-**Syntax:** `vanillaClass(debugId: string, css: string): string`
+**Syntax:**
+`vanillaClass(css: string | ((className: string) => string)): string`  
+**Syntax:**
+`vanillaClass(debugId: string, css: string | ((className: string) => string)): string`
 
 Returns a scoped cssClassName styled with free-form CSS. This function is a
 thin wrapper around vanilla-extract's `style` function.
@@ -544,6 +546,25 @@ export const myClass = vanillaClass(`
   background-color: #ccc;
   padding: .5em 1em;
 `);
+
+// Passing a function to get the generated class name for
+// more complex styles.
+export const myOtherClass = vanillaClass(
+  (className) => `
+  .${className} {
+    background-color: #ccc;
+    padding: .5em 1em;
+  }
+  .${className} > strong {
+    color: #c00;
+  }
+  @media (min-width: 800px) {
+    .${className} {
+      background-color: #eee;
+    }
+  }
+`
+);
 
 export const humanReadableClass = vanillaClass(
   'HumanReadable',

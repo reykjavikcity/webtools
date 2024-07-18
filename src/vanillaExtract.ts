@@ -25,12 +25,23 @@ export const vanillaProps = (css: string) => ({ x: `; ${css}` } as GlobalStyleRu
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#vanillaclass
  */
-export function vanillaClass(css: string): string;
-export function vanillaClass(debugId: string, css: string): string;
+export function vanillaClass(css: string | ((className: string) => string)): string;
+export function vanillaClass(
+  debugId: string,
+  css: string | ((className: string) => string)
+): string;
 
-export function vanillaClass(cssOrDebugId: string, css?: string): string {
-  const debugId = css != null ? cssOrDebugId : undefined;
+export function vanillaClass(
+  cssOrDebugId: string | ((className: string) => string),
+  css?: string | ((className: string) => string)
+): string {
+  const debugId = css != null ? (cssOrDebugId as string) : undefined;
   css = css != null ? css : cssOrDebugId;
+  if (typeof css === 'function') {
+    const className = style({}, debugId);
+    vanillaGlobal(css(className));
+    return className;
+  }
   return style(vanillaProps(css), debugId);
 }
 
