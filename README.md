@@ -1,4 +1,4 @@
-# @reykjavik/webtools
+# @reykjavik/webtools <!-- omit from toc -->
 
 Miscellaneous JavaScript/TypeScript helpers used by Reykjavík City's web dev
 teams.
