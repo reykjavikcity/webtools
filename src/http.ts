@@ -344,7 +344,7 @@ const setCC = (
  * Use this function to quickly set the `Cache-Control` header with a `max-age=`
  * on a HTTP response
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#getcssbundleurl
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#cachecontrol-helper
  */
 // eslint-disable-next-line complexity
 export const cacheControl = (
