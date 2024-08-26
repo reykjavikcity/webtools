@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.29
+
+_2024-08-26_
+
 - `@reykjavik/webtools/http`:
   - feat: Add `cacheControlHeaders` helper that returns a `HeadersInit` object
   - fix: `cacheControl` with `maxAge: 'unset'` didn't delete `X-Cache-Control`
