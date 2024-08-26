@@ -3,6 +3,9 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/http`:
+  - fix: `cacheControl` with `maxAge: 'unset'` didn't delete `X-Cache-Control`
+    in dev mode
 
 ## 0.1.28
 

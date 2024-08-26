@@ -373,7 +373,7 @@ export const cacheControl = (
     }
   }
   if (maxAge == null) {
-    toRespnseStubHeaders(response).delete('Cache-Control');
+    setCC(response, undefined);
     return;
   }
 
