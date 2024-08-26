@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.28
+
+_2024-08-26_
+
 - `@reykjavik/webtools/http`:
   - feat: `cacheControl` now also accepts `Map<string, string>` for headers
 
