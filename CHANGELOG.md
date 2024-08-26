@@ -4,21 +4,15 @@
 
 - ... <!-- Add new lines here. -->
 
-## 0.1.29
+## 0.1.28 – 0.1.29
 
 _2024-08-26_
 
 - `@reykjavik/webtools/http`:
   - feat: Add `cacheControlHeaders` helper that returns a `HeadersInit` object
+  - feat: `cacheControl` now also accepts `Map<string, string>` for headers
   - fix: `cacheControl` with `maxAge: 'unset'` didn't delete `X-Cache-Control`
     in dev mode
-
-## 0.1.28
-
-_2024-08-26_
-
-- `@reykjavik/webtools/http`:
-  - feat: `cacheControl` now also accepts `Map<string, string>` for headers
 
 ## 0.1.27
 
