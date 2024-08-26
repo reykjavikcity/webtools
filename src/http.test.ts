@@ -124,8 +124,11 @@ if (false as boolean) {
 
 describe('cacheControl', () => {
   test('works with `Response`', () => {
-    const res = new Response();
+    const res = new Response('', { headers: { 'Cache-Control': 'public, max-age=17' } });
     const spy = spyOn(res.headers, 'set');
+
+    expect(cacheControl(res, 'unset')).toEqual(undefined);
+    expect(res.headers.get('Cache-Control')).toEqual(null);
 
     expect(cacheControl(res, '1s')).toEqual(undefined);
     expect(spy).toHaveBeenCalled();
