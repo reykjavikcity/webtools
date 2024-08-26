@@ -20,6 +20,7 @@ bun add @reykjavik/webtools
   - [HTTP Status Codes](#http-status-codes)
   - [Types for HTTP Status code groups](#types-for-http-status-code-groups)
   - [`cacheControl` helper](#cachecontrol-helper)
+  - [`cacheControlHeaders` helper](#cachecontrolheaders-helper)
     - [Type `TTLConfig`](#type-ttlconfig)
   - [`toSec` TTL helper](#tosec-ttl-helper)
 - [`@reykjavik/webtools/async`](#reykjavikwebtoolsasync)
@@ -130,6 +131,27 @@ The directives `private` and `immutable` are used by by default.
 
 Use the optional `eTag` parameter if you intend to
 [handle conditional requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Conditional_requests).
+
+### `cacheControlHeaders` helper
+
+**Syntax:**
+`cacheControlHeaders(ttlCfg: TTLConfig, eTag?: string|number): Record<string, string>`
+
+Similar to the [`cacheControl` helper](#cachecontrol-helper), but returns an
+plain object with the headers for use in situations where `HeadersInit` object
+are expected.
+
+```js
+import { cacheControlHeaders } from '@reykjavik/webtools/http';
+
+const response = new Response('Hello, World!', {
+  headers: cacheControlHeaders('4h'),
+});
+```
+
+```js
+
+```
 
 #### Type `TTLConfig`
 

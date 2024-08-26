@@ -22,7 +22,7 @@ import type {
   TTL,
   TTLConfig,
 } from './http.js';
-import { cacheControl, toSec } from './http.js';
+import { cacheControl, cacheControlHeaders, toSec } from './http.js';
 import * as moduleExports from './http.js';
 
 // ---------------------------------------------------------------------------
@@ -33,6 +33,8 @@ if (false as boolean) {
   const exports: Record<keyof typeof moduleExports, true> = {
     toSec: true,
     cacheControl: true,
+    cacheControlHeaders: true,
+
     HTTP_100_Continue: true,
     HTTP_101_SwitchingProtocols: true,
     HTTP_102_Processing: true,
@@ -206,6 +208,31 @@ describe('cacheControl', () => {
     expect(map.get('ETag')).toEqual('my-etag-123');
   });
 });
+
+// ---------------------------------------------------------------------------
+
+describe('cacheControlHeaders', () => {
+  test('works', () => {
+    expect(cacheControlHeaders('unset')).toEqual({});
+
+    expect(cacheControlHeaders('1s')).toEqual({
+      'Cache-Control': 'private, max-age=1, immutable',
+      ...(process.env.NODE_ENV !== 'production'
+        ? { 'X-Cache-Control': 'private, max-age=1, immutable' }
+        : undefined),
+    });
+
+    expect(cacheControlHeaders({ maxAge: '2m', publ: true }, 'my-etag-123')).toEqual({
+      'Cache-Control': 'public, max-age=120, immutable',
+      ...(process.env.NODE_ENV !== 'production'
+        ? { 'X-Cache-Control': 'public, max-age=120, immutable' }
+        : undefined),
+      ETag: 'my-etag-123',
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
 
 describe('toSec', () => {
   test('works', () => {

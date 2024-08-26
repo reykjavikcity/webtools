@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/http`:
+  - feat: Add `cacheControlHeaders` helper that returns a `HeadersInit` object
   - fix: `cacheControl` with `maxAge: 'unset'` didn't delete `X-Cache-Control`
     in dev mode
 

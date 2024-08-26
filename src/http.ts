@@ -397,3 +397,19 @@ export const cacheControl = (
 
   eTag != null && toRespnseStubHeaders(response).set('ETag', String(eTag));
 };
+
+/**
+ * Generates a Record with `Cache-Control` and `ETag` headers, for use in
+ * situations requiring a `HeadersInit` compatible object.
+ *
+ * Accepts the same arguments as `cacheControl()`.
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#cachecontrolheaders-helper
+ */
+export const cacheControlHeaders = (
+  ttlCfg: TTLConfig,
+  eTag?: string | number
+): Record<string, string> => {
+  const headers = new Map<string, string>();
+  cacheControl(headers, ttlCfg, eTag);
+  return Object.fromEntries(headers);
+};
