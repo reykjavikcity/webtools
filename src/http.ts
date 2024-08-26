@@ -288,12 +288,16 @@ type ServerResponseStub = Pick<
   headers?: Record<string, string | Array<string>>;
 };
 type ResponseStub = {
-  headers: Pick<Headers, 'set' | 'get' | 'delete' | 'append'>;
+  // headers: Pick<Headers, 'set' | 'get' | 'delete' >;
+  headers: Pick<Headers, 'set' | 'get' | 'delete'>;
 };
 
 const toRespnseStubHeaders = (
-  response: ServerResponseStub | ResponseStub
-): ResponseStub['headers'] => {
+  response: Map<string, string> | ServerResponseStub | ResponseStub
+): ResponseStub['headers'] | Map<string, string> => {
+  if (response instanceof Map) {
+    return response;
+  }
   if ('headers' in response && !('setHeader' in response)) {
     return response.headers;
   }
@@ -306,14 +310,6 @@ const toRespnseStubHeaders = (
       return val != null ? `${val}` : null;
     },
     set: (name: string, value: string) => response.setHeader(name, value),
-    append: (name: string, value: string) => {
-      const existing = response.getHeader(name);
-      if (existing) {
-        response.setHeader(name, `${existing}, ${value}`);
-      } else {
-        response.setHeader(name, value);
-      }
-    },
     delete: (name: string) => response.removeHeader(name),
   };
 };
@@ -324,7 +320,10 @@ const stabilities: Record<NonNullable<TTLObj['stability']>, string> = {
   normal: '',
 };
 
-const setCC = (response: ServerResponseStub | ResponseStub, cc: string | undefined) => {
+const setCC = (
+  response: Map<string, string> | ServerResponseStub | ResponseStub,
+  cc: string | undefined
+) => {
   const devModeHeader = 'X-Cache-Control';
   const headers = toRespnseStubHeaders(response);
 
@@ -352,10 +351,11 @@ export const cacheControl = (
   response:
     | ServerResponseStub
     | ResponseStub
+    | Map<string, string>
     | { res: ServerResponseStub | ResponseStub },
   ttlCfg: TTLConfig,
   eTag?: string | number
-) => {
+): void => {
   response = 'res' in response ? response.res : response;
   const opts =
     typeof ttlCfg === 'number' || typeof ttlCfg === 'string'

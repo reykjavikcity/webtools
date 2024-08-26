@@ -112,10 +112,10 @@ codes, are also available:
 ### `cacheControl` helper
 
 **Syntax:**
-`cacheConrol(response: ServerResponse | { res: ServerResponse }, ttlCfg: TTLConfig, eTag?: string|number): void`
+`cacheConrol(response: ServerResponse | Response | Map<string, string> | { res: ServerResponse | Response }, ttlCfg: TTLConfig, eTag?: string|number): void`
 
 Use this function to quickly set the `Cache-Control` header with a `max-age=`
-on a HTTP response.
+on a HTTP response (or a `Map` object representing response headers).
 
 ```js
 import { cacheControl } from '@reykjavik/webtools/http';

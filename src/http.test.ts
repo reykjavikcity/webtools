@@ -138,8 +138,9 @@ describe('cacheControl', () => {
     }
 
     // repeat calls update the header
-    cacheControl(res, '2s');
+    cacheControl(res, '2s', 'my-etag-123'); // Setting ETag works
     expect(res.headers.get('Cache-Control')).toEqual('private, max-age=2, immutable');
+    expect(res.headers.get('ETag')).toEqual('my-etag-123');
   });
 
   test('works with `ServerResponse`', () => {
@@ -148,7 +149,7 @@ describe('cacheControl', () => {
 
     expect(cacheControl(res, '1s')).toEqual(undefined);
     expect(spy).toHaveBeenCalled();
-    // TODO: Remove these `spy.mock.calls` hacks as soon as possible
+    // TODO: Remove these `[...spy.mock.calls]` hacks as soon as possible.
     // This somehow fails, as when `bun test` is running, calling setHeader
     // on ServerResponse does not actually set the header.
 
@@ -171,11 +172,35 @@ describe('cacheControl', () => {
     }
 
     // repeat calls update the header
-    cacheControl(res, '2s');
+    cacheControl(res, '2s', 'my-etag-123'); // Setting ETag works
     // expect(res.getHeader('Cache-Control')).toEqual('private, max-age=2, immutable');
     expect(
       [...spy.mock.calls].reverse().find((args) => args[0] === 'X-Cache-Control')
     ).toEqual(['X-Cache-Control', 'private, max-age=2, immutable']);
+    expect([...spy.mock.calls].reverse().find((args) => args[0] === 'ETag')).toEqual([
+      'ETag',
+      'my-etag-123',
+    ]);
+  });
+
+  test('works with `Map`', () => {
+    const map = new Map();
+    const spy = spyOn(map, 'set');
+
+    expect(cacheControl(map, '1s')).toEqual(undefined);
+    expect(spy).toHaveBeenCalled();
+    expect(map.get('Cache-Control')).toEqual('private, max-age=1, immutable');
+    // sets X-Cache-Control in dev mode
+    if (process.env.NODE_ENV !== 'production') {
+      expect(map.get('X-Cache-Control')).toEqual('private, max-age=1, immutable');
+    } else {
+      expect(map.get('X-Cache-Control')).toBeUndefined();
+    }
+
+    // repeat calls update the header
+    cacheControl(map, '2s', 'my-etag-123'); // Setting ETag works
+    expect(map.get('Cache-Control')).toEqual('private, max-age=2, immutable');
+    expect(map.get('ETag')).toEqual('my-etag-123');
   });
 });
 
