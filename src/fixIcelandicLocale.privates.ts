@@ -50,11 +50,11 @@ const PatchedCollator = function Collator(
     return new PatchedCollator(locales, options);
   }
   const mappedLocales = mapLocales(_Collator, locales);
-  const parent = _Collator(mappedLocales || locales, options);
+  const super_ = _Collator(mappedLocales || locales, options);
   const mapped = !!mappedLocales;
 
   this.compare = (a, b) => {
-    const res1 = parent.compare(a, b);
+    const res1 = super_.compare(a, b);
     if (!mapped) {
       return res1;
     }
@@ -63,10 +63,10 @@ const PatchedCollator = function Collator(
     if (/\d/.test(a0 + b0)) {
       return res1;
     }
-    const res2 = parent.compare(a0, b0);
+    const res2 = super_.compare(a0, b0);
     return res2 !== 0 ? res2 : res1;
   };
-  this.resolvedOptions = () => parent.resolvedOptions();
+  this.resolvedOptions = () => super_.resolvedOptions();
 };
 
 PatchedCollator.prototype = { constructor: PatchedCollator };
@@ -130,21 +130,21 @@ const PatchedNumberFormat = function NumberFormat(
     return new PatchedNumberFormat(locales, options);
   }
   const mappedLocales = mapLocales(_NumberFormat, locales);
-  const parent = _NumberFormat(mappedLocales || locales, options);
+  const super_ = _NumberFormat(mappedLocales || locales, options);
   const mapped = !!mappedLocales;
 
   this.format = (value) => combineParts(this.formatToParts(value));
   this.formatRange = (value1, value2) =>
     combineParts(this.formatRangeToParts(value1, value2));
   this.formatToParts = (value) => {
-    const parts = parent.formatToParts(value);
-    return mapped ? reformatNumberParts(parent, parts) : parts;
+    const parts = super_.formatToParts(value);
+    return mapped ? reformatNumberParts(super_, parts) : parts;
   };
   this.formatRangeToParts = (value1, value2) => {
-    const parts = parent.formatRangeToParts(value1, value2);
-    return mapped ? reformatNumberParts(parent, parts) : parts;
+    const parts = super_.formatRangeToParts(value1, value2);
+    return mapped ? reformatNumberParts(super_, parts) : parts;
   };
-  this.resolvedOptions = () => parent.resolvedOptions();
+  this.resolvedOptions = () => super_.resolvedOptions();
 };
 
 PatchedNumberFormat.prototype = { constructor: PatchedNumberFormat };
@@ -295,7 +295,7 @@ const PatchedDateTimeFormat = function DateTimeFormat(
       hourCycle: 'h11',
     };
   }
-  const parent = _DateTimeFormat(mappedLocales || locales, options);
+  const super_ = _DateTimeFormat(mappedLocales || locales, options);
   const mapped = !!mappedLocales;
 
   this.format = (value) => combineParts(this.formatToParts(value));
@@ -303,14 +303,14 @@ const PatchedDateTimeFormat = function DateTimeFormat(
     combineParts(this.formatRangeToParts(value1, value2));
 
   this.formatToParts = (value) => {
-    const parts = parent.formatToParts(value);
-    return mapped ? reformatDateTimeParts(parent, parts) : parts;
+    const parts = super_.formatToParts(value);
+    return mapped ? reformatDateTimeParts(super_, parts) : parts;
   };
   this.formatRangeToParts = (value1, value2) => {
-    const parts = parent.formatRangeToParts(value1, value2);
-    return mapped ? reformatDateTimeParts(parent, parts) : parts;
+    const parts = super_.formatRangeToParts(value1, value2);
+    return mapped ? reformatDateTimeParts(super_, parts) : parts;
   };
-  this.resolvedOptions = () => parent.resolvedOptions();
+  this.resolvedOptions = () => super_.resolvedOptions();
 };
 
 PatchedDateTimeFormat.prototype = { constructor: PatchedDateTimeFormat };
