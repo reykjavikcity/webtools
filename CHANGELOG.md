@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/fixIcelandicLocale`:
+  - fix: Use each `Intl.*` class' `supportedLocalesOf` method to map locales
 
 ## 0.1.28 – 0.1.29
 

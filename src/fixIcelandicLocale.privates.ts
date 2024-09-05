@@ -1,12 +1,16 @@
-const _Collator = Intl.Collator;
+type SupportedLocalesOf = (typeof Intl.Collator)['supportedLocalesOf'];
+type IntlClassLike = { supportedLocalesOf: SupportedLocalesOf };
+
+const islLocaleRe = /^isl?(?:-|$)/i;
 
 const mapLocales = (
+  constr: IntlClassLike,
   locales: string | Array<string> | undefined
 ): [string] | undefined => {
   locales = typeof locales === 'string' ? [locales] : locales || [];
   for (let i = 0, loc; (loc = locales[i]); i++) {
-    const isIsLocale = /^isl?(?:-|$)/i.test(loc);
-    if (isIsLocale) {
+    const isIslLocale = islLocaleRe.test(loc);
+    if (isIslLocale) {
       // Danish feels like a "good enough" substitution for Icelandic.
       // For alphabetization, it seems to just the internal order of `Ø` and `Ö`
       // that's different, and when the `sensitivity` option is set to "base"
@@ -17,7 +21,7 @@ const mapLocales = (
       // as fully equal to the base letter.
       return ['da'];
     }
-    if (_Collator.supportedLocalesOf(loc).length) {
+    if (constr.supportedLocalesOf(loc).length) {
       return; // no mapping needed. YOLO!
     }
   }
@@ -29,6 +33,8 @@ const combineParts = (parts: Array<{ value: string }>) =>
 // ===========================================================================
 // Collator
 // ===========================================================================
+
+const _Collator = Intl.Collator;
 
 type PatchedCollatorInstance = Intl.Collator & {
   constructor: typeof PatchedCollator;
@@ -43,7 +49,7 @@ const PatchedCollator = function Collator(
     // @ts-expect-error  (YOLO! Can't be arsed)
     return new PatchedCollator(locales, options);
   }
-  const mappedLocales = mapLocales(locales);
+  const mappedLocales = mapLocales(_Collator, locales);
   const parent = _Collator(mappedLocales || locales, options);
   const mapped = !!mappedLocales;
 
@@ -123,7 +129,7 @@ const PatchedNumberFormat = function NumberFormat(
     // @ts-expect-error  (YOLO! Can't be arsed)
     return new PatchedNumberFormat(locales, options);
   }
-  const mappedLocales = mapLocales(locales);
+  const mappedLocales = mapLocales(_NumberFormat, locales);
   const parent = _NumberFormat(mappedLocales || locales, options);
   const mapped = !!mappedLocales;
 
@@ -281,7 +287,7 @@ const PatchedDateTimeFormat = function DateTimeFormat(
     // @ts-expect-error  (YOLO! Can't be arsed)
     return new PatchedDateTimeFormat(locales, options);
   }
-  const mappedLocales = mapLocales(locales);
+  const mappedLocales = mapLocales(_DateTimeFormat, locales);
   if (options?.hour12) {
     options = {
       ...options,
@@ -426,7 +432,7 @@ if (_PluralRules) {
     }
 
     constructor(locales: string | Array<string>, options?: Intl.PluralRulesOptions) {
-      const mappedLocales = mapLocales(locales);
+      const mappedLocales = mapLocales(_PluralRules, locales);
       super(mappedLocales || locales, options);
       this.mapped = !!mappedLocales;
       this.ord = options?.type === 'ordinal';
@@ -472,7 +478,7 @@ if (_ListFormat) {
     private mapped: boolean;
 
     constructor(locales: string | Array<string>, options?: Intl.ListFormatOptions) {
-      const mappedLocales = mapLocales(locales);
+      const mappedLocales = mapLocales(_ListFormat, locales);
       super(mappedLocales || locales, options);
       this.mapped = !!mappedLocales;
 
