@@ -18,7 +18,7 @@
     "prepublishOnly": "echo \"\nRun 'bun run publish:list' to publish this package\n\n\"  && exit 1"
   },
   "dependencies": {
-    "@reykjavik/hanna-utils": "^0.2.3"
+    "@reykjavik/hanna-utils": "^0.2.16"
   },
   "peerDependencies": {
     "@remix-run/react": "^2.6.0",
@@ -46,18 +46,18 @@
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^14.12.3",
-    "@hugsmidjan/hxmstyle": "^8.6.1",
-    "@maranomynet/libtools": "^0.1.10",
-    "@remix-run/react": "^2.8.0",
-    "@types/bun": "^1.1.6",
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "@vanilla-extract/css": "^1.14.1",
+    "@hugsmidjan/hxmstyle": "^8.8.0",
+    "@maranomynet/libtools": "^0.1.14",
+    "@remix-run/react": "^2.11.2",
+    "@types/bun": "^1.1.8",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vanilla-extract/css": "^1.15.5",
     "eslint": "^8.57.0",
-    "next": "^12",
+    "next": "^12.3.4",
     "prettier": "^2.8.8",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "typescript": "^4.9.5"
   },
   "hxmstyle": {
