@@ -27,6 +27,31 @@ const mapLocales = (
   }
 };
 
+const patchSupportedLocalesOf = (constr: IntlClassLike): SupportedLocalesOf => {
+  const BASE_CHAR_CODE = 64; // 'A'.charCodeAt(0) - 1; // used for generating unique suffix for fake locales
+  return (locales: string | Array<string>, options?: Intl.CollatorOptions) => {
+    let localesArr = typeof locales === 'string' ? [locales] : locales;
+    const memoIsl: Array<string> = [];
+    localesArr = localesArr.map((locale) => {
+      if (islLocaleRe.test(locale)) {
+        // Some engines throw a RangeError if the locale is weirdly shaped,
+        // so we must use a short, safe, unique fake locale instead,
+        // and store the actual locale in `memoIsl` for later reinsertion.
+        memoIsl.push(locale);
+        return `da-X${String.fromCharCode(BASE_CHAR_CODE + memoIsl.length)}`;
+      }
+      return locale;
+    });
+    const supportedLocales = constr.supportedLocalesOf(localesArr, options);
+    if (!memoIsl.length) {
+      return supportedLocales;
+    }
+    return supportedLocales.map((locale) =>
+      locale.startsWith('da-X') ? memoIsl.shift()! : locale
+    );
+  };
+};
+
 const combineParts = (parts: Array<{ value: string }>) =>
   parts.map(({ value }) => value).join('');
 
@@ -70,8 +95,7 @@ const PatchedCollator = function Collator(
 };
 
 PatchedCollator.prototype = { constructor: PatchedCollator };
-// Static methods (not patched since "is" is not ACTUALLY supported.)
-PatchedCollator.supportedLocalesOf = _Collator.supportedLocalesOf;
+PatchedCollator.supportedLocalesOf = /*#__PURE__*/ patchSupportedLocalesOf(_Collator);
 PatchedCollator.$original = _Collator;
 
 export const _PatchedCollator = PatchedCollator as unknown as typeof Intl.Collator & {
@@ -148,8 +172,8 @@ const PatchedNumberFormat = function NumberFormat(
 };
 
 PatchedNumberFormat.prototype = { constructor: PatchedNumberFormat };
-// Static methods (not patched since "is" is not ACTUALLY supported.)
-PatchedNumberFormat.supportedLocalesOf = _NumberFormat.supportedLocalesOf;
+PatchedNumberFormat.supportedLocalesOf =
+  /*#__PURE__*/ patchSupportedLocalesOf(_NumberFormat);
 PatchedNumberFormat.$original = _NumberFormat;
 
 export const _PatchedNumberFormat =
@@ -314,8 +338,8 @@ const PatchedDateTimeFormat = function DateTimeFormat(
 };
 
 PatchedDateTimeFormat.prototype = { constructor: PatchedDateTimeFormat };
-// Static methods (not patched since "is" is not ACTUALLY supported.)
-PatchedDateTimeFormat.supportedLocalesOf = _DateTimeFormat.supportedLocalesOf;
+PatchedDateTimeFormat.supportedLocalesOf =
+  /*#__PURE__*/ patchSupportedLocalesOf(_DateTimeFormat);
 PatchedDateTimeFormat.$original = _DateTimeFormat;
 
 export const _PatchedDateTimeFormat =
@@ -456,6 +480,7 @@ if (_PluralRules) {
       return super.selectRange(n, n2);
     }
 
+    static supportedLocalesOf = /*#__PURE__*/ patchSupportedLocalesOf(_PluralRules);
     static $original = _PluralRules;
   };
 }
@@ -504,6 +529,7 @@ if (_ListFormat) {
       return parts;
     }
 
+    static supportedLocalesOf = /*#__PURE__*/ patchSupportedLocalesOf(_ListFormat);
     static $original = _ListFormat;
   };
 }

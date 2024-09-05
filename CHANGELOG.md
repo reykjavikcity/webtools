@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/fixIcelandicLocale`:
+  - feat: Patch all `supportedLocalesOf` methods to report "is\*" as supported
   - fix: Use each `Intl.*` class' `supportedLocalesOf` method to map locales
 
 ## 0.1.28 – 0.1.29
