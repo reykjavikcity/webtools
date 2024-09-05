@@ -7,6 +7,7 @@
   - feat: Add `toMs` duration helper
 - `@reykjavik/webtools/fixIcelandicLocale`:
   - feat: Patch `Intl.RelativeTimeFormat`
+  - feat: Patch all `supportedLocalesOf` methods to report "is\*" as supported
   - fix: Incorrect `PluralRules` results for negative values
   - fix: Use each `Intl.*` class' `supportedLocalesOf` method to map locales
   - fix: Remove unnecessary `Intl.\*` method instance-bindings

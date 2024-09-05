@@ -31,7 +31,11 @@ describe('_PatchedCollator', () => {
   });
 
   test('Has static methods', () => {
-    expect(_PatchedCollator.supportedLocalesOf(['da'])).toEqual(['da']);
+    expect(_PatchedCollator.supportedLocalesOf(['da', 'is', 'is-IS'])).toEqual([
+      'da',
+      'is',
+      'is-IS',
+    ]);
   });
 
   test('Handles numeric sorting', () => {
@@ -77,7 +81,11 @@ describe('_PatchedNumberFormat', () => {
   });
 
   test('Has static methods', () => {
-    expect(_PatchedNumberFormat.supportedLocalesOf(['da'])).toEqual(['da']);
+    expect(_PatchedNumberFormat.supportedLocalesOf(['da', 'is', 'is-IS'])).toEqual([
+      'da',
+      'is',
+      'is-IS',
+    ]);
   });
 
   test('Translates ISK to kr.', () => {
@@ -180,7 +188,11 @@ describe('_PatchedDateTimeFormat', () => {
   });
 
   test('Has static methods', () => {
-    expect(_PatchedDateTimeFormat.supportedLocalesOf(['da'])).toEqual(['da']);
+    expect(_PatchedDateTimeFormat.supportedLocalesOf(['da', 'is', 'is-IS'])).toEqual([
+      'da',
+      'is',
+      'is-IS',
+    ]);
   });
 });
 
@@ -406,7 +418,11 @@ describe('_PatchedPluralRules', () => {
   });
 
   test('Has static methods', () => {
-    expect(_PatchedPluralRules.supportedLocalesOf(['da'])).toEqual(['da']);
+    expect(_PatchedPluralRules.supportedLocalesOf(['da', 'is', 'is-IS'])).toEqual([
+      'da',
+      'is',
+      'is-IS',
+    ]);
   });
 
   const islPlural = new _PatchedPluralRules('is');
@@ -458,7 +474,11 @@ describe('_PatchedListFormat', () => {
   });
 
   test('Has static methods', () => {
-    expect(_PatchedListFormat.supportedLocalesOf(['da'])).toEqual(['da']);
+    expect(_PatchedListFormat.supportedLocalesOf(['da', 'is', 'is-IS'])).toEqual([
+      'da',
+      'is',
+      'is-IS',
+    ]);
   });
 
   test('Supports both conjunction and disjunction', () => {
@@ -500,7 +520,11 @@ describe('_PatchedRelativeTimeFormat', () => {
   });
 
   test('Has static methods', () => {
-    expect(_PatchedRelativeTimeFormat.supportedLocalesOf(['da'])).toEqual(['da']);
+    expect(_PatchedRelativeTimeFormat.supportedLocalesOf(['da', 'is', 'is-IS'])).toEqual([
+      'da',
+      'is',
+      'is-IS',
+    ]);
   });
 
   {
