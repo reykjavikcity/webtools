@@ -338,6 +338,8 @@ detection test.)
 - The `dayPeriod` option has a couple of slight mismatches, at 5 am and 12
   noon.
 
+We eagerly accept bugfixes, additions, etc. to this module!
+
 ---
 
 ## `@reykjavik/webtools/SiteImprove`
@@ -573,19 +575,19 @@ export const myClass = vanillaClass(`
 // more complex styles.
 export const myOtherClass = vanillaClass(
   (className) => `
-  .${className} {
-    background-color: #ccc;
-    padding: .5em 1em;
-  }
-  .${className} > strong {
-    color: #c00;
-  }
-  @media (min-width: 800px) {
-    .${className} {
-      background-color: #eee;
+    .${className} { 
+      background-color: #ccc;
+      padding: .5em 1em;
     }
-  }
-`
+    .${className} > strong {
+      color: #c00;
+    }
+    @media (min-width: 800px) {
+      .${className} {
+        background-color: #eee;
+      }
+    }
+  `
 );
 
 export const humanReadableClass = vanillaClass(
