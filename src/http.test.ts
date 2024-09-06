@@ -22,7 +22,7 @@ import type {
   TTL,
   TTLConfig,
 } from './http.js';
-import { cacheControl, cacheControlHeaders, toSec } from './http.js';
+import { cacheControl, cacheControlHeaders, toMs, toSec } from './http.js';
 import * as moduleExports from './http.js';
 
 // ---------------------------------------------------------------------------
@@ -32,6 +32,7 @@ if (false as boolean) {
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const exports: Record<keyof typeof moduleExports, true> = {
     toSec: true,
+    toMs: true,
     cacheControl: true,
     cacheControlHeaders: true,
 
@@ -244,9 +245,9 @@ describe('toSec', () => {
     expect(toSec('-2s')).toEqual(0);
     expect(toSec('2m')).toEqual(120);
     expect(toSec('2.5m')).toEqual(150);
-    expect(toSec('2h')).toEqual(7200);
-    expect(toSec('3d')).toEqual(259200);
-    expect(toSec('4w')).toEqual(2419200);
+    expect(toSec('2h')).toEqual(7_200);
+    expect(toSec('3d')).toEqual(259_200);
+    expect(toSec('4w')).toEqual(2_419_200);
 
     // @ts-expect-error  (testing bad input)
     const bad1: TTL = 'halló';
@@ -254,5 +255,26 @@ describe('toSec', () => {
     const bad2: TTL = undefined;
     expect(toSec(bad1)).toEqual(0);
     expect(toSec(bad2)).toEqual(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe('toMs', () => {
+  test('works', () => {
+    expect(toMs(123)).toEqual(123_000);
+    expect(toMs(123.7)).toEqual(124_000);
+    expect(toMs(-1)).toEqual(0);
+
+    expect(toMs('1s')).toEqual(1_000);
+    expect(toMs('-2s')).toEqual(0);
+    expect(toMs('4w')).toEqual(2_419_200_000);
+
+    // @ts-expect-error  (testing bad input)
+    const bad1: TTL = 'halló';
+    // @ts-expect-error  (testing bad input)
+    const bad2: TTL = undefined;
+    expect(toMs(bad1)).toEqual(0);
+    expect(toMs(bad2)).toEqual(0);
   });
 });

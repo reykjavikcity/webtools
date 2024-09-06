@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/http`:
+  - feat: Add `toMs` duration helper
 - `@reykjavik/webtools/fixIcelandicLocale`:
   - fix: Use each `Intl.*` class' `supportedLocalesOf` method to map locales
 

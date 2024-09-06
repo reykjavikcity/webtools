@@ -23,6 +23,7 @@ bun add @reykjavik/webtools
   - [`cacheControlHeaders` helper](#cachecontrolheaders-helper)
     - [Type `TTLConfig`](#type-ttlconfig)
   - [`toSec` TTL helper](#tosec-ttl-helper)
+  - [`toMs` duration helper](#toms-duration-helper)
 - [`@reykjavik/webtools/async`](#reykjavikwebtoolsasync)
   - [`promiseAllObject`](#promiseallobject)
   - [`maxWait`](#maxwait)
@@ -206,7 +207,7 @@ behavior.
 **Syntax:**
 `` toSec(ttl: number | `${number}${'s'|'m'|'h'|'d'|'w'}`): number ``
 
-Converts a `TTL` (max-age) value into seconds, and returns `0` for bad and/or
+Converts a `TTL` (max-age) value into seconds. Returns `0` for bad and/or
 negative input values.
 
 ```js
@@ -215,6 +216,22 @@ import type { toSec, TTL } from '@reykjavik/webtools/http';
 const ttl: TTL = '2h';
 
 const ttlSec = toSec(ttl);
+```
+
+### `toMs` duration helper
+
+**Syntax:**
+`` toSec(duration: number | `${number}${'s'|'m'|'h'|'d'|'w'}`): number ``
+
+Converts a `TTL` (duration) value into milliseconds. Returns `0` for bad
+and/or negative input values.
+
+```js
+import type { toMs, TTL } from '@reykjavik/webtools/http';
+
+const ttl: TTL = '2h';
+
+const ttlSec = toMs(ttl);
 ```
 
 ---

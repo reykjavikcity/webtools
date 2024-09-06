@@ -265,8 +265,8 @@ const unitToSeconds: Record<TimeUnit, number> = {
 };
 
 /**
- * Converts a `TTL` (max-age) value into seconds, and returns `0` for bad
- * and/or negative input values.
+ * Converts a `TTL` (max-age) value into seconds. Returns `0` for bad and/or
+ * negative input values.
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#tosec-ttl-helper
  */
@@ -278,6 +278,14 @@ export const toSec = (ttl: TTL): number => {
   }
   return Math.max(0, Math.round(ttl)) || 0;
 };
+
+/**
+ * Converts a `TTL` (duration) value into milliseconds. Returns `0` for bad
+ * and/or negative input values.
+ *
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#toms-duration-helper
+ */
+export const toMs = (ttl: TTL): number => toSec(ttl) * 1_000;
 
 type ServerResponseStub = Pick<
   ServerResponse,
