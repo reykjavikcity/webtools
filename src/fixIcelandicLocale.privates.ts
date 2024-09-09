@@ -134,9 +134,12 @@ const PatchedNumberFormat = function NumberFormat(
   const super_ = _NumberFormat(mappedLocales || locales, options);
   const mapped = !!mappedLocales;
 
-  this.format = (value) => combineParts(this.formatToParts(value));
+  this.format = (value) =>
+    mapped ? combineParts(this.formatToParts(value)) : super_.format(value);
   this.formatRange = (value1, value2) =>
-    combineParts(this.formatRangeToParts(value1, value2));
+    mapped
+      ? combineParts(this.formatRangeToParts(value1, value2))
+      : super_.formatRange(value1, value2);
   this.formatToParts = (value) => {
     const parts = super_.formatToParts(value);
     return mapped ? reformatNumberParts(super_, parts) : parts;
@@ -299,9 +302,12 @@ const PatchedDateTimeFormat = function DateTimeFormat(
   const super_ = _DateTimeFormat(mappedLocales || locales, options);
   const mapped = !!mappedLocales;
 
-  this.format = (value) => combineParts(this.formatToParts(value));
+  this.format = (value) =>
+    mapped ? combineParts(this.formatToParts(value)) : super_.format(value);
   this.formatRange = (value1, value2) =>
-    combineParts(this.formatRangeToParts(value1, value2));
+    mapped
+      ? combineParts(this.formatRangeToParts(value1, value2))
+      : super_.formatRange(value1, value2);
 
   this.formatToParts = (value) => {
     const parts = super_.formatToParts(value);
