@@ -7,6 +7,7 @@
   - feat: Add `toMs` duration helper
 - `@reykjavik/webtools/fixIcelandicLocale`:
   - fix: Use each `Intl.*` class' `supportedLocalesOf` method to map locales
+  - fix: Remove unnecessary Intl.\* method instance-bindings
 
 ## 0.1.28 – 0.1.29
 

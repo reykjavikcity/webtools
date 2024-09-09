@@ -437,9 +437,6 @@ if (_PluralRules) {
       super(mappedLocales || locales, options);
       this.mapped = !!mappedLocales;
       this.ord = options?.type === 'ordinal';
-
-      this.select = this.select.bind(this);
-      this.selectRange = this.selectRange.bind(this);
     }
     select(n: number): Intl.LDMLPluralRule {
       if (this.mapped) {
@@ -482,9 +479,6 @@ if (_ListFormat) {
       const mappedLocales = mapLocales(_ListFormat, locales);
       super(mappedLocales || locales, options);
       this.mapped = !!mappedLocales;
-
-      this.format = this.format.bind(this);
-      this.formatToParts = this.formatToParts.bind(this);
     }
     format(list: Iterable<string>) {
       return this.mapped ? combineParts(this.formatToParts(list)) : super.format(list);
