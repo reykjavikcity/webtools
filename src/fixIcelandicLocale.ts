@@ -17,7 +17,7 @@ import {
   none. Partial Icelandic suppoort is better than none. Partial Icelandic...
 */
 
-if (Intl.Collator.supportedLocalesOf(['is']).length < 1) {
+if (!Intl.Collator.supportedLocalesOf(['is']).length) {
   Intl.Collator = _PatchedCollator;
   String.prototype.localeCompare = _patchedStringLocaleCompare;
 
@@ -30,10 +30,10 @@ if (Intl.Collator.supportedLocalesOf(['is']).length < 1) {
   Date.prototype.toLocaleTimeString = _patchedDateToLocaleTimeString;
 }
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unnecessary-condition */
-if (Intl.ListFormat && Intl.ListFormat.supportedLocalesOf(['is']).length < 1) {
+if (Intl.ListFormat && !Intl.ListFormat.supportedLocalesOf(['is']).length) {
   (Intl.ListFormat as typeof Intl.ListFormat) = _PatchedListFormat;
 }
-if (Intl.PluralRules && Intl.PluralRules.supportedLocalesOf(['is']).length < 1) {
+if (Intl.PluralRules && !Intl.PluralRules.supportedLocalesOf(['is']).length) {
   (Intl.PluralRules as typeof Intl.PluralRules) = _PatchedPluralRules;
 }
 /* eslint-enable @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unnecessary-condition */
