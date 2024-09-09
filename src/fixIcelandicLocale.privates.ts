@@ -1,5 +1,6 @@
-type SupportedLocalesOf = (typeof Intl.Collator)['supportedLocalesOf'];
-type IntlClassLike = { supportedLocalesOf: SupportedLocalesOf };
+type IntlClassLike = {
+  supportedLocalesOf: (locales: string | Array<string>) => Array<string>;
+};
 
 const islLocaleRe = /^isl?(?:-|$)/i;
 
