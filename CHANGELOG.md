@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.30
+
+_2024-09-15_
+
 - `@reykjavik/webtools/http`:
   - feat: Add `toMs` duration helper
 - `@reykjavik/webtools/fixIcelandicLocale`:
