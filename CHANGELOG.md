@@ -6,9 +6,10 @@
 - `@reykjavik/webtools/http`:
   - feat: Add `toMs` duration helper
 - `@reykjavik/webtools/fixIcelandicLocale`:
+  - feat: Patch `Intl.RelativeTimeFormat`
   - fix: Incorrect `PluralRules` results for negative values
   - fix: Use each `Intl.*` class' `supportedLocalesOf` method to map locales
-  - fix: Remove unnecessary Intl.\* method instance-bindings
+  - fix: Remove unnecessary `Intl.\*` method instance-bindings
 
 ## 0.1.28 – 0.1.29
 

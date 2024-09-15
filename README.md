@@ -305,15 +305,16 @@ This module patches the following methods/classes by substituting the `is`
 locale with `da` (Danish) and apply a few post-hoc fixes to their return
 values.
 
-- `Intl.Collator` and `String.prototype.localeCompare`
-- `Intl.NumberFormat` and `Number.prototype.toLocaleString`
+- `Intl.Collator` and `String.prototype.localeCompare` (\*)
+- `Intl.NumberFormat` and `Number.prototype.toLocaleString` (\*)
 - `Intl.DateTimeFormat` and `Date.prototype.toLocaleString`,
-  `.toLocaleDateString`, and `.toLocaleTimeString`
+  `.toLocaleDateString`, and `.toLocaleTimeString` (\*)
+- `Intl.RelativeDateFormat`
 - `Intl.PluralRules`
 - `Intl.ListFormat`
 
-This provides usable (but not perfect) results, with a few caveats that are
-listed below.
+(\*) The results are quite usable, but not entirely perfect. The
+limitations/caveats are listed below.
 
 To apply the patch, simply "side-effect import" this module at the top of your
 app's entry point:

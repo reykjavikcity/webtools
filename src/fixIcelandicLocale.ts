@@ -8,6 +8,7 @@ import {
   _PatchedNumberFormat,
   _patchedNumberToLocaleString,
   _PatchedPluralRules,
+  _PatchedRelativeTimeFormat,
   _patchedStringLocaleCompare,
 } from './fixIcelandicLocale.privates.js';
 
@@ -35,5 +36,12 @@ if (Intl.ListFormat && !Intl.ListFormat.supportedLocalesOf(['is']).length) {
 }
 if (Intl.PluralRules && !Intl.PluralRules.supportedLocalesOf(['is']).length) {
   (Intl.PluralRules as typeof Intl.PluralRules) = _PatchedPluralRules;
+}
+if (
+  Intl.RelativeTimeFormat &&
+  !Intl.RelativeTimeFormat.supportedLocalesOf(['is']).length
+) {
+  (Intl.RelativeTimeFormat as typeof Intl.RelativeTimeFormat) =
+    _PatchedRelativeTimeFormat;
 }
 /* eslint-enable @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unnecessary-condition */

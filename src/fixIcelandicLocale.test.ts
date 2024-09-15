@@ -6,6 +6,7 @@ import {
   _PatchedListFormat,
   _PatchedNumberFormat,
   _PatchedPluralRules,
+  _PatchedRelativeTimeFormat,
 } from './fixIcelandicLocale.privates.js';
 
 // ---------------------------------------------------------------------------
@@ -479,4 +480,91 @@ describe('_PatchedListFormat', () => {
       });
     });
   });
+});
+
+// ---------------------------------------------------------------------------
+
+describe('_PatchedRelativeTimeFormat', () => {
+  test('Can be called with `new`', () => {
+    expect(new _PatchedRelativeTimeFormat('is').format(1, 'day')).toBe('eftir 1 dag');
+    // @ts-expect-error  (Throws if called without `new`)
+    expect(() => _PatchedRelativeTimeFormat('is')).toThrow(TypeError);
+
+    // respects preceding locales ...including "da"
+    expect(new _PatchedRelativeTimeFormat(['en', 'is']).format(1, 'day')).toBe(
+      'in 1 day'
+    );
+    expect(new _PatchedRelativeTimeFormat(['da', 'is']).format(1, 'day')).toBe(
+      'om 1 dag'
+    );
+  });
+
+  test('Has static methods', () => {
+    expect(_PatchedRelativeTimeFormat.supportedLocalesOf(['da'])).toEqual(['da']);
+  });
+
+  {
+    const styles: Array<Intl.RelativeTimeFormatStyle> = ['long', 'short', 'narrow'];
+    const numerics: Array<Intl.RelativeTimeFormatNumeric> = ['always', 'auto'];
+    const values = [0, 1, 2, 3, 4, 5, 9, 10, 11, 21, 1234];
+    const units: Array<Intl.RelativeTimeFormatUnitSingular> = [
+      'year',
+      'quarter',
+      'month',
+      'week',
+      'day',
+      'hour',
+      'minute',
+      'second',
+    ];
+
+    for (const style of styles) {
+      for (const numeric of numerics) {
+        const opts: Intl.RelativeTimeFormatOptions = { numeric, style };
+        const patchedRTF = new _PatchedRelativeTimeFormat('is', opts);
+        const nativeRTF = new Intl.RelativeTimeFormat('is', opts);
+        for (const unitPrefix of units) {
+          for (const unitSuffix of ['', 's'] as const) {
+            const unit: Intl.RelativeTimeFormatUnit = `${unitPrefix}${unitSuffix}`;
+
+            const key = `${style},${numeric},${unit}: `;
+
+            test(`_PatchedDateTimeFormat.format* (${key})`, () => {
+              for (const posNeg of [1, -1]) {
+                for (const absValue of values) {
+                  if (posNeg === -1 && absValue === 0) {
+                    continue; // Skip testing -0
+                  }
+                  const value = posNeg * absValue;
+                  if (
+                    style === 'narrow' &&
+                    unitPrefix === 'year' &&
+                    value % 10 === -1 &&
+                    value % 100 !== -11 &&
+                    !(numeric === 'auto' && value === -1) // make exception for "á síðasta ári"
+                  ) {
+                    // The native implementations (Node, Bun, Firefox, Safari, etc.)
+                    // have incorrect pluralization for negative years in narrow
+                    // style, but our patched version has the correct pluralization.
+                    // Can't be arsed to "fix" this, to match the grammatically
+                    // incorrect results.
+                    expect(patchedRTF.format(value, unit)).toBe(
+                      `fyrir ${Math.abs(value)} ári`
+                    );
+                    return;
+                  }
+                  expect(patchedRTF.format(value, unit)).toBe(
+                    nativeRTF.format(value, unit)
+                  );
+                  expect(patchedRTF.formatToParts(value, unit)).toEqual(
+                    nativeRTF.formatToParts(value, unit)
+                  );
+                }
+              }
+            });
+          }
+        }
+      }
+    }
+  }
 });

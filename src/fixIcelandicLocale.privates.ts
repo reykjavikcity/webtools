@@ -514,3 +514,144 @@ export const _PatchedListFormat =
   PatchedListFormat as unknown as typeof Intl.ListFormat & {
     $original: typeof Intl.ListFormat;
   };
+
+// ===========================================================================
+// RelativeTimeFormat
+// ===========================================================================
+
+const _RelativeTimeFormat = Intl.RelativeTimeFormat;
+let PatchedRelativeTimeFormat;
+
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+if (_RelativeTimeFormat) {
+  let pluralIsl: Intl.PluralRules | undefined;
+  let numFormatIsl: Intl.NumberFormat | undefined;
+
+  const islUnits: Record<
+    Intl.RelativeTimeFormatUnitSingular,
+    [
+      long: [sPast: string, pPast: string, sFuture: string, pFuture: string],
+      short?: string
+    ]
+  > = {
+    year: [['ári', 'árum', 'ár', 'ár'], ''],
+    quarter: [['ársfjórðungi', 'ársfjórðungum', 'ársfjórðung', 'ársfjórðunga'], 'ársfj.'],
+    month: [['mánuði', 'mánuðum', 'mánuð', 'mánuði'], 'mán.'],
+    week: [['viku', 'vikum', 'viku', 'vikur'], ''],
+    day: [['degi', 'dögum', 'dag', 'daga'], ''],
+    hour: [['klukkustund', 'klukkustundum', 'klukkustund', 'klukkustundir'], 'klst.'],
+    minute: [['mínútu', 'mínútum', 'mínútu', 'mínútur'], 'mín.'],
+    second: [['sekúndu', 'sekúndum', 'sekúndu', 'sekúndur'], 'sek.'],
+  };
+  const phrases: Record<string, string> = {
+    nu: 'núna',
+    'næste år': 'á næsta ári',
+    'sidste år': 'á síðasta ári',
+    'i år': 'á þessu ári',
+
+    'sidste kvartal': 'síðasti ársfjórðungur',
+    'dette kvartal': 'þessi ársfjórðungur',
+    'næste kvartal': 'næsti ársfjórðungur',
+    'sidste kvt.': 'síðasti ársfj.',
+    'dette kvt.': 'þessi ársfj.',
+    'næste kvt.': 'næsti ársfj.',
+
+    'sidste måned': 'í síðasta mánuði',
+    'denne måned': 'í þessum mánuði',
+    'næste måned': 'í næsta mánuði',
+    'sidste md.': 'í síðasta mán.',
+    'denne md.': 'í þessum mán.',
+    'næste md.': 'í næsta mán.',
+
+    'sidste uge': 'í síðustu viku',
+    'denne uge': 'í þessari viku',
+    'næste uge': 'í næstu viku',
+
+    'i forgårs': 'í fyrradag',
+    'i går': 'í gær',
+    'i dag': 'í dag',
+    'i morgen': 'á morgun',
+    'i overmorgen': 'eftir tvo daga', // 'á hinn daginn',
+
+    'denne time': 'þessa stundina',
+
+    'dette minut': 'á þessari mínútu',
+  };
+
+  PatchedRelativeTimeFormat = class RelativeTimeFormat extends _RelativeTimeFormat {
+    private mapped: boolean;
+
+    constructor(
+      locales: string | Array<string>,
+      options?: Intl.RelativeTimeFormatOptions
+    ) {
+      const mappedLocales = mapLocales(_RelativeTimeFormat, locales);
+      super(mappedLocales || locales, options);
+      this.mapped = !!mappedLocales;
+    }
+    format(value: number, unit: Intl.RelativeTimeFormatUnit): string {
+      return this.mapped
+        ? combineParts(this.formatToParts(value, unit))
+        : super.format(value, unit);
+    }
+
+    // eslint-disable-next-line complexity
+    formatToParts(
+      value: number,
+      unit: Intl.RelativeTimeFormatUnit
+    ): Array<Intl.RelativeTimeFormatPart> {
+      const parts = super.formatToParts(value, unit);
+      if (!this.mapped) {
+        return parts;
+      }
+      if (!pluralIsl) {
+        pluralIsl = new _PatchedPluralRules('is');
+      }
+      if (!numFormatIsl) {
+        numFormatIsl = new _PatchedNumberFormat('is');
+      }
+
+      const options = this.resolvedOptions();
+      const unitSngl = unit.replace(/s$/, '') as Intl.RelativeTimeFormatUnitSingular;
+
+      if (parts.length === 1) {
+        const firstPart = parts[0]!;
+        firstPart.value = phrases[firstPart.value] || firstPart.value;
+        return parts;
+      }
+
+      const [long, short] = islUnits[unitSngl];
+      const idx = (value < 0 ? 0 : 2) + (pluralIsl.select(value) === 'one' ? 0 : 1);
+
+      const prefixStr =
+        options.style === 'narrow' &&
+        (unitSngl === 'second' || unitSngl === 'minute' || unitSngl === 'hour')
+          ? value < 0
+            ? '-'
+            : '+'
+          : value < 0
+          ? 'fyrir '
+          : 'eftir ';
+      const valueStr = (options.style !== 'long' && short) || long[idx];
+
+      const islParts: Array<Intl.RelativeTimeFormatPart> = [
+        { type: 'literal', value: prefixStr },
+        ...(numFormatIsl.formatToParts(Math.abs(value)).map((part) => {
+          (part as Exclude<Intl.RelativeTimeFormatPart, { type: 'literal' }>).unit =
+            unitSngl;
+          return part;
+        }) as Array<Intl.RelativeTimeFormatPart>),
+        { type: 'literal', value: ` ${valueStr}` },
+      ];
+
+      return islParts;
+    }
+
+    static $original = _RelativeTimeFormat;
+  };
+}
+
+export const _PatchedRelativeTimeFormat =
+  PatchedRelativeTimeFormat as unknown as typeof Intl.RelativeTimeFormat & {
+    $original: typeof Intl.RelativeTimeFormat;
+  };
