@@ -6,6 +6,7 @@
 - `@reykjavik/webtools/http`:
   - feat: Add `toMs` duration helper
 - `@reykjavik/webtools/fixIcelandicLocale`:
+  - fix: Incorrect `PluralRules` results for negative values
   - fix: Use each `Intl.*` class' `supportedLocalesOf` method to map locales
   - fix: Remove unnecessary Intl.\* method instance-bindings
 

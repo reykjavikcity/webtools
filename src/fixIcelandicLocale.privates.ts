@@ -435,6 +435,7 @@ if (_PluralRules) {
     private mapped: boolean;
     private ord: boolean;
     private pluralIsl(n: number) {
+      n = n < 0 ? -n : n;
       return this.ord ? 'other' : n % 10 !== 1 || n % 100 === 11 ? 'other' : 'one';
     }
 

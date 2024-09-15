@@ -414,9 +414,10 @@ describe('_PatchedPluralRules', () => {
   test('.select() handles icelandic', () => {
     [-1, 1].forEach((f) => {
       [0, 1, 2, 11, 17, 21, 91, 101, 111, 121, 100011, 101234].forEach((n) => {
-        expect(islPlural.select(n)).toEqual(islPluralReal.select(n));
-        expect(new _PatchedPluralRules('is', { type: 'ordinal' }).select(n)).toEqual(
-          new _PatchedPluralRules.$original('is', { type: 'ordinal' }).select(n)
+        const num = f * n;
+        expect(islPlural.select(num)).toEqual(islPluralReal.select(num));
+        expect(new _PatchedPluralRules('is', { type: 'ordinal' }).select(num)).toEqual(
+          new _PatchedPluralRules.$original('is', { type: 'ordinal' }).select(num)
         );
       });
     });
