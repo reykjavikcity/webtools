@@ -333,11 +333,10 @@ detection test.)
 
 **`Intl.Collator` and `localeCompare`:**
 
-- It incorrectly treats `ð` and `d` as the same letter (most of the time), and
-  the acute-accented characters `á`, `é`, `í`, `ó`, `ú` and `ý` get lumped in
-  with their non-accented counterparts (unless the compared).  
-  We fix this only for the first letter in the string, but not for the rest of
-  it.
+- It sorts initial letters correctly but in the rest of the string, it
+  incorrectly treats `ð` and `d` as the same letter (most of the time), and
+  lumps the acute-accented characters `á`, `é`, `í`, `ó`, `ú` and `ý` in with
+  their non-accented counterparts.
 
 **`Intl.NumberFormat` and `toLocaleString`:**
 
