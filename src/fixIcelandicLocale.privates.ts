@@ -497,8 +497,8 @@ if (_ListFormat) {
       const parts = super.formatToParts(list);
       if (this.mapped) {
         for (const item of parts) {
-          const { value } = item;
-          if (item.type === 'literal' && (value === ' el. ' || value === ' eller ')) {
+          const { type, value } = item;
+          if (type === 'literal' && (value === ' el. ' || value === ' eller ')) {
             item.value = ' eða ';
           }
         }
