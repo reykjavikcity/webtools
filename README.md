@@ -271,17 +271,17 @@ This somewhat esoteric helper resolves soon as all of the passed `promises`
 have resolved, or after `timeout` milliseconds — whichever comes first.
 
 If an object is passed, the resolved value will be an object with the same
-keys, with undefined values for any promises that didn't resolve in time, and
-the resolved values in a `value` container object.
+keys, with `undefined` values for any promises that didn't resolve in time,
+and the resolved values in a `value` container object.
 
-If any of the promises reject, their values become undefined in the returned
+If any of the promises reject, their values become `undefined` in the returned
 object.
 
 ```ts
 import { maxWait } from '@reykjavik/webtools/async';
 
-const user = fetchUser();
-const posts = fetchPosts();
+const user = fetchUser(); // Promise<User>
+const posts = fetchPosts(); // Promise<Array<Post>>
 
 // Array of promises resolves to void
 await maxWait(500, [user, posts]);

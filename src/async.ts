@@ -10,8 +10,8 @@ export const sleep = (length: number) =>
 // ---------------------------------------------------------------------------
 
 /**
- * Resolves soon as all of the passed `promises` have resolved, or after
- * `timeout` milliseconds — whichever comes first.
+ * Resolves soon as all of the passed `promises` have resolved/settled,
+ * or after `timeout` milliseconds — whichever comes first.
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#maxwait
  */
