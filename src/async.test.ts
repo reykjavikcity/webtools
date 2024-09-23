@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 
-import { maxWait, promiseAllObject, sleep } from './async.js';
+import { addLag, maxWait, promiseAllObject, sleep } from './async.js';
 import * as moduleExports from './async.js';
 
 if (false as boolean) {
@@ -11,6 +11,7 @@ if (false as boolean) {
 
   const exports: Record<keyof typeof moduleExports, true> = {
     sleep: true,
+    addLag: true,
     maxWait: true,
     promiseAllObject: true,
   };
@@ -30,11 +31,11 @@ if (false as boolean) {
     promiseAllObject(promiseMap);
 
   const res2: Promise<{
-    foo?: { value: 'A' };
-    bar?: { value: 'B' };
-    baz?: { value: 'C' };
-    smu?: { value: undefined };
-    fle?: { value: false };
+    foo?: PromiseFulfilledResult<'A'> | PromiseRejectedResult;
+    bar?: PromiseFulfilledResult<'B'> | PromiseRejectedResult;
+    baz?: PromiseFulfilledResult<'C'> | PromiseRejectedResult;
+    smu?: PromiseFulfilledResult<undefined> | PromiseRejectedResult;
+    fle?: PromiseFulfilledResult<false> | PromiseRejectedResult;
   }> = maxWait(10, promiseMap);
 
   const res3: Promise<void> = maxWait(10, [Promise.resolve('A')]);
@@ -67,46 +68,33 @@ describe('maxWait', () => {
         foo: sleep(10).then(() => 'A'),
         bar: 'B',
         baz: undefined,
+        smu: Promise.reject('Rejected promise in maxWait'),
       })
     ).resolves.toEqual({
-      foo: { value: 'A' },
-      bar: { value: 'B' },
-      baz: { value: undefined },
+      foo: { status: 'fulfilled', value: 'A' },
+      bar: { status: 'fulfilled', value: 'B' },
+      baz: { status: 'fulfilled', value: undefined },
+      smu: { status: 'rejected', reason: 'Rejected promise in maxWait' },
     });
 
-    expect(
-      maxWait(10, {
-        foo: sleep(20).then(() => 'A'),
-        bar: 'B',
-      })
-    ).resolves.toEqual({
-      foo: undefined,
-      bar: { value: 'B' },
+    const partiallySettled = maxWait(20, {
+      foo: sleep(10).then(() => 'A'),
+      fuu: sleep(10).then(() => Promise.reject('slow rejection A')),
+      bar: 'B',
+      baz: sleep(30).then(() => Promise.reject('slow rejection B')),
+      smu: sleep(30).then(() => 'C'),
     });
-
-    expect(
-      maxWait(20, {
-        foo: sleep(30).then(() => 'A'),
-        bar: 'B',
-        baz: sleep(10).then(() => 'C'),
-      })
-    ).resolves.toEqual({
-      foo: undefined,
-      bar: { value: 'B' },
-      baz: { value: 'C' },
-    });
-
-    expect(
-      maxWait(20, {
-        foo: sleep(10).then(() => 'A'),
-        bar: 'B',
-        baz: Promise.reject('Rejected promise in maxwait'),
-      })
-    ).resolves.toEqual({
-      foo: { value: 'A' },
-      bar: { value: 'B' },
+    const partialResults = {
+      foo: { status: 'fulfilled', value: 'A' },
+      fuu: { status: 'rejected', reason: 'slow rejection A' },
+      bar: { status: 'fulfilled', value: 'B' },
       baz: undefined,
-    });
+      smu: undefined,
+    } as const;
+
+    expect(partiallySettled).resolves.toEqual(partialResults);
+    // returned result object should be stable.
+    expect(partiallySettled.then(addLag(30))).resolves.toEqual(partialResults);
   });
 });
 

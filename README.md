@@ -265,17 +265,15 @@ const { user, posts } = await promiseAllObject({
 
 **Syntax:** `maxWait(timeout: number, promises: Array<any>): Promise<void>`  
 **Syntax:**
-`maxWait<T extends PlainObj>(timeout: number, promises: T): Promise<{ [K in keyof T]: { value: Awaited<T[K]> } | undefined }>`
+`maxWait<T extends PlainObj>(timeout: number, promises: T): Promise<{ [K in keyof T]: PromiseSettledResult<T[K]> } | undefined }>`
 
-This somewhat esoteric helper resolves soon as all of the passed `promises`
-have resolved, or after `timeout` milliseconds — whichever comes first.
+This somewhat esoteric helper resolves soon when all of the passed `promises`
+have settled (resolved or rejected), OR after `timeout` milliseconds —
+whichever comes first.
 
 If an object is passed, the resolved value will be an object with the same
-keys, with `undefined` values for any promises that didn't resolve in time,
-and the resolved values in a `value` container object.
-
-If any of the promises reject, their values become `undefined` in the returned
-object.
+keys, and any settled values in a `PromiseSettledResult` object, and
+`undefined` for any promises that didn't settle in time.
 
 ```ts
 import { maxWait } from '@reykjavik/webtools/async';
@@ -291,6 +289,8 @@ const { user, posts } = await maxWait(500, { user, posts });
 
 console.log(user?.value); // undefined | User
 console.log(posts?.value); // undefined | Array<Post>
+console.log(posts?.status); // 'fulfilled' | 'rejected'
+console.log(posts?.reason); // undefined | unknown
 ```
 
 ---

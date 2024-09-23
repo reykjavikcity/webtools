@@ -1,3 +1,5 @@
+import { EitherObj } from '@reykjavik/hanna-utils';
+
 type PlainObj = Record<string, unknown>;
 
 /**
@@ -7,10 +9,19 @@ type PlainObj = Record<string, unknown>;
 export const sleep = (length: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, length));
 
+/**
+ * Returns a function that adds lag/delay to a promise chain,
+ * passing the promise payload through.
+ */
+export const addLag =
+  (length: number) =>
+  <T>(res: T) =>
+    sleep(length).then(() => res);
+
 // ---------------------------------------------------------------------------
 
 /**
- * Resolves soon as all of the passed `promises` have resolved/settled,
+ * Resolves as soon as all of the passed `promises` have resolved/settled,
  * or after `timeout` milliseconds — whichever comes first.
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#maxwait
@@ -20,7 +31,9 @@ export function maxWait<PromiseMap extends PlainObj>(
   timeout: number,
   promises: PromiseMap
 ): Promise<{
-  -readonly [K in keyof PromiseMap]: { value: Awaited<PromiseMap[K]> } | undefined;
+  -readonly [K in keyof PromiseMap]:
+    | EitherObj<PromiseFulfilledResult<Awaited<PromiseMap[K]>>, PromiseRejectedResult>
+    | undefined;
 }>;
 
 export function maxWait(timeout: number, promises: Array<unknown> | PlainObj) {
@@ -32,23 +45,28 @@ export function maxWait(timeout: number, promises: Array<unknown> | PlainObj) {
   }
   return Promise.race([sleep(timeout), Promise.allSettled(Object.values(promises))]).then(
     () => {
-      const retObj: Record<string, undefined | { value: unknown }> = {};
+      const retObj: Record<string, undefined | PromiseSettledResult<unknown>> = {};
       Object.entries(promises).forEach(([key, value]) => {
         if (value instanceof Promise) {
           retObj[key] = undefined;
-          value
-            .then((value) => {
-              retObj[key] = { value };
-            })
-            .catch(() => undefined);
+          value.then(
+            (value) => {
+              retObj[key] = { status: 'fulfilled', value };
+            },
+            (reason) => {
+              retObj[key] = { status: 'rejected', reason };
+            }
+          );
         } else {
-          retObj[key] = { value };
+          retObj[key] = { status: 'fulfilled', value };
         }
       });
-      return sleep(0).then(() => retObj);
+      return Promise.resolve().then(() => ({ ...retObj }));
     }
   );
 }
+
+type XX = EitherObj<PromiseFulfilledResult<string>, PromiseRejectedResult>;
 
 // ---------------------------------------------------------------------------
 
