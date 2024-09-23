@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.31
+
+_2024-09-23_
+
 - `@reykjavik/webtools/async`:
   - feat: `maxWait` returns full `PromiseSettledResult` objects
   - fix: `maxWait` result objects should remain stable
