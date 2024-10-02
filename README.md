@@ -24,6 +24,8 @@ bun add @reykjavik/webtools
     - [Type `TTLConfig`](#type-ttlconfig)
   - [`toSec` TTL helper](#tosec-ttl-helper)
   - [`toMs` duration helper](#toms-duration-helper)
+- [`@reykjavik/webtools/fixIcelandicLocale`](#reykjavikwebtoolsfixicelandiclocale)
+  - [Limitations](#limitations)
 - [`@reykjavik/webtools/async`](#reykjavikwebtoolsasync)
   - [`promiseAllObject`](#promiseallobject)
   - [`maxWait`](#maxwait)
@@ -37,8 +39,6 @@ bun add @reykjavik/webtools
   - [`Result.Success`](#resultsuccess)
   - [`Result.Fail`](#resultfail)
   - [`Result.throw`](#resultthrow)
-- [`@reykjavik/webtools/fixIcelandicLocale`](#reykjavikwebtoolsfixicelandiclocale)
-  - [Limitations](#limitations)
 - [`@reykjavik/webtools/SiteImprove`](#reykjavikwebtoolssiteimprove)
   - [`SiteImprove` component](#siteimprove-component)
   - [`pingSiteImprove` helper](#pingsiteimprove-helper)
@@ -243,6 +243,70 @@ const ttl: TTL = '2h';
 
 const ttlSec = toMs(ttl);
 ```
+
+---
+
+## `@reykjavik/webtools/fixIcelandicLocale`
+
+As of early 2024, Google Chrome still does not support the Icelandic locale
+`is`/`is-IS` in any way. Meanwhile other browsers have supported it for over a
+decade.
+
+This module patches the following methods/classes by substituting the `is`
+locale with `da` (Danish) and apply a few post-hoc fixes to their return
+values.
+
+- `Intl.Collator` and `String.prototype.localeCompare` (\*)
+- `Intl.NumberFormat` and `Number.prototype.toLocaleString` (\*)
+- `Intl.DateTimeFormat` and `Date.prototype.toLocaleString`,
+  `.toLocaleDateString`, and `.toLocaleTimeString` (\*)
+- `Intl.RelativeDateFormat`
+- `Intl.PluralRules`
+- `Intl.ListFormat`
+
+(\*) The results are quite usable, but not entirely perfect. The
+limitations/caveats are listed below.
+
+To apply the patch, simply "side-effect import" this module at the top of your
+app's entry point:
+
+```ts
+import '@reykjavik/webtools/fixIcelandicLocale';
+
+// Then continue with your day and use `localeCompare` and other Intl.* methods
+// as you normally would. (See "limitations" below.)
+```
+
+(**NOTE** The patch is only applied in engines that fail a simple feature
+detection test.)
+
+### Limitations
+
+**`Intl.Collator` and `localeCompare`:**
+
+- It sorts initial letters correctly but in the rest of the string, it
+  incorrectly treats `ð` and `d` as the same letter (most of the time), and
+  lumps the acute-accented characters `á`, `é`, `í`, `ó`, `ú` and `ý` in with
+  their non-accented counterparts.
+
+**`Intl.NumberFormat` and `toLocaleString`:**
+
+- The `style: "unit"` option is not supported and prints units in Danish. (Soo
+  many units and unit-variants…)
+- The `currencyDisplay: "name"` option is not supported and prints the
+  currency's full name in Danish.
+
+**`Intl.DateTimeFormat` and `toLocaleDateString`:**
+
+- The `month: 'narrow'` and `weekday: 'narrow'` options are not supported, and
+  print the corresponding Danish initials.
+- For `timeZoneName` the values `"long"`, `"shortGeneric"` and `"longGeneric"`
+  will appear in Danish.
+- The `timeStyle: 'full'` option prints the timezone names in Danish
+- The `dayPeriod` option has a couple of slight mismatches, at 5 am and 12
+  noon.
+
+We eagerly accept bugfixes, additions, etc. to this module!
 
 ---
 
@@ -530,70 +594,6 @@ try {
 ```
 
 This function acts as the inverse of [`Result.catch()`](#resultcatch).
-
----
-
-## `@reykjavik/webtools/fixIcelandicLocale`
-
-As of early 2024, Google Chrome still does not support the Icelandic locale
-`is`/`is-IS` in any way. Meanwhile other browsers have supported it for over a
-decade.
-
-This module patches the following methods/classes by substituting the `is`
-locale with `da` (Danish) and apply a few post-hoc fixes to their return
-values.
-
-- `Intl.Collator` and `String.prototype.localeCompare` (\*)
-- `Intl.NumberFormat` and `Number.prototype.toLocaleString` (\*)
-- `Intl.DateTimeFormat` and `Date.prototype.toLocaleString`,
-  `.toLocaleDateString`, and `.toLocaleTimeString` (\*)
-- `Intl.RelativeDateFormat`
-- `Intl.PluralRules`
-- `Intl.ListFormat`
-
-(\*) The results are quite usable, but not entirely perfect. The
-limitations/caveats are listed below.
-
-To apply the patch, simply "side-effect import" this module at the top of your
-app's entry point:
-
-```ts
-import '@reykjavik/webtools/fixIcelandicLocale';
-
-// Then continue with your day and use `localeCompare` and other Intl.* methods
-// as you normally would. (See "limitations" below.)
-```
-
-(**NOTE** The patch is only applied in engines that fail a simple feature
-detection test.)
-
-### Limitations
-
-**`Intl.Collator` and `localeCompare`:**
-
-- It sorts initial letters correctly but in the rest of the string, it
-  incorrectly treats `ð` and `d` as the same letter (most of the time), and
-  lumps the acute-accented characters `á`, `é`, `í`, `ó`, `ú` and `ý` in with
-  their non-accented counterparts.
-
-**`Intl.NumberFormat` and `toLocaleString`:**
-
-- The `style: "unit"` option is not supported and prints units in Danish. (Soo
-  many units and unit-variants…)
-- The `currencyDisplay: "name"` option is not supported and prints the
-  currency's full name in Danish.
-
-**`Intl.DateTimeFormat` and `toLocaleDateString`:**
-
-- The `month: 'narrow'` and `weekday: 'narrow'` options are not supported, and
-  print the corresponding Danish initials.
-- For `timeZoneName` the values `"long"`, `"shortGeneric"` and `"longGeneric"`
-  will appear in Danish.
-- The `timeStyle: 'full'` option prints the timezone names in Danish
-- The `dayPeriod` option has a couple of slight mismatches, at 5 am and 12
-  noon.
-
-We eagerly accept bugfixes, additions, etc. to this module!
 
 ---
 
