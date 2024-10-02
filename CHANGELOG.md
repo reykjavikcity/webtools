@@ -3,6 +3,9 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- feat: Add module `@reykjavik/webtools/errorhandling` with `asError` and
+  `Result.*` helpers for safe, structured error handling with discriminated
+  `[error, result]` tuples.
 
 ## 0.1.31
 

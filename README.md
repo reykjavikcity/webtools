@@ -27,6 +27,16 @@ bun add @reykjavik/webtools
 - [`@reykjavik/webtools/async`](#reykjavikwebtoolsasync)
   - [`promiseAllObject`](#promiseallobject)
   - [`maxWait`](#maxwait)
+- [`@reykjavik/webtools/errorhandling`](#reykjavikwebtoolserrorhandling)
+  - [`asError`](#aserror)
+  - [`Result` Singleton](#result-singleton)
+  - [Type `ResultTuple`](#type-resulttuple)
+  - [Type `ResultTupleObj`](#type-resulttupleobj)
+  - [`Result.catch`](#resultcatch)
+  - [`Result.map`](#resultmap)
+  - [`Result.Success`](#resultsuccess)
+  - [`Result.Fail`](#resultfail)
+  - [`Result.throw`](#resultthrow)
 - [`@reykjavik/webtools/fixIcelandicLocale`](#reykjavikwebtoolsfixicelandiclocale)
   - [Limitations](#limitations)
 - [`@reykjavik/webtools/SiteImprove`](#reykjavikwebtoolssiteimprove)
@@ -292,6 +302,234 @@ console.log(posts?.value); // undefined | Array<Post>
 console.log(posts?.status); // 'fulfilled' | 'rejected'
 console.log(posts?.reason); // undefined | unknown
 ```
+
+---
+
+## `@reykjavik/webtools/errorhandling`
+
+A small set of lightweight tools for handling errors and promises in a safer,
+more structured, FP-style way.
+
+Errors are always the first return value to promote early, explicit error
+handling.
+
+### `asError`
+
+**Syntax:** `asError(maybeError: unknown): ErrorFromPayload`
+
+Guarantees that a caught (`catch (e)`) value of `unknown` type, is indeed an
+`Error` instance.
+
+If the input is an `Error` instance, it is returned as-is. If the input is
+something else it is wrapped in a new `ErrorFromPayload` instance, and the
+original value is stored in a `payload`
+
+```ts
+import { asError, type ErrorFromPayload } from '@reykjavik/webtools/errorhandling';
+
+const theError = new Error('Something went wrong');
+try {
+  throw theError;
+} catch (err) {
+  const error = asError(theError);
+  console.error(error === theError); // true
+  console.error('patload' in error); // false
+}
+
+const someObject = ['Something went wrong'];
+try {
+  throw someObject;
+} catch (err) {
+  const error = asError(someObject);
+  console.error(error === someObject); // false
+  console.error(error.message === someObject.join(',')); // false
+  console.error(error instanceOf ErrorFromPayload); // true
+  console.error(error.payload === someObject); // true
+}
+```
+
+### `Result` Singleton
+
+Singleton object with the following small methods for creating, mapping or
+handling `ResultTupleObj` instances:
+
+- `Result.Success`
+- `Result.Fail`
+- `Result.catch`
+- `Result.map`
+- `Result.throw`
+
+### Type `ResultTuple`
+
+**Syntax:** `ResultTuple<ResultType, OptionalErrorType>`
+
+(Also aliased as `Result.Tuple`)
+
+Simple bare-bones discriminated tuple type for a `[error, result]` pair.
+
+```ts
+import { type ResultTuple } from '@reykjavik/webtools/errorhandling';
+
+declare const myResult: ResultTuple<string, Error>;
+
+const [error, result] = myResult;
+// Either `error` or `result` will be `undefined`
+
+if (error) {
+  // Here `error` is an Error instance
+  console.error(error.message);
+} else {
+  // Here `result` is guaranteed to be a string
+  console.log(result);
+}
+```
+
+### Type `ResultTupleObj`
+
+**Syntax:** `ResultTupleObj<ResultType, OptionalErrorType>`
+
+(Also aliased as `Result.TupleObj`)
+
+Discriminated tuple type for a `[error, result]` pair (same as `ResultTuple`)
+but with named properties `error` and `result` attached for dev convenience.
+
+```ts
+import { type ResultTuple } from '@reykjavik/webtools/errorhandling';
+
+declare const myResult: ResultTuple<string, Error>;
+
+const [error, result] = myResult;
+// Either `error` or `result` will be `undefined`
+
+if (error) {
+  // Here `error` is an Error instance
+  console.error(error.message);
+} else {
+  // Here `result` is guaranteed to be a string
+  console.log(result);
+}
+
+// But `myResults` also has named properties, for convenience
+if (myResult.error) {
+  // Here `myResult.error` is an Error instance
+  console.error(myResult.error.message);
+} else {
+  // Here `myResult.result` is a string
+  console.log(myResult.result);
+}
+```
+
+### `Result.catch`
+
+**Syntax:** `Result.catch<T, Err>(callback: () => T): ResultTupleObj<T, Err>`
+**Syntax:**
+`Result.catch<T, Err>(promise: Promise<T>): Promise<ResultTupleObj<T, Err>>`
+
+Error handling utility that wraps a promise or a callback function.
+
+Catches errors and returns a `ResultTupleObj` — a nice discriminated
+`[error, results]` tuple with the `result` and `error` also attached as named
+properties.
+
+Works on both promises and sync callback functions.
+
+```ts
+import { Result } from '@reykjavik/webtools/errorhandling';
+
+// Callback:
+const [error, fooObject] = Result.catch(() => getFooSyncMayThrow());
+// Promise:
+const [error, fooObject] = await Result.catch(getFooPromiseMayThrow());
+
+// Example of object property access:
+const fooQuery = await Result.catch(getFooPromiseMayThrow());
+if (fooQuery.error) {
+  console.log(fooQuery.error === fooQuery[0]); // true
+  throw fooQuery.error;
+}
+console.log(fooQuery.result === fooQuery[1]); // true
+fooQuery.result; // Guaranteed to be defined
+```
+
+This function acts as the inverse of [`Result.throw()`](#resultthrow).
+
+### `Result.map`
+
+**Syntax:**
+`Result.map<T, T2, E>(result: ResultTuple<T, E>, mapResult: (resultValue: T) => T2): ResultTuple<T2, E>`
+
+Helper to map a `ResultTuple`-like object to a new `ResultTupleObj` object,
+applying a transformation function to the result, but retaining the error
+as-is.
+
+```ts
+import { Result } from '@reykjavik/webtools/errorhandling';
+
+const getStrLength = (str: string) => str.length;
+
+const resultTuple =
+  Math.random() < 0.5 ? [new Error('Fail')] : [undefined, 'Hello!'];
+
+const [error, mappedResult] = Result.map(resultTuple, getStrLength);
+
+if (result) {
+  console.log(result); // 6
+}
+```
+
+### `Result.Success`
+
+**Syntax:** `Result.Success<T>(result: T): ResultTuple<T>`
+
+Factory for creating a successful `ResultTupleObj`.
+
+```ts
+import { Result } from '@reykjavik/webtools/errorhandling';
+
+const happyResult: Result.SuccessObj<string> =
+  Result.Success('My result value');
+
+console.log(happyResult.error); // undefined
+console.log(happyResult[0]); // undefined
+console.log(happyResult.result); // 'My result value'
+console.log(happyResult[1]); // 'My result value'
+```
+
+### `Result.Fail`
+
+**Syntax:** `Result.Fail<E extends Error>(err: T): ResultTuple<unknown, Err>`
+
+Factory for creating a failed `ResultTupleObj`.
+
+```ts
+import { Result } from '@reykjavik/webtools/errorhandling';
+
+const happyResult: Result.FailObj<string> = Result.Fail(new Error('Oh no!'));
+
+console.log(happyResult.error.message); // 'Oh no!'
+console.log(happyResult[0].message); // 'Oh no!'
+console.log(happyResult.result); // undefined
+console.log(happyResult[1]); // undefined
+```
+
+### `Result.throw`
+
+**Syntax:** `Result.throw<T>(result: ResultTuple<T>): T`
+
+Unwraps a discriminated `ResultTuple`-like `[error, result]` tuple and throws
+if there's an error, but returns the result otherwise.
+
+```ts
+import { Result } from '@reykjavik/webtools/errorhandling';
+
+try {
+  const fooResults = Result.throw(await getFooResultsTuple());
+} catch (fooError) {
+  // error is
+}
+```
+
+This function acts as the inverse of [`Result.catch()`](#resultcatch).
 
 ---
 
