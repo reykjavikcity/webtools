@@ -372,7 +372,7 @@ console.log(posts?.reason); // undefined | unknown
 ## `@reykjavik/webtools/errorhandling`
 
 A small set of lightweight tools for handling errors and promises in a safer,
-more structured, FP-style way.
+more structured, FP-ish way.
 
 Errors are always the first return value to promote early, explicit error
 handling.
@@ -386,7 +386,7 @@ Guarantees that a caught (`catch (e)`) value of `unknown` type, is indeed an
 
 If the input is an `Error` instance, it is returned as-is. If the input is
 something else it is wrapped in a new `ErrorFromPayload` instance, and the
-original value is stored in a `payload`
+original value is stored in as a `payload` property.
 
 ```ts
 import { asError, type ErrorFromPayload } from '@reykjavik/webtools/errorhandling';
@@ -408,6 +408,7 @@ try {
   console.error(error === someObject); // false
   console.error(error.message === someObject.join(',')); // false
   console.error(error instanceOf ErrorFromPayload); // true
+
   console.error(error.payload === someObject); // true
 }
 ```
@@ -437,7 +438,7 @@ import { type ResultTuple } from '@reykjavik/webtools/errorhandling';
 declare const myResult: ResultTuple<string, Error>;
 
 const [error, result] = myResult;
-// Either `error` or `result` will be `undefined`
+// (One of these two is always `undefined`)
 
 if (error) {
   // Here `error` is an Error instance
@@ -463,7 +464,7 @@ import { type ResultTuple } from '@reykjavik/webtools/errorhandling';
 declare const myResult: ResultTuple<string, Error>;
 
 const [error, result] = myResult;
-// Either `error` or `result` will be `undefined`
+// (One of these two is always `undefined`)
 
 if (error) {
   // Here `error` is an Error instance
@@ -589,7 +590,7 @@ import { Result } from '@reykjavik/webtools/errorhandling';
 try {
   const fooResults = Result.throw(await getFooResultsTuple());
 } catch (fooError) {
-  // error is
+  // Do something with the error from `getFooResultsTuple()`
 }
 ```
 
@@ -786,8 +787,8 @@ vanillaGlobal(`
 
 **Syntax:** `vanillaProps(css: string): GlobalStyleRule`
 
-Spreads the return value into a style object, to inject free-form CSS
-properties (or nested blocks)
+Returns an object that can be safely spread into a vanilla-extract style
+object, to inject free-form CSS properties (or nested blocks).
 
 ```ts
 // someFile.css.ts
@@ -951,14 +952,10 @@ vanillaGlobal(`
 
 ## Framework Specific Tools
 
----
-
 ### Remix.run Tools
 
 See [README-remix.md](./README-remix.md) for helpers and components
 specifically designed for use in Remix.run projects.
-
----
 
 <!-- #fragment anchors to not break older v0.1 @see links -->
 
