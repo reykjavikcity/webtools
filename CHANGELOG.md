@@ -3,6 +3,10 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/next/vanillaExtract`:
+  - feat: Deprecate `vanillaNest` and `vanillaClassNested` — in favor of
+    `vanillaClass` with `className` function parameter, or other home-brew
+    solutions.
 
 ## 0.1.32
 
