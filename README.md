@@ -47,9 +47,9 @@ bun add @reykjavik/webtools
   - [`CookieHubProvider` component](#cookiehubprovider-component)
   - [`useCookieHubConsent`](#usecookiehubconsent)
 - [`@reykjavik/webtools/vanillaExtract`](#reykjavikwebtoolsvanillaextract)
+  - [`vanillaClass`](#vanillaclass)
   - [`vanillaGlobal`](#vanillaglobal)
   - [`vanillaProps`](#vanillaprops)
-  - [`vanillaClass`](#vanillaclass)
   - [`vanillaClassNested`](#vanillaclassnested)
   - [`vanillaNest`](#vanillanest)
 - [Framework Specific Tools](#framework-specific-tools)
@@ -766,48 +766,6 @@ local type-safety for access to the full features and expressiveness of real
 CSS.
 ([Background info](https://github.com/vanilla-extract-css/vanilla-extract/discussions/898#discussioncomment-7125457).)
 
-### `vanillaGlobal`
-
-**Syntax:** `vanillaGlobal(css: string): void`
-
-Inserts free-form CSS as a vanilla-extract `globalStyle`.
-
-```ts
-// someFile.css.ts
-import { vanillaGlobal } from '@reykjavik/webtools/vanillaExtract';
-
-vanillaGlobal(`
-  body {
-    background-color: rebeccapurple;
-  }
-`);
-```
-
-### `vanillaProps`
-
-**Syntax:** `vanillaProps(css: string): GlobalStyleRule`
-
-Returns an object that can be safely spread into a vanilla-extract style
-object, to inject free-form CSS properties (or nested blocks).
-
-```ts
-// someFile.css.ts
-import { style } from '@vanilla-extract/css';
-import { vanillaProps } from '@reykjavik/webtools/vanillaExtract';
-
-const myStyle = style({
-  color: 'darksalmon',
-  // ...other style props...
-
-  ...vanillaProps(`
-    /* Plain CSS that's injected into the "myStyle" style block */
-    border-bottom: 1px solid red;
-    color: ${theme.color.primary}; /* I can still use typesafe values */
-    random-css-prop-normally-rejected-by-vanilla-extract: 'YOLO!';
-  `),
-});
-```
-
 ### `vanillaClass`
 
 **Syntax:**
@@ -853,6 +811,48 @@ export const humanReadableClass = vanillaClass(
     cursor: pointer;
   `
 );
+```
+
+### `vanillaGlobal`
+
+**Syntax:** `vanillaGlobal(css: string): void`
+
+Inserts free-form CSS as a vanilla-extract `globalStyle`.
+
+```ts
+// someFile.css.ts
+import { vanillaGlobal } from '@reykjavik/webtools/vanillaExtract';
+
+vanillaGlobal(`
+  body {
+    background-color: rebeccapurple;
+  }
+`);
+```
+
+### `vanillaProps`
+
+**Syntax:** `vanillaProps(css: string): GlobalStyleRule`
+
+Returns an object that can be safely spread into a vanilla-extract style
+object, to inject free-form CSS properties (or nested blocks).
+
+```ts
+// someFile.css.ts
+import { style } from '@vanilla-extract/css';
+import { vanillaProps } from '@reykjavik/webtools/vanillaExtract';
+
+const myStyle = style({
+  color: 'darksalmon',
+  // ...other style props...
+
+  ...vanillaProps(`
+    /* Plain CSS that's injected into the "myStyle" style block */
+    border-bottom: 1px solid red;
+    color: ${theme.color.primary}; /* I can still use typesafe values */
+    random-css-prop-normally-rejected-by-vanilla-extract: 'YOLO!';
+  `),
+});
 ```
 
 ### `vanillaClassNested`
