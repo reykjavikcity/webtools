@@ -425,18 +425,18 @@ describe('_PatchedPluralRules', () => {
     ]);
   });
 
-  const islPlural = new _PatchedPluralRules('is');
-  const islPluralReal = new _PatchedPluralRules.$original('is');
-
   test('.select() handles icelandic', () => {
     [-1, 1].forEach((f) => {
-      [0, 1, 2, 11, 17, 21, 91, 101, 111, 121, 100011, 101234].forEach((n) => {
-        const num = f * n;
-        expect(islPlural.select(num)).toEqual(islPluralReal.select(num));
-        expect(new _PatchedPluralRules('is', { type: 'ordinal' }).select(num)).toEqual(
-          new _PatchedPluralRules.$original('is', { type: 'ordinal' }).select(num)
-        );
-      });
+      (['ordinal', 'cardinal'] satisfies Array<Intl.PluralRulesOptions['type']>).forEach(
+        (type) => {
+          [0, 1, 2, 3, 11, 17, 21, 91, 101, 111, 121, 100011, 101234].forEach((n) => {
+            const num = f * n;
+            expect(new _PatchedPluralRules('is', { type }).select(num)).toEqual(
+              new _PatchedPluralRules.$original('is', { type }).select(num)
+            );
+          });
+        }
+      );
     });
   });
 
@@ -452,8 +452,15 @@ describe('_PatchedPluralRules', () => {
         [91, 92],
       ] as const
     ).forEach(([a, b]) => {
-      // @ts-expect-error  (TS doesn't know about the .selectRange() method ...yet?)
-      expect(islPlural.selectRange(a, b)).toEqual(islPluralReal.selectRange(a, b));
+      (['ordinal', 'cardinal'] satisfies Array<Intl.PluralRulesOptions['type']>).forEach(
+        (type) => {
+          // @ts-expect-error  (TS doesn't know about the .selectRange() method ...yet?)
+          expect(new _PatchedPluralRules('is', { type }).selectRange(a, b)).toEqual(
+            // @ts-expect-error  (TS doesn't know about the .selectRange() method ...yet?)
+            new _PatchedPluralRules.$original('is', { type }).selectRange(a, b)
+          );
+        }
+      );
     });
   });
 });
