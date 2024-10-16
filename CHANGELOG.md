@@ -7,6 +7,9 @@
   - feat: Deprecate `vanillaNest` and `vanillaClassNested` — in favor of
     `vanillaClass` with `className` function parameter, or other home-brew
     solutions.
+  - docs: Improve inline JSDocs and README for the `vanilla*` helpers
+- `@reykjavik/webtools/errorhandling`:
+  - docs: Improve code examples in README
 
 ## 0.1.32
 
