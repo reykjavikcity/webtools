@@ -491,19 +491,17 @@ describe('_PatchedListFormat', () => {
   test('Supports both conjunction and disjunction', () => {
     (['conjunction', 'disjunction', 'unit'] as const).forEach((type) => {
       (['long', 'short', 'narrow'] as const).forEach((style) => {
-        [['a', 'b', 'c'], ['a', 'b'], ['a']].forEach((input) => {
-          const opts = { style, type };
-          const narrowUnit = style === 'narrow' && type === 'unit';
-          const comma = narrowUnit ? '' : ',';
-          const joint = narrowUnit ? '' : type === 'disjunction' ? ' eða' : ' og';
-          expect(new _PatchedListFormat('is', opts).format(['a', 'b', 'c'])).toEqual(
-            `a${comma} b${joint} c`
-          );
-          expect(new _PatchedListFormat('is', opts).format(['a', 'b'])).toEqual(
-            `a${joint} b`
-          );
-          expect(new _PatchedListFormat('is', opts).format(['a'])).toEqual(`a`);
-        });
+        const opts = { style, type };
+        const narrowUnit = style === 'narrow' && type === 'unit';
+        const comma = narrowUnit ? '' : ',';
+        const joint = narrowUnit ? '' : type === 'disjunction' ? ' eða' : ' og';
+        expect(new _PatchedListFormat('is', opts).format(['a', 'b', 'c'])).toEqual(
+          `a${comma} b${joint} c`
+        );
+        expect(new _PatchedListFormat('is', opts).format(['a', 'b'])).toEqual(
+          `a${joint} b`
+        );
+        expect(new _PatchedListFormat('is', opts).format(['a'])).toEqual(`a`);
       });
     });
   });
