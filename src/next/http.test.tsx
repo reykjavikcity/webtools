@@ -1,9 +1,9 @@
 import React, { ComponentType, ReactElement } from 'react';
 import { Equals, Expect } from '@maranomynet/libtools';
 import { expect, test } from 'bun:test';
-import { ServerResponse } from 'http';
 import { AppType } from 'next/app.js';
 import { NextRouter } from 'next/router.js';
+import { ServerResponse } from 'node:http';
 
 import { HTTP_400_BadRequest } from '../http.js';
 import * as vannillaHttpExports from '../http.js';
