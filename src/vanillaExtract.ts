@@ -20,26 +20,25 @@ export const vanillaProps = (css: string) => ({ x: `; ${css}` } as GlobalStyleRu
 
 // ---------------------------------------------------------------------------
 
+type ClassNameCallback = (className: string, classNameSelector: string) => string;
+
 /**
  * Returns a scoped cssClassName styled with free-form CSS
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#vanillaclass
  */
-export function vanillaClass(css: string | ((className: string) => string)): string;
-export function vanillaClass(
-  debugId: string,
-  css: string | ((className: string) => string)
-): string;
+export function vanillaClass(css: string | ClassNameCallback): string;
+export function vanillaClass(debugId: string, css: string | ClassNameCallback): string;
 
 export function vanillaClass(
-  cssOrDebugId: string | ((className: string) => string),
-  css?: string | ((className: string) => string)
+  cssOrDebugId: string | ClassNameCallback,
+  css?: string | ClassNameCallback
 ): string {
   const debugId = css != null ? (cssOrDebugId as string) : undefined;
   css = css != null ? css : cssOrDebugId;
   if (typeof css === 'function') {
     const className = style({}, debugId);
-    vanillaGlobal(css(className));
+    vanillaGlobal(css(className, `.${className}`));
     return className;
   }
   return style(vanillaProps(css), debugId);

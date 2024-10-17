@@ -767,9 +767,9 @@ CSS.
 ### `vanillaClass`
 
 **Syntax:**
-`vanillaClass(css: string | ((className: string) => string)): string`  
+`vanillaClass(css: string | ((className: string, classNameSelector: string) => string)): string`  
 **Syntax:**
-`vanillaClass(debugId: string, css: string | ((className: string) => string)): string`
+`vanillaClass(debugId: string, css: string | ((className: string, classNameSelector: string) => string)): string`
 
 Returns a scoped cssClassName styled with free-form CSS. This function is a
 thin wrapper around vanilla-extract's `style` function.
@@ -783,19 +783,19 @@ export const myClass = vanillaClass(`
   padding: .5em 1em;
 `);
 
-// Passing a function to get the generated class name for
+// Passing a function to get the generated class-name for
 // more complex styles.
 export const myOtherClass = vanillaClass(
-  (className) => `
-    .${className} { 
+  (className, classNameSelector) => `
+    ${classNameSelector} { 
       background-color: #ccc;
       padding: .5em 1em;
     }
-    .${className} > strong {
+    [class="${className}"] > strong {
       color: #c00;
     }
     @media (min-width: 800px) {
-      .${className} {
+      ${classNameSelector} {
         background-color: #eee;
       }
     }
