@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.34
+
+_2024-10-17_
+
 - `@reykjavik/webtools/next/vanillaExtract`:
   - feat: `vanillaClass` passes `classNameSelector` a second parameter to the
     render callback.
