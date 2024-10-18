@@ -786,12 +786,12 @@ export const myClass = vanillaClass(`
 // Passing a function to get the generated class-name for
 // more complex styles.
 export const myOtherClass = vanillaClass(
-  (className, classNameSelector) => `
+  (classNameRaw, classNameSelector) => `
     ${classNameSelector} { 
       background-color: #ccc;
       padding: .5em 1em;
     }
-    [class="${className}"] > strong {
+    [class="${classNameRaw}"] > strong {
       color: #c00;
     }
     @media (min-width: 800px) {

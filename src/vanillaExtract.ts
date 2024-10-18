@@ -20,7 +20,12 @@ export const vanillaProps = (css: string) => ({ x: `; ${css}` } as GlobalStyleRu
 
 // ---------------------------------------------------------------------------
 
-type ClassNameCallback = (className: string, classNameSelector: string) => string;
+type ClassNameCallback = (
+  /** The raw standalone class-name. (i.e. `"Component_b6ff51c"`) */
+  classNameRaw: string,
+  /** The class-name prefixed with a "." for convenence (i.e. `".Component_b6ff51c"`) */
+  classNameSelector: string
+) => string;
 
 /**
  * Returns a scoped cssClassName styled with free-form CSS
@@ -38,7 +43,7 @@ export function vanillaClass(
   css = css != null ? css : cssOrDebugId;
   if (typeof css === 'function') {
     const className = style({}, debugId);
-    vanillaGlobal(css(className, `.${className}`));
+    vanillaGlobal(css('className', `.${className}`));
     return className;
   }
   return style(vanillaProps(css), debugId);

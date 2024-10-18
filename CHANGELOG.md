@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/next/vanillaExtract`:
+  - docs: Minor improvements to README and JSDoc comments
 
 ## 0.1.34
 
