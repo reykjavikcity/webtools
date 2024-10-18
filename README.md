@@ -774,13 +774,31 @@ CSS.
 Returns a scoped cssClassName styled with free-form CSS. This function is a
 thin wrapper around vanilla-extract's `style` function.
 
+When you pass it a string, all `.&` tokens are automatically replaced with the
+selector for the auto-generated class-name. Note that in such cases EVERY
+style property must be wrapped in a selector block.
+
+To opt out of the `.&` replacement, use the callback function signature.
+
 ```ts
 // someFile.css.ts
 import { vanillaClass } from '@reykjavik/webtools/vanillaExtract';
 
+// Simple class selector block
 export const myClass = vanillaClass(`
   background-color: #ccc;
   padding: .5em 1em;
+`);
+
+// With .& tokens that get replaced with the generated class-name
+export const myClasWithAmp = vanillaClass(`
+  .& {
+    background-color: #ccc;
+    padding: .5em 1em;
+  }
+  .& > strong {
+    color: #c00;
+  }
 `);
 
 // Passing a function to get the generated class-name for
@@ -799,9 +817,12 @@ export const myOtherClass = vanillaClass(
         background-color: #eee;
       }
     }
+    /* ".&" tokens in CSS returned from a callback are not replaced */
+    .& { will-not-be: interpolated; }
   `
 );
 
+// With a human readable debugId
 export const humanReadableClass = vanillaClass(
   'HumanReadable',
   `
@@ -810,6 +831,9 @@ export const humanReadableClass = vanillaClass(
   `
 );
 ```
+
+(NOTE: The dot-prefixed `.&` pattern is chosen to not conflict with the bare
+`&` token in modern nested CSS.)
 
 ### `vanillaGlobal`
 

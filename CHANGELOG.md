@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/next/vanillaExtract`:
+  - feat: `vanillaClass` auto-replaces `.&` tokens in a plain-string input
   - docs: Minor improvements to README and JSDoc comments
 
 ## 0.1.34
