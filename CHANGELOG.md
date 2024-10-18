@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.1.35
+
+_2024-10-18_
+
 - `@reykjavik/webtools/next/vanillaExtract`:
   - feat: `vanillaClass` auto-replaces `.&` tokens in a plain-string input
   - docs: Minor improvements to README and JSDoc comments
