@@ -31,11 +31,11 @@ type ClassNameCallback = (
  * Returns a scoped cssClassName styled with free-form CSS. This function is a
  * thin wrapper around vanilla-extract's `style` function.
  *
- * When you pass it a string, all `.&` tokens are automatically replaced with the
+ * When you pass it a string, all `&&` tokens are automatically replaced with the
  * selector for the auto-generated class-name. Note that in such cases EVERY
  * style property must be wrapped in a selector block.
  *
- * To opt out of the `.&` replacement, use the callback function signature.
+ * To opt out of the `&&` replacement, use the callback function signature.
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#vanillaclass
  */
@@ -49,7 +49,7 @@ export function vanillaClass(
   const debugId = css != null ? (cssOrDebugId as string) : undefined;
   css = css != null ? css : cssOrDebugId;
 
-  if (typeof css === 'string' && !/.&/.test(css)) {
+  if (typeof css === 'string' && !/&&/.test(css)) {
     return style(vanillaProps(css), debugId);
   }
 
@@ -58,7 +58,7 @@ export function vanillaClass(
   vanillaGlobal(
     typeof css === 'function'
       ? css('className', `.${className}`)
-      : css.replace(/.&/g, `.${className}`)
+      : css.replace(/&&/g, `.${className}`)
   );
 
   return className;

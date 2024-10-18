@@ -774,11 +774,11 @@ CSS.
 Returns a scoped cssClassName styled with free-form CSS. This function is a
 thin wrapper around vanilla-extract's `style` function.
 
-When you pass it a string, all `.&` tokens are automatically replaced with the
+When you pass it a string, all `&&` tokens are automatically replaced with the
 selector for the auto-generated class-name. Note that in such cases EVERY
 style property must be wrapped in a selector block.
 
-To opt out of the `.&` replacement, use the callback function signature.
+To opt out of the `&&` replacement, use the callback function signature.
 
 ```ts
 // someFile.css.ts
@@ -790,13 +790,13 @@ export const myClass = vanillaClass(`
   padding: .5em 1em;
 `);
 
-// With .& tokens that get replaced with the generated class-name
+// With && tokens that get replaced with the generated class-name
 export const myClasWithAmp = vanillaClass(`
-  .& {
+  && {
     background-color: #ccc;
     padding: .5em 1em;
   }
-  .& > strong {
+  && > strong {
     color: #c00;
   }
 `);
@@ -817,8 +817,8 @@ export const myOtherClass = vanillaClass(
         background-color: #eee;
       }
     }
-    /* ".&" tokens in CSS returned from a callback are not replaced */
-    .& { will-not-be: interpolated; }
+    /* NOTE: '&&' tokens returned from a callback function are NOT replaced */
+    && { will-not-be: interpolated; }
   `
 );
 
@@ -832,7 +832,7 @@ export const humanReadableClass = vanillaClass(
 );
 ```
 
-(NOTE: The dot-prefixed `.&` pattern is chosen to not conflict with the bare
+(NOTE: The dot-prefixed `&&` pattern is chosen to not conflict with the bare
 `&` token in modern nested CSS.)
 
 ### `vanillaGlobal`

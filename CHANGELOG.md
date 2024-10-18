@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/next/vanillaExtract`:
+  - fix: Change `vanillaClass` replacement token to be `&&`
 
 ## 0.1.35
 
