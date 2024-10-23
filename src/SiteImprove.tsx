@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { EitherObj } from '@reykjavik/hanna-utils';
 
 import { useCookieHubConsent } from './CookieHubConsent.js';
@@ -211,12 +211,12 @@ export type SiteImproveProps = EitherObj<
   /**
    * Custom callback for when the SiteImprove script has loaded.
    */
-  onLoad?: (e: unknown) => void;
+  onLoad?: (e: Event) => void;
 
   /**
    * Error callback for if the SiteImprove script fails to load.
    */
-  onError?: (e: unknown) => void;
+  onError?: (e: Event | string) => void;
 };
 
 // ---------------------------------------------------------------------------
@@ -231,8 +231,20 @@ const useResolvedAnalyticsConsent = (hasConsented: boolean | undefined) => {
 
 // ---------------------------------------------------------------------------
 
-const mockSIGlobalIfNeeded = (props: SiteImproveProps) => {
-  if (process.env.NODE_ENV !== 'production') {
+const loadSIScript = (props: SiteImproveProps) => {
+  if (process.env.NODE_ENV === 'production') {
+    if (window._sz || document.querySelector('script#siteimprove-analytics-script')) {
+      console.warn('SiteImprove script already loaded.');
+      return;
+    }
+    const script = document.createElement('script');
+    script.defer = true;
+    script.id = 'siteimprove-analytics-script';
+    script.src = props.scriptUrl ?? makeScriptUrl(props.accountId);
+    props.onLoad && (script.onload = props.onLoad);
+    props.onError && (script.onerror = props.onError);
+    document.body.append(script);
+  } else {
     setTimeout(() => {
       if (!window._sz) {
         console.info(
@@ -241,7 +253,7 @@ const mockSIGlobalIfNeeded = (props: SiteImproveProps) => {
         );
         window._sz = [];
       }
-    }, 300);
+    }, 300); // Aribtrary delay to simulate script loading
   }
 };
 
@@ -287,18 +299,12 @@ export const SiteImprove = (props: SiteImproveProps) => {
       if (!consented) {
         return;
       }
-      mockSIGlobalIfNeeded(props);
+      loadSIScript(props);
       return logOutboundLinks();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [consented]
   );
 
-  if (!consented || process.env.NODE_ENV !== 'production') {
-    return null;
-  }
-
-  const scriptUrl = props.scriptUrl ?? makeScriptUrl(props.accountId);
-
-  return <script defer src={scriptUrl} onLoad={props.onLoad} onError={props.onError} />;
+  return null;
 };

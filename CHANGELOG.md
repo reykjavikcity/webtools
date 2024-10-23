@@ -3,6 +3,9 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/SiteImprove`:
+  - fix: `onLoad` and `onError` callback arguments are now typed as `Event`
+  - fix: Script wasn't actually loading. Now it does.
 
 ## 0.1.35 – 0.1.36
 
