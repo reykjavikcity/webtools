@@ -484,7 +484,8 @@ if (myResult.error) {
 
 ### `Result.catch`
 
-**Syntax:** `Result.catch<T, Err>(callback: () => T): ResultTupleObj<T, Err>`
+**Syntax:**
+`Result.catch<T, Err>(callback: () => T): ResultTupleObj<T, Err>`  
 **Syntax:**
 `Result.catch<T, Err>(promise: Promise<T>): Promise<ResultTupleObj<T, Err>>`
 
