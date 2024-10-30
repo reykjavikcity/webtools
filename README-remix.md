@@ -1,4 +1,4 @@
-# @reykjavik/webtools/remix/\*
+# @reykjavik/webtools/remix/\* <!-- omit from toc -->
 
 These are the [Remix.run](https://remix.run)-specific utilities in the
 `@reykjavik/webtools` package.
@@ -87,7 +87,7 @@ const CustomError = (props: SizeProps) => {
   Custom loading/spinner component.
 - **`error`**`?: ReactNode` — (Default: `'An error occurred.'`)  
   Custom error component if the promise is rejected or if it resolves to an
-  object with an `error` property.
+  object with an `$error` property.
 
 ---
 
