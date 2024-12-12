@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- **BREAKING** feat: Bump `pkg.engines.node` version to >=20
 
 ## 0.1.37
 
