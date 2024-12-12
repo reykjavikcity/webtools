@@ -24,7 +24,7 @@ export const addLag =
  * Resolves as soon as all of the passed `promises` have resolved/settled,
  * or after `timeout` milliseconds — whichever comes first.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#maxwait
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#maxwait
  */
 export function maxWait(timeout: number, promises: Array<unknown>): Promise<void>;
 export function maxWait<PromiseMap extends PlainObj>(
@@ -75,7 +75,7 @@ type XX = EitherObj<PromiseFulfilledResult<string>, PromiseRejectedResult>;
  * A variation of `Promise.all()` that accepts an object with named promises
  * and returns a same-shaped object with the resolved values.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#promiseallobject
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#promiseallobject
  */
 export const promiseAllObject = <T extends PlainObj>(promisesMap: T) =>
   Promise.all(Object.values(promisesMap)).then((results) => {

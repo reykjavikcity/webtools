@@ -2,7 +2,7 @@
  * Error subclass for thrown values that got cought and turned into an actual
  * Error, with the thrown value as the `payload` property.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#aserror
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#aserror
  */
 export class ErrorFromPayload extends Error {
   payload?: unknown;
@@ -28,7 +28,7 @@ export class ErrorFromPayload extends Error {
  * something else it is wrapped in a new `ErrorFromPayload` instance, and the
  * original value is stored in a `payload`
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#aserror
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#aserror
  */
 export const asError = (maybeError: unknown): ErrorFromPayload => {
   if (maybeError instanceof Error) {
@@ -51,7 +51,7 @@ type FailResult<E extends Error> = [error: E] & {
 /**
  * Simple bare-bones discriminated tuple type for a [error, result] pair.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#type-resulttuple
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#type-resulttuple
  */
 export type ResultTuple<T, E extends Error = Error> =
   | [error: undefined, result: T]
@@ -61,7 +61,7 @@ export type ResultTuple<T, E extends Error = Error> =
  * Discriminated tuple type for a `[error, result]` pair (same as `ResultTuple`)
  * but with named properties `error` and `result` attached for dev convenience.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#type-resulttupleobj
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#type-resulttupleobj
  */
 export type ResultTupleObj<T, E extends Error = Error> = SuccessResult<T> | FailResult<E>;
 
@@ -85,7 +85,7 @@ const Fail = <E extends Error = Error>(e: unknown) => {
  *
  * Works on both promises and sync callback functions.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#resultcatch
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#resultcatch
  */
 function catch_<T, E extends Error = ErrorFromPayload>(
   promise: Promise<T>
@@ -114,20 +114,20 @@ function catch_<T, E extends Error = ErrorFromPayload>(
  * Singleton object with small methods for creating, mapping or handling
  * `ResultTupleObj` instances.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#result-singleton
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#result-singleton
  */
 export const Result = {
   /**
    * Factory for creating a successful `Result.TupleObj`.
    *
-   * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#resultsuccess
+   * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#resultsuccess
    */
   Success,
 
   /**
    * Factory for creating a failed `Result.TupleObj`.
    *
-   * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#resultsfail
+   * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#resultsfail
    */
   Fail,
 
@@ -139,7 +139,7 @@ export const Result = {
    * object, applying a transformation function to the result, but retaining
    * the error as-is.
    *
-   * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#resulmap
+   * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#resulmap
    */
   map: <T, T2, E extends Error>(
     result: ResultTuple<T, E>,
@@ -156,7 +156,7 @@ export const Result = {
    * Unwraps a discriminated [error, result] `Result.Tuple`-like object
    * and throws if there's an error, but returns the result otherwise.
    *
-   * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#resulthrow
+   * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#resulthrow
    */
   throw: <T>(result: ResultTuple<T>): T => {
     if (result[0]) {

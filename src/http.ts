@@ -252,7 +252,7 @@ type TTLObj = {
 /**
  * Configures quick TTL-related settings for a HTTP request object
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#type-ttlconfig
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#type-ttlconfig
  */
 export type TTLConfig = TTL | TTLKeywords | TTLObj;
 
@@ -268,7 +268,7 @@ const unitToSeconds: Record<TimeUnit, number> = {
  * Converts a `TTL` (max-age) value into seconds. Returns `0` for bad and/or
  * negative input values.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#tosec-ttl-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#tosec-ttl-helper
  */
 export const toSec = (ttl: TTL): number => {
   if (typeof ttl === 'string') {
@@ -283,7 +283,7 @@ export const toSec = (ttl: TTL): number => {
  * Converts a `TTL` (duration) value into milliseconds. Returns `0` for bad
  * and/or negative input values.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#toms-duration-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#toms-duration-helper
  */
 export const toMs = (ttl: TTL): number => toSec(ttl) * 1_000;
 
@@ -352,7 +352,7 @@ const setCC = (
  * Use this function to quickly set the `Cache-Control` header with a `max-age=`
  * on a HTTP response
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#cachecontrol-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#cachecontrol-helper
  */
 // eslint-disable-next-line complexity
 export const cacheControl = (
@@ -411,7 +411,7 @@ export const cacheControl = (
  * situations requiring a `HeadersInit` compatible object.
  *
  * Accepts the same arguments as `cacheControl()`.
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README.md#cachecontrolheaders-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#cachecontrolheaders-helper
  */
 export const cacheControlHeaders = (
   ttlCfg: TTLConfig,

@@ -36,7 +36,7 @@ export type WaitProps<T> = WaitPropsBase<T> & WaitFallbacks;
  * custom properties for `meanwhile` and `error` fallbacks, and/or other
  * behaviors.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-rr.md#type-waitcomponent
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README-rr.md#type-waitcomponent
  */
 export type WaitComponent<
   CustomProps extends Record<string, unknown> = Record<never, never>
@@ -51,7 +51,7 @@ export type WaitComponent<
  * If the awaited promise (`props.for`) resolves to an object with a truthy
  * `$error` property, the `$error` will be thrown.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.1/README-rr.md#wait-component
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README-rr.md#wait-component
  */
 export const Wait: WaitComponent<WaitFallbacks> = (props) => (
   <Suspense fallback={props.meanwhile || 'Loading...'}>
