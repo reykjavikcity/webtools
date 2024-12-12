@@ -51,7 +51,7 @@ bun add @reykjavik/webtools
   - [`vanillaGlobal`](#vanillaglobal)
   - [`vanillaProps`](#vanillaprops)
 - [Framework Specific Tools](#framework-specific-tools)
-  - [Remix.run Tools](#remixrun-tools)
+  - [React-Router Tools](#react-router-tools)
   - [Next.js Tools](#nextjs-tools)
 - [Contributing](#contributing)
 - [Changelog](#changelog)
@@ -882,10 +882,13 @@ const myStyle = style({
 
 ## Framework Specific Tools
 
-### Remix.run Tools
+### React-Router Tools
 
-See [README-remix.md](./README-remix.md) for helpers and components
-specifically designed for use in Remix.run projects.
+See [README-rr.md](./README-rr.md) for helpers and components specifically
+designed for use in Remix.run projects.
+
+(NOTE: If you're still using [Remix.run](https://remix.run) you can install
+version `"^0.1.22"` of this package.)
 
 <!-- #fragment anchors to not break older v0.1 @see links -->
 

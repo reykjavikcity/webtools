@@ -1,26 +1,26 @@
-# @reykjavik/webtools/remix/\* <!-- omit from toc -->
+# @reykjavik/webtools/react-router/\* <!-- omit from toc -->
 
-These are the [Remix.run](https://remix.run)-specific utilities in the
-`@reykjavik/webtools` package.
+These are the [react-router (>=7)](https://reactrouter.com)-specific utilities
+in the `@reykjavik/webtools` package.
 
 **Contents:**
 
 <!-- prettier-ignore-start -->
 
-- [`@reykjavik/webtools/remix/Wait`](#reykjavikwebtoolsremixwait)
+- [`@reykjavik/webtools/react-router/Wait`](#reykjavikwebtoolsreact-routerwait)
   - [`Wait` component](#wait-component)
   - [Type `WaitComponent`](#type-waitcomponent)
-- [`@reykjavik/webtools/remix/http`](#reykjavikwebtoolsremixhttp)
+- [`@reykjavik/webtools/react-router/http`](#reykjavikwebtoolsreact-routerhttp)
   - [`isClientFetch`](#isclientfetch)
 
 <!-- prettier-ignore-end -->
 
 ---
 
-## `@reykjavik/webtools/remix/Wait`
+## `@reykjavik/webtools/react-router/Wait`
 
 Contains a thin wrapper around
-[Remix's `Await` component](https://remix.run/docs/en/main/components/await),
+[React-Router's `Await` component](https://reactrouter.com/how-to/suspense#2-render-the-fallback-and-resolved-ui),
 to provide a more ergonomic API.
 
 ---
@@ -34,21 +34,20 @@ If the awaited promise resolves to an object with a truthy `$error` property,
 the error will be thrown.
 
 ```tsx
-import { defer, LoaderFunctionArgs } from '@remix-run/node';
-import { useLoaderData, useAsyncError } from '@remix-run/react';
+import type { Route } from './+types/test-page';
+import { useAsyncError } from 'react-router';
+import { Wait } from '@reykjavik/webtools/react-router/Wait';
 
-import { Wait } from '@reykjavik/webtools/remix/Wait';
-
-export const loader = async (args: LoaderFunctionArgs) => {
-  return defer({
+export const loader = async (args: Route.LoaderArgs) => {
+  return {
     document: getDocument().catch(() => ({
       $error: 'Failed to load document',
     })),
-  });
+  };
 };
 
-export default function TestPage() {
-  const { document } = useLoaderData<typeof loader>();
+export default function TestPage(props: Route.ComponentProps) {
+  const { document } = props.loaderData;
 
   return (
     <Wait
@@ -68,7 +67,7 @@ export default function TestPage() {
 
 // ----
 
-const CustomError = (props: SizeProps) => {
+const CustomError = () => {
   const error = useAsyncError();
   const errMessage = error instanceof Error ? error.message : error;
   return <p style={{ color: 'red' }}>Error: {errMessage}</p>;
@@ -93,15 +92,15 @@ const CustomError = (props: SizeProps) => {
 
 ### Type `WaitComponent`
 
-A function component that wraps `@reykjavik/webtools/remix/Wait` to provide
-custom properties for `meanwhile` and `error` fallbacks, and/or other
+A function component that wraps `@reykjavik/webtools/react-router/Wait` to
+provide custom properties for `meanwhile` and `error` fallbacks, and/or other
 behaviors.
 
 You can pass a type parameter listing the "CustomProps" it accepts in addition
 to the base `for` and `children` props of `<Wait />`.
 
 ```tsx
-import { Wait, WaitComponent } from '@reykjavik/webtools/remix/Wait';
+import { Wait, WaitComponent } from '@reykjavik/webtools/react-router/Wait';
 
 export const MyWait: WaitComponent<{ size?: 'large' | 'small' }> = (
   props
@@ -128,7 +127,7 @@ export type MyWaitProps = Parameters<typeof MyWait>[0];
 
 ---
 
-## `@reykjavik/webtools/remix/http`
+## `@reykjavik/webtools/react-router/http`
 
 Contains utilities to aid working with `loader` and `action` functions.
 
@@ -140,14 +139,13 @@ Contains utilities to aid working with `loader` and `action` functions.
 
 Detects if the request is a client fetch, or an initial/full-page load.
 
-This can be used to decide whether to defer data fetching or not.
+This can be used to decide whether to await the fetched data or not.
 
 ```ts
-import { defer, LoaderFunctionArgs } from '@remix-run/node';
+import type { Route } from './+types/my-route-module';
+import { isClientFetch } from '@reykjavik/webtools/react-router/deferring';
 
-import { isClientFetch } from '@reykjavik/webtools/remix/deferring';
-
-export const loader = async (args: LoaderFunctionArgs) => {
+export const loader = async (args: Route.LoaderArgs) => {
   const document = fetchDocument();
   if (!isClientFetch(args.request)) {
     // Make the page curl-friendly by waiting for the promise to resolve
@@ -155,6 +153,6 @@ export const loader = async (args: LoaderFunctionArgs) => {
     await document;
   }
 
-  return defer({ document });
+  return { document };
 };
 ```
