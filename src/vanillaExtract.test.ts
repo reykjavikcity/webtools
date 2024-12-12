@@ -7,9 +7,7 @@ if (false as boolean) {
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const exports: Record<keyof typeof moduleExports, true> = {
     vanillaClass: true,
-    vanillaClassNested: true,
     vanillaGlobal: true,
-    vanillaNest: true,
     vanillaProps: true,
   };
 

@@ -6,6 +6,10 @@
 - feat: Add `@reykjavik/webtools/react-router/*` (previously `/remix/*`)
 - **BREAKING** feat: Remove all `@reykjavik/webtools/react-router/*` modules
 - **BREAKING** feat: Bump `pkg.engines.node` version to >=20
+- **BREAKING** feat: Remove `@reykjavik/webtools/next/SiteImprove` (deprecated
+  module)
+- **BREAKING** feat: Remove deprecated exports `vanillaNest` and
+  `vanillaClassNested` from `@reykjavik/webtools/vanillaExtract`
 
 ## 0.1.37
 

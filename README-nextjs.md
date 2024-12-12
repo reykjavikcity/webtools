@@ -1,4 +1,4 @@
-# @reykjavik/webtools/next/\*
+# @reykjavik/webtools/next/\* <!-- omit from toc -->
 
 These are the [Next.js](https://nextjs.org/)-specific utilities in the
 `@reykjavik/webtools` package.
@@ -11,7 +11,6 @@ These are the [Next.js](https://nextjs.org/)-specific utilities in the
   - [`makeErrorizeAppHOC`](#makeerrorizeapphoc)
   - [`showErrorPage` helper](#showerrorpage-helper)
   - [`notModified304` helper](#notmodified304-helper)
-- [~~`@reykjavik/webtools/next/SiteImprove`~~ (deprecated)](#reykjavikwebtoolsnextsiteimprove-deprecated)
 
 <!-- prettier-ignore-end -->
 
@@ -173,21 +172,3 @@ if (notModified) {
   return notModified304(res);
 }
 ```
-
----
-
-<!-- #fragment anchors to not break older v0.1 @see links -->
-
-<a name="reykjavikwebtoolsnextsiteimprove"></a>
-<a name="siteimprove-component"></a> <a name="pingsiteimprove-helper"></a>
-<a name="pingsiteimproveoutbound-helper"></a>
-
-## ~~`@reykjavik/webtools/next/SiteImprove`~~ (deprecated)
-
-This Next.js-specific import path has been deprecated in favor of the
-framework-agnostic
-[`@reykjavik/webtools/SiteImprove` module](./README.md#reykjavikwebtoolssiteimprove)
-with the same features.
-
-Update your import paths to use the new module, as this path will be removed
-in the next major release of the library.
