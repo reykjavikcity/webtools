@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.2.0
+
+_2024-12-12_
+
 - feat: Add `@reykjavik/webtools/react-router/*` (previously `/remix/*`)
 - **BREAKING** feat: Remove all `@reykjavik/webtools/react-router/*` modules
 - **BREAKING** feat: Bump `pkg.engines.node` version to >=20
