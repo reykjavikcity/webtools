@@ -43,7 +43,7 @@ type SuccessResult<T> = [error: undefined, result: T] & {
   error?: undefined;
   result: T;
 };
-type FailResult<E extends Error> = [error: E] & {
+type FailResult<E extends Error> = [error: E, result?: undefined] & {
   error: E;
   result?: undefined;
 };
@@ -55,7 +55,7 @@ type FailResult<E extends Error> = [error: E] & {
  */
 export type ResultTuple<T, E extends Error = Error> =
   | [error: undefined, result: T]
-  | [error: E];
+  | [error: E, result?: undefined];
 
 /**
  * Discriminated tuple type for a `[error, result]` pair (same as `ResultTuple`)
@@ -98,10 +98,7 @@ function catch_<T, E extends Error = ErrorFromPayload>(
   something: Promise<T> | (() => T)
 ): ResultTupleObj<T, E> | Promise<ResultTupleObj<T, E>> {
   if (something instanceof Promise) {
-    return something.then(
-      (result) => Success(result),
-      (e) => Fail<E>(e)
-    );
+    return something.then(Success, (e) => Fail<E>(e));
   }
   try {
     return Success(something());

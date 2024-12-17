@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: Make typing of failed ResultTuple/ResultTupleObj less ambiguous
 
 ## 0.2.0
 
