@@ -8,7 +8,8 @@
 
 _2024-12-17_
 
-- fix: Make typing of failed ResultTuple/ResultTupleObj less ambiguous
+- `@reykjavik/webtools/errorhandling`:
+  - fix: Make typing of failed ResultTuple/ResultTupleObj less ambiguous
 
 ## 0.2.0
 
