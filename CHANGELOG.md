@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.2.2
+
+_2024-12-19_
+
 - `@reykjavik/webtools/CookieHubConsent`:
   - feat: Allow passing explicit `undefined` as `accountId` to skip loading
   - fix: Note that `window.cookiehub` is possibly `undefined` (before load)
