@@ -312,20 +312,29 @@ const moveCookiehubScriptInDomTree = () => {
 export const CookieHubProvider = (props: CookieHubProviderProps) => {
   const [state, setState] = useState<CookieHubContextState>(initialConsentState);
 
+  const scriptUrLOrId = props.scriptUrl
+    ? `@ ${props.scriptUrl}`
+    : props.accountId || undefined;
+
   useEffect(
     () => {
-      const scriptSrc =
-        props.scriptUrl != null
-          ? props.scriptUrl
-          : props.accountId && scriptUrlTemplate.replace(idToken, props.accountId);
+      if (!scriptUrLOrId) {
+        return;
+      }
+      const scriptSrc = scriptUrLOrId.startsWith('@ ')
+        ? scriptUrLOrId.slice(2)
+        : scriptUrlTemplate.replace(idToken, scriptUrLOrId);
 
-      if (!scriptSrc) {
+      if (window.cookiehub && document.querySelector('script#cookiehub-script')) {
+        // We can't load the script from more than one source at a time
+        console.warn('CookieHub script already loaded.');
         return;
       }
 
       const opts = props.options || {};
       const script = document.createElement('script');
       script.async = true;
+      script.id = 'cookiehub-script';
       script.src = scriptSrc;
       script.onload = () => {
         window.cookiehub.load({
@@ -380,8 +389,11 @@ export const CookieHubProvider = (props: CookieHubProviderProps) => {
 
       document.body.append(script);
     },
+    // Unless we can find a safe way to tear down the CookieHub script and
+    // clean up after it we can only load it once, so monitoring anything other
+    // than accountId or scriptUrl is pointless.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [scriptUrLOrId]
   );
 
   return (
