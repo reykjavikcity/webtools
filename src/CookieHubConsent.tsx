@@ -251,9 +251,11 @@ export type CookieHubProviderProps = EitherObj<
      * extracted from the script embed URL like this:
      * `"https://cookiehub.net/c2/[ACCOUNT_ID].js"`
      *
+     * Pass `undefined` to disable/skip the script loading
+     *
      * @see https://support.cookiehub.com/article/155-manual-implementation-guide
      */
-    accountId: string;
+    accountId: string | undefined;
   },
   {
     /**
@@ -312,16 +314,19 @@ export const CookieHubProvider = (props: CookieHubProviderProps) => {
 
   useEffect(
     () => {
-      const script = document.createElement('script');
-      script.async = true;
-
-      const opts = props.options || {};
-
-      script.src =
+      const scriptSrc =
         props.scriptUrl != null
           ? props.scriptUrl
-          : scriptUrlTemplate.replace(idToken, props.accountId);
+          : props.accountId && scriptUrlTemplate.replace(idToken, props.accountId);
 
+      if (!scriptSrc) {
+        return;
+      }
+
+      const opts = props.options || {};
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = scriptSrc;
       script.onload = () => {
         window.cookiehub.load({
           ...opts,

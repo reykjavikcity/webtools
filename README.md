@@ -723,8 +723,8 @@ export default function App() {
 The Component's props have detailed JSDoc comments (displayed in your code
 editor), but there's a brief summary:
 
-- `accountId?: string` — Your CookieHub account ID. (alternative to
-  `scriptUrl` prop).
+- `accountId?: string | undefined` — Your CookieHub account ID. (alternative
+  to `scriptUrl` prop). Pass `undefined` to skip loading the script.
 - `scriptUrl?: string` — The full CookieHub embed script URL. (alternative to
   `accountId` prop).
 - `options?: CookieHubOptions` — Raw CookieHub options object that gets used
