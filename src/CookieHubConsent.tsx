@@ -11,7 +11,7 @@ import { EitherObj } from '@reykjavik/hanna-utils';
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
-    cookiehub: CookieHub;
+    cookiehub?: CookieHub;
     // /** Alias for window.cookiehub */
     // cookieconsent: CookieHub;
   }
@@ -337,7 +337,7 @@ export const CookieHubProvider = (props: CookieHubProviderProps) => {
       script.id = 'cookiehub-script';
       script.src = scriptSrc;
       script.onload = () => {
-        window.cookiehub.load({
+        window.cookiehub!.load({
           ...opts,
           onInitialise(status) {
             const analytics = this.hasConsented('analytics');
