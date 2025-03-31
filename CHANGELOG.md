@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/errorhandling`:
+  - docs: Fix minor error in README code example
 
 ## 0.2.2
 

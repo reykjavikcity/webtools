@@ -457,9 +457,9 @@ Discriminated tuple type for a `[error, result]` pair (same as `ResultTuple`)
 but with named properties `error` and `result` attached for dev convenience.
 
 ```ts
-import { type ResultTuple } from '@reykjavik/webtools/errorhandling';
+import { type ResultTupleObj } from '@reykjavik/webtools/errorhandling';
 
-declare const myResult: ResultTuple<string, Error>;
+declare const myResult: ResultTupleObj<string, Error>;
 
 const [error, result] = myResult;
 // (One of these two is always `undefined`)
