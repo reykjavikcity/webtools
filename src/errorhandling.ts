@@ -146,7 +146,7 @@ export const Result = {
     if (error) {
       return Fail<E>(error);
     }
-    return Success(mapFn(resultValue as T));
+    return catch_(() => mapFn(resultValue as T));
   },
 
   /**

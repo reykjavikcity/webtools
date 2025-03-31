@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/errorhandling`:
+  - fix: `Result.map` does not catch errors thrown by the mapping function
   - docs: Fix minor error in README code example
 
 ## 0.2.2

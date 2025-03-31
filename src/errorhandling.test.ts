@@ -180,6 +180,13 @@ describe('Result.map', () => {
     const result = Result.Success('test result');
     const mapped = Result.map(result, (res) => res.toUpperCase());
     expect(mapped.result).toBe('TEST RESULT');
+
+    const err = new Error('test error');
+    const mapped2 = Result.map(result, () => {
+      throw err;
+    });
+    expect(mapped2.result).toBeUndefined();
+    expect(mapped2.error).toBe(err);
   });
 });
 
