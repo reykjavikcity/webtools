@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.2.3
+
+_2025-03-31_
+
 - `@reykjavik/webtools/errorhandling`:
   - feat: Add a `.mapTo(fn)` method to `ResultTupleObj`s
   - fix: `Result.map` does not catch errors thrown by the mapping function
