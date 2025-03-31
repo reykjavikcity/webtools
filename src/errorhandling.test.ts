@@ -131,6 +131,17 @@ describe('Result.Success / Result.Fail', () => {
     expect(success.error).toBeUndefined();
     expect(success[1]).toBe(result);
     expect(success.result).toBe(result);
+    expect(success.mapTo).toBeInstanceOf(Function);
+    const mapped = success.mapTo((r) => r.prop);
+    expect(mapped.result).toEqual(result.prop);
+    expect(mapped.error).toBeUndefined();
+    expect(mapped.mapTo).toBeInstanceOf(Function);
+    const err = new Error('test error');
+    const mapped2 = success.mapTo(() => {
+      throw err;
+    });
+    expect(mapped2.result).toBeUndefined();
+    expect(mapped2.error).toBe(err);
   });
 
   test('`Fail` creates a fail tuple', () => {
@@ -140,6 +151,16 @@ describe('Result.Success / Result.Fail', () => {
     expect(fail.error).toBe(error);
     expect(fail[1]).toBeUndefined();
     expect(fail.result).toBeUndefined();
+
+    const mapped = fail.mapTo();
+    expect(mapped.result).toBeUndefined();
+    expect(mapped.error).toBe(error);
+    expect(mapped.mapTo).toBeInstanceOf(Function);
+
+    // @ts-expect-error  (testing if actually passing a function throws)
+    const mapped2 = fail.mapTo((never) => typeof never);
+    expect(mapped2.result).toBeUndefined();
+    expect(mapped2.error).toBe(error);
   });
 });
 
@@ -159,9 +180,12 @@ describe('Result.catch', () => {
 
   test('handles synchronous callback functions', () => {
     const callback = () => 'test result';
-    const [error, result] = Result.catch(callback);
-    expect(error).toBeUndefined();
-    expect(result).toBe('test result');
+    const cbRes = Result.catch(callback);
+    expect(cbRes.error).toBeUndefined();
+    expect(cbRes.result).toBe('test result');
+    const mapped = cbRes.mapTo((res) => res.length);
+    expect(mapped.result).toBe(11);
+    expect(mapped.error).toBeUndefined();
   });
 
   test('handles synchronous callback function errors', () => {
@@ -187,6 +211,7 @@ describe('Result.map', () => {
     });
     expect(mapped2.result).toBeUndefined();
     expect(mapped2.error).toBe(err);
+    expect(mapped2.mapTo).toBeInstanceOf(Function);
   });
 });
 

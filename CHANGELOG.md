@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/errorhandling`:
+  - feat: Add a `.mapTo(fn)` method to `ResultTupleObj`s
   - fix: `Result.map` does not catch errors thrown by the mapping function
   - docs: Fix minor error in README code example
 

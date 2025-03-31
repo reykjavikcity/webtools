@@ -42,10 +42,12 @@ export const asError = (maybeError: unknown): ErrorFromPayload => {
 type SuccessResult<T> = [error: undefined, result: T] & {
   error?: undefined;
   result: T;
+  mapTo: <T2, E extends Error = Error>(fn: (result: T) => T2) => ResultTupleObj<T2, E>;
 };
 type FailResult<E extends Error> = [error: E, result?: undefined] & {
   error: E;
   result?: undefined;
+  mapTo: () => FailResult<E>;
 };
 
 /**
@@ -68,11 +70,15 @@ export type ResultTupleObj<T, E extends Error = Error> = SuccessResult<T> | Fail
 const Success = <T>(result: T) => {
   const tuple = [undefined, result] as SuccessResult<T>;
   tuple.result = result;
+  tuple.mapTo = <T2, E extends Error = Error>(fn: (result: T) => T2) =>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    map<T, T2, E>(tuple, fn);
   return tuple;
 };
 const Fail = <E extends Error = Error>(e: unknown) => {
   const tuple = [asError(e) as E] as FailResult<E>;
   tuple.error = tuple[0];
+  tuple.mapTo = () => tuple;
   return tuple;
 };
 
@@ -106,6 +112,17 @@ function catch_<T, E extends Error = ErrorFromPayload>(
     return Fail<E>(e);
   }
 }
+
+const map = <T, T2, E extends Error>(
+  result: ResultTuple<T, E>,
+  mapFn: (resultValue: T) => T2
+): ResultTupleObj<T2, E> => {
+  const [error, resultValue] = result;
+  if (error) {
+    return Fail<E>(error);
+  }
+  return catch_(() => mapFn(resultValue as T));
+};
 
 /**
  * Singleton object with small methods for creating, mapping or handling

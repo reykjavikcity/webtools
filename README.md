@@ -34,6 +34,7 @@ bun add @reykjavik/webtools
   - [`Result` Singleton](#result-singleton)
   - [Type `ResultTuple`](#type-resulttuple)
   - [Type `ResultTupleObj`](#type-resulttupleobj)
+    - [Type `ResultTupleObj.mapTo`](#type-resulttupleobjmapto)
   - [`Result.catch`](#resultcatch)
   - [`Result.map`](#resultmap)
   - [`Result.Success`](#resultsuccess)
@@ -456,6 +457,8 @@ if (error) {
 Discriminated tuple type for a `[error, result]` pair (same as `ResultTuple`)
 but with named properties `error` and `result` attached for dev convenience.
 
+It also has a `.mapTo` method ([see below](#type-resulttupleobjmapto)).
+
 ```ts
 import { type ResultTupleObj } from '@reykjavik/webtools/errorhandling';
 
@@ -481,6 +484,39 @@ if (myResult.error) {
   console.log(myResult.result);
 }
 ```
+
+#### Type `ResultTupleObj.mapTo`
+
+**Syntax:**
+`ResultTupleObj.mapTo<T2, E>(mapResult: (resultValue: T) => T2): ResultTuple<T2, E>`
+
+This convenience method allows quick mapping of the `ResultTubleOBj`'s result
+value to a new type. The returned value is also a `ResultTubleOBj`.
+
+(Internally this method calls [`Result.map`](#resultmap).)
+
+```ts
+import { type ResultTuple } from '@reykjavik/webtools/errorhandling';
+
+declare const myResult: ResultTuple<string, Error>;
+
+const mappedResult: ResultTupleObj<number, Error> = myResult.mapTo(
+  (result: string) => result.length
+);
+
+if (mappedRes.error) {
+  console.error(myResult.error.message);
+} else {
+  // Here `myResult.result` is a number
+  console.log(myResult.result);
+}
+```
+
+If the original `ResultTupleObj` is in a failed state, the mapping function is
+not called.
+
+If the mapping function throws an error it gets caught and turned into a
+failed `ResultTupleObj`.
 
 ### `Result.catch`
 
