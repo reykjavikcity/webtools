@@ -270,6 +270,7 @@ const unitToSeconds: Record<TimeUnit, number> = {
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#tosec-ttl-helper
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const toSec = (ttl: TTL): number => {
   if (typeof ttl === 'string') {
     const value = parseFloat(ttl);
@@ -285,6 +286,7 @@ export const toSec = (ttl: TTL): number => {
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#toms-duration-helper
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const toMs = (ttl: TTL): number => toSec(ttl) * 1_000;
 
 type ServerResponseStub = Pick<
@@ -300,6 +302,7 @@ type ResponseStub = {
   headers: Pick<Headers, 'set' | 'get' | 'delete'>;
 };
 
+/*#__NO_SIDE_EFFECTS__*/
 const toRespnseStubHeaders = (
   response: Map<string, string> | ServerResponseStub | ResponseStub
 ): ResponseStub['headers'] | Map<string, string> => {
@@ -328,6 +331,7 @@ const stabilities: Record<NonNullable<TTLObj['stability']>, string> = {
   normal: '',
 };
 
+/*#__NO_SIDE_EFFECTS__*/
 const setCC = (
   response: Map<string, string> | ServerResponseStub | ResponseStub,
   cc: string | undefined
@@ -354,7 +358,7 @@ const setCC = (
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#cachecontrol-helper
  */
-// eslint-disable-next-line complexity
+/*#__NO_SIDE_EFFECTS__*/ // eslint-disable-next-line complexity
 export const cacheControl = (
   response:
     | ServerResponseStub
@@ -413,6 +417,7 @@ export const cacheControl = (
  * Accepts the same arguments as `cacheControl()`.
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#cachecontrolheaders-helper
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const cacheControlHeaders = (
   ttlCfg: TTLConfig,
   eTag?: string | number

@@ -4,6 +4,7 @@
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#aserror
  */
+/*#__NO_SIDE_EFFECTS__*/
 export class ErrorFromPayload extends Error {
   payload?: unknown;
 
@@ -30,6 +31,7 @@ export class ErrorFromPayload extends Error {
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#aserror
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const asError = (maybeError: unknown): ErrorFromPayload => {
   if (maybeError instanceof Error) {
     return maybeError;
@@ -67,6 +69,7 @@ export type ResultTuple<T, E extends Error = Error> =
  */
 export type ResultTupleObj<T, E extends Error = Error> = SuccessResult<T> | FailResult<E>;
 
+/*#__NO_SIDE_EFFECTS__*/
 const Success = <T>(result: T) => {
   const tuple = [undefined, result] as SuccessResult<T>;
   tuple.result = result;
@@ -75,6 +78,7 @@ const Success = <T>(result: T) => {
     map<T, T2, E>(tuple, fn);
   return tuple;
 };
+/*#__NO_SIDE_EFFECTS__*/
 const Fail = <E extends Error = Error>(e: unknown) => {
   const tuple = [asError(e) as E] as FailResult<E>;
   tuple.error = tuple[0];
@@ -100,6 +104,7 @@ function catch_<T, E extends Error = ErrorFromPayload>(
   callback: () => T
 ): ResultTupleObj<T, E>;
 
+/*#__NO_SIDE_EFFECTS__*/
 function catch_<T, E extends Error = ErrorFromPayload>(
   something: Promise<T> | (() => T)
 ): ResultTupleObj<T, E> | Promise<ResultTupleObj<T, E>> {
@@ -115,6 +120,7 @@ function catch_<T, E extends Error = ErrorFromPayload>(
 
 const map = <T, T2, E extends Error>(
   result: ResultTuple<T, E>,
+  /*#__NO_SIDE_EFFECTS__*/
   mapFn: (resultValue: T) => T2
 ): ResultTupleObj<T2, E> => {
   const [error, resultValue] = result;
@@ -155,6 +161,7 @@ export const Result = {
    *
    * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#resulmap
    */
+  /*#__NO_SIDE_EFFECTS__*/
   map: <T, T2, E extends Error>(
     result: ResultTuple<T, E>,
     mapFn: (resultValue: T) => T2
@@ -172,6 +179,7 @@ export const Result = {
    *
    * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#resulthrow
    */
+  /*#__NO_SIDE_EFFECTS__*/
   throw: <T>(result: ResultTuple<T>): T => {
     if (result[0]) {
       throw result[0];

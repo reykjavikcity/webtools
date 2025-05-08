@@ -4,6 +4,7 @@
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README-rr.md#isclientfetch
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const isClientFetch = (request: Request): boolean =>
   // For info about this detection method:
   // - https://github.com/remix-run/remix/discussions/5583

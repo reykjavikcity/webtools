@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- perf: Add `#__NO_SIDE_EFFECTS__` compiler notation to selected functions
 
 ## 0.2.3
 

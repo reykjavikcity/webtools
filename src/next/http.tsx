@@ -40,6 +40,7 @@ type ShowErrorPageFn<EP extends ErrorProps = ErrorProps> = (
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README-nextjs.md#showerrorpage-helper
  */
+/*#__NO_SIDE_EFFECTS__*/
 const showErrorPage: ShowErrorPageFn = (response, error, ttl = '2s') => {
   error =
     typeof error === 'number'
@@ -70,6 +71,7 @@ export type InferErrorPageProps<
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README-nextjs.md#makeerrorizeapphoc
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const makeErrorizeAppHOC = <EP extends Partial<ErrorProps>>(
   ErrorPage: FunctionComponent<EP>
 ) => {
@@ -115,6 +117,7 @@ export const makeErrorizeAppHOC = <EP extends Partial<ErrorProps>>(
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README-nextjs.md#notmodified304-helper
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const notModified304 = (response: ServerResponse | NextContextLike) => {
   response = 'res' in response ? response.res : response;
   response.statusCode = HTTP_304_NotModified;

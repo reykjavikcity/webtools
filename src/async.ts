@@ -6,6 +6,7 @@ type PlainObj = Record<string, unknown>;
  * Simple sleep function. Returns a promise that resolves after `length`
  * milliseconds.
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const sleep = (length: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, length));
 
@@ -13,6 +14,7 @@ export const sleep = (length: number) =>
  * Returns a function that adds lag/delay to a promise chain,
  * passing the promise payload through.
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const addLag =
   (length: number) =>
   <T>(res: T) =>
@@ -36,6 +38,7 @@ export function maxWait<PromiseMap extends PlainObj>(
     | undefined;
 }>;
 
+/*#__NO_SIDE_EFFECTS__*/
 export function maxWait(timeout: number, promises: Array<unknown> | PlainObj) {
   if (Array.isArray(promises)) {
     return Promise.race([
@@ -77,6 +80,7 @@ type XX = EitherObj<PromiseFulfilledResult<string>, PromiseRejectedResult>;
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#promiseallobject
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const promiseAllObject = <T extends PlainObj>(promisesMap: T) =>
   Promise.all(Object.values(promisesMap)).then((results) => {
     const keys = Object.keys(promisesMap);
