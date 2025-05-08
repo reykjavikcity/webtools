@@ -19,7 +19,7 @@
     "prepublishOnly": "echo \"\nRun 'bun run publish:list' to publish this package\n\n\"  && exit 1"
   },
   "dependencies": {
-    "@reykjavik/hanna-utils": "^0.2.16"
+    "@reykjavik/hanna-utils": "^0.2.20"
   },
   "peerDependencies": {
     "@vanilla-extract/css": "^1.14.1",
@@ -47,19 +47,19 @@
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^14.12.3",
-    "@hugsmidjan/hxmstyle": "^8.9.3",
-    "@maranomynet/libtools": "^0.1.14",
-    "@types/bun": "^1.1.11",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.1",
-    "@vanilla-extract/css": "^1.16.0",
+    "@hugsmidjan/hxmstyle": "^8.13.0",
+    "@maranomynet/libtools": "^0.1.16",
+    "@types/bun": "^1.2.12",
+    "@types/react": "^18.3.21",
+    "@types/react-dom": "^18.3.7",
+    "@vanilla-extract/css": "^1.17.1",
     "eslint": "^8.57.1",
-    "next": "^12.3.4",
+    "next": "^12.3.7",
     "prettier": "^2.8.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router": "^7.0.2",
-    "typescript": "^4.9.5"
+    "react-router": "^7.6.0",
+    "typescript": "^5.8.3"
   },
   "hxmstyle": {
     "options": {
@@ -82,7 +82,7 @@
   },
   "type": "module",
   "engines": {
-    "bun": "^1.1.17",
+    "bun": "^1.2.12",
     "node": "9999. Please use bun",
     "npm": "9999. Please use bun",
     "yarn": "9999. Please use bun"
