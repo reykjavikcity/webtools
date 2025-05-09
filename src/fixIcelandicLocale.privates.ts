@@ -171,7 +171,7 @@ const PatchedNumberFormat = function NumberFormat(
       ? combineParts(this.formatRangeToParts(value1, value2))
       : super_.formatRange(value1, value2);
   this.formatToParts = (value) => {
-    const parts = super_.formatToParts(value);
+    const parts = super_.formatToParts(value!);
     return mapped ? reformatNumberParts(super_, parts) : parts;
   };
   this.formatRangeToParts = (value1, value2) => {
