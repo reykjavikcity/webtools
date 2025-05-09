@@ -39,7 +39,7 @@ _2024-12-17_
 _2024-12-12_
 
 - feat: Add `@reykjavik/webtools/react-router/*` (previously `/remix/*`)
-- **BREAKING** feat: Remove all `@reykjavik/webtools/react-router/*` modules
+- **BREAKING** feat: Remove all `@reykjavik/webtools/remix/*` modules
 - **BREAKING** feat: Bump `pkg.engines.node` version to >=20
 - **BREAKING** feat: Remove `@reykjavik/webtools/next/SiteImprove` (deprecated
   module)
