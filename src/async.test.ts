@@ -55,6 +55,21 @@ describe('sleep', () => {
     expect(
       Promise.race([sleep(-100).then(() => 'A'), sleep(10).then(() => 'B')])
     ).resolves.toBe('A');
+
+    // Passing a signal should work
+    const { signal } = new AbortController();
+    expect(sleep(10, { signal })).toBeInstanceOf(Promise);
+    expect(sleep(10, { signal })).resolves.toBeUndefined();
+  });
+
+  test('works with abort signal', () => {
+    const abortedSleep = sleep(10, { signal: AbortSignal.abort() });
+    expect(abortedSleep).toBeInstanceOf(Promise);
+    expect(abortedSleep).rejects.toThrow();
+
+    const controller = new AbortController();
+    sleep(10).then(() => controller.abort());
+    expect(sleep(15, { signal: controller.signal })).rejects.toThrow();
   });
 });
 

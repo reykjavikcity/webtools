@@ -7,8 +7,28 @@ type PlainObj = Record<string, unknown>;
  * milliseconds.
  */
 /*#__NO_SIDE_EFFECTS__*/
-export const sleep = (length: number) =>
-  new Promise<void>((resolve) => setTimeout(resolve, length));
+export const sleep = (length: number, opts?: { signal?: AbortSignal }) =>
+  new Promise<void>((resolve, reject) => {
+    const signal = opts && opts.signal;
+    if (!signal) {
+      return setTimeout(resolve, length);
+    }
+    if (signal.aborted) {
+      return reject(signal.reason);
+    }
+    const onAbort = () => {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      clearTimeout(timer);
+      signal.removeEventListener('abort', onAbort);
+      reject(signal.reason);
+    };
+    signal.addEventListener('abort', onAbort);
+
+    const timer = setTimeout(() => {
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    }, length);
+  });
 
 /**
  * Returns a function that adds lag/delay to a promise chain,
@@ -16,9 +36,9 @@ export const sleep = (length: number) =>
  */
 /*#__NO_SIDE_EFFECTS__*/
 export const addLag =
-  (length: number) =>
+  (length: number, opts?: { signal?: AbortSignal }) =>
   <T>(res: T) =>
-    sleep(length).then(() => res);
+    sleep(length, opts).then(() => res);
 
 // ---------------------------------------------------------------------------
 
