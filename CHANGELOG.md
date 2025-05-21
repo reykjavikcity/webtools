@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.2.5
+
+_2025-05-21_
+
 - `@reykjavik/webtools/async`:
   - feat: Support passing `AbortSignal` to `sleep` and `addLag` helpers
 
