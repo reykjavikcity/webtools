@@ -821,14 +821,25 @@ To opt out of the `&&` replacement, use the callback function signature.
 // someFile.css.ts
 import { vanillaClass } from '@reykjavik/webtools/vanillaExtract';
 
-// Simple class selector block
+// 1) Simple class selector block — no sub-selectors — auto-wrapped
+// in a class-name selector block.
 export const myClass = vanillaClass(`
   background-color: #ccc;
   padding: .5em 1em;
 `);
+// Generated CSS:
+/*
+  .x1y2z3 {
+    background-color: #ccc;
+    padding: .5em 1em;
+  }
+*/
 
-// With && tokens that get replaced with the generated class-name
+// 2) More advanced usage with `&&` tokens that get replaced with the
+// generated class-name selector (prefixed with a dot).
 export const myClasWithAmp = vanillaClass(`
+  oops: not-wrapped-in-a-selector-block;
+
   && {
     background-color: #ccc;
     padding: .5em 1em;
@@ -836,10 +847,32 @@ export const myClasWithAmp = vanillaClass(`
   && > strong {
     color: #c00;
   }
+  @media (min-width: 800px) {
+    && {
+      background-color: #eee;
+    }
+  }
 `);
+// Generated CSS:
+/*
+  oops: not-wrapped-in-a-selector-block;
 
-// Passing a function to get the generated class-name for
-// more complex styles.
+  .y2X1z3 {
+    background-color: #ccc;
+    padding: .5em 1em;
+  }
+  .y2X1z3 > strong {
+    color: #c00;
+  }
+  @media (min-width: 800px) {
+    .y2X1z3 {
+      background-color: #eee;
+    }
+  }
+*/
+
+// 3) Advanced use: Pass a function to get the raw generated class-name,
+// plus a more convenient dot-prefixed selector for the class-name.
 export const myOtherClass = vanillaClass(
   (classNameRaw, classNameSelector) => `
     ${classNameSelector} { 
@@ -855,22 +888,45 @@ export const myOtherClass = vanillaClass(
       }
     }
     /* NOTE: '&&' tokens returned from a callback function are NOT replaced */
-    && { will-not-be: interpolated; }
+    && { this-is-not: interpolated; }
   `
 );
+// Generated CSS:
+/* 
+  .y3z1X2 {
+    background-color: #ccc;
+    padding: .5em 1em;
+  }
+  [class="y3z1X2"] > strong {
+    color: #c00;
+  }
+  @media (min-width: 800px) {
+    .y3z1X2 {
+      background-color: #eee;
+    }
+  }
+  && { this-is-not: interpolated; }
+*/
 
-// With a human readable debugId
+// 4) ...with a human readable debugId
 export const humanReadableClass = vanillaClass(
-  'HumanReadable',
+  'HumanReadable__classNamePrefix',
   `
     border: 1px dashed hotpink;
     cursor: pointer;
   `
 );
+// Generated CSS:
+/*
+  .HumanReadable__classNamePrefix_x2y1z3 {
+    border: 1px dashed hotpink;
+    cursor: pointer;
+  }
+*/
 ```
 
-(NOTE: The dot-prefixed `&&` pattern is chosen to not conflict with the bare
-`&` token in modern nested CSS.)
+(NOTE: The dot-prefixed `&&` pattern was chosen as to not conflict with the
+bare `&` token in modern nested CSS.)
 
 ### `vanillaGlobal`
 
