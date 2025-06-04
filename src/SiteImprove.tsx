@@ -7,7 +7,7 @@ import { useCookieHubConsent } from './CookieHubConsent.js';
 // Event tracking - https://help.siteimprove.com/support/solutions/articles/80000863895-getting-started-with-event-tracking
 // Custom page visit tracking - https://help.siteimprove.com/support/solutions/articles/80000448441-siteimprove-analytics-custom-visit-tracking
 // Since SiteImprove does not track client-side route changes in frameworks
-// that perform client-side (`pushState`) routing, such as Remix and Next.js,
+// that perform client-side (`pushState`) routing, such as React-router and Next.js,
 // we must manually track them by monitoring document.location changes.
 
 // --------------------------------------------------------------------------

@@ -977,7 +977,7 @@ const myStyle = style({
 ### React-Router Tools
 
 See [README-rr.md](./README-rr.md) for helpers and components specifically
-designed for use in Remix.run projects.
+designed for use in React-router projects.
 
 (NOTE: If you're still using [Remix.run](https://remix.run) you can install
 version `"^0.1.22"` of this package.)

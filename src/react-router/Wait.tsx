@@ -32,7 +32,7 @@ type WaitFallbacks = {
 export type WaitProps<T> = WaitPropsBase<T> & WaitFallbacks;
 
 /**
- * A function component that wraps `@reykjavik/webtools/remix/Wait` to provide
+ * A function component that wraps `@reykjavik/webtools/react-router/Wait` to provide
  * custom properties for `meanwhile` and `error` fallbacks, and/or other
  * behaviors.
  *
@@ -45,7 +45,7 @@ export type WaitComponent<
 };
 
 /**
- * A thin wrapper around [Remix's `Await`](https://remix.run/docs/en/2/components/await)
+ * A thin wrapper around [React-router's `Await`](https://reactrouter.com/api/components/Await)
  * component, to provide a more ergonomic API.
  *
  * If the awaited promise (`props.for`) resolves to an object with a truthy
