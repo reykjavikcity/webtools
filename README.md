@@ -835,11 +835,12 @@ export const myClass = vanillaClass(`
   }
 */
 
+// ---------------------------------------------------------------------------
+
 // 2) More advanced usage with `&&` tokens that get replaced with the
 // generated class-name selector (prefixed with a dot).
-export const myClasWithAmp = vanillaClass(`
-  oops: not-wrapped-in-a-selector-block;
-
+export const myClasWithAmp = vanillaClass(
+  `
   && {
     background-color: #ccc;
     padding: .5em 1em;
@@ -852,11 +853,13 @@ export const myClasWithAmp = vanillaClass(`
       background-color: #eee;
     }
   }
-`);
+  /* NOTE: Root-level CSS rules are NOT auto-wrapped when ` &&
+    ` tokens are otherwise present */
+  color: blue;
+`
+);
 // Generated CSS:
 /*
-  oops: not-wrapped-in-a-selector-block;
-
   .y2X1z3 {
     background-color: #ccc;
     padding: .5em 1em;
@@ -869,7 +872,11 @@ export const myClasWithAmp = vanillaClass(`
       background-color: #eee;
     }
   }
+  /* NOTE: Root-level CSS rules are NOT auto-wrapped when `&&` tokens are otherwise present *​/
+  color: blue;
 */
+
+// ---------------------------------------------------------------------------
 
 // 3) Advanced use: Pass a function to get the raw generated class-name,
 // plus a more convenient dot-prefixed selector for the class-name.
@@ -905,8 +912,11 @@ export const myOtherClass = vanillaClass(
       background-color: #eee;
     }
   }
+  /* NOTE: '&&' tokens returned from a callback function are NOT replaced *​​/
   && { this-is-not: interpolated; }
 */
+
+// ---------------------------------------------------------------------------
 
 // 4) ...with a human readable debugId
 export const humanReadableClass = vanillaClass(
