@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.2.6
+
+_2025-06-20_
+
 - `@reykjavik/webtools/next/vanillaExtract`:
   - feat: Add `vanillaVars` helper to generate privately scoped CSS variables
 
