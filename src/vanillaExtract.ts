@@ -1,3 +1,4 @@
+import { capitalize } from '@reykjavik/hanna-utils';
 import { globalStyle, GlobalStyleRule, style } from '@vanilla-extract/css';
 
 /**
@@ -63,3 +64,20 @@ export function vanillaClass(
 
   return className;
 }
+
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns an object with privately scoped CSS variables props.
+ * Pass them around and use them in your CSS.
+ *
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#vanillacvars
+ */
+export const vanillaVars = <T extends string>(...varNames: Array<T>) => {
+  const id = vanillaClass(``);
+  const vars = {} as Record<`var${Capitalize<T>}`, string>;
+  for (const name of varNames) {
+    vars[`var${capitalize(name)}`] = `--${id}--${name}`;
+  }
+  return vars;
+};

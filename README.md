@@ -51,6 +51,7 @@ bun add @reykjavik/webtools
   - [`vanillaClass`](#vanillaclass)
   - [`vanillaGlobal`](#vanillaglobal)
   - [`vanillaProps`](#vanillaprops)
+  - [`vanillaVars`](#vanillavars)
 - [Framework Specific Tools](#framework-specific-tools)
   - [React-Router Tools](#react-router-tools)
   - [Next.js Tools](#nextjs-tools)
@@ -978,6 +979,59 @@ const myStyle = style({
     random-css-prop-normally-rejected-by-vanilla-extract: 'YOLO!';
   `),
 });
+```
+
+### `vanillaVars`
+
+**Syntax:**
+`` vanillaVars(...varNames: Array<T>): Record <`var${Capitalize<T>}`, string> ``
+
+Returns an object with privately scoped CSS variables props. Pass them around
+and use them in your CSS.
+
+```ts
+// MyComponent.css.ts
+import {
+  vanillaVars,
+  vanillaGlobal,
+} from '@reykjavik/webtools/vanillaExtract';
+
+export const { varPrimaryColor, varSecondaryColor } = vanillaVars(
+  'primaryColor',
+  'secondaryColor'
+);
+
+vanillaGlobal(`
+  :root {
+    ${varPrimaryColor}: #ff0000;
+    ${varSecondaryColor}: #00ff00;
+  }
+  body {
+    background-color: var(${varPrimaryColor});
+    color: var(${varSecondaryColor});
+  }
+`);
+```
+
+…and then in your component:
+
+```ts
+// MyComponent.tsx
+import React from 'react';
+import * as cl from './someFile.css.ts';
+
+export function MyComponent() {
+  return (
+    <div
+      style={{
+        [cl.varPrimaryColor]: 'yellow',
+        [cl.varSecondaryColor]: 'blue',
+      }}
+    >
+      ...children...
+    </div>
+  );
+}
 ```
 
 ---

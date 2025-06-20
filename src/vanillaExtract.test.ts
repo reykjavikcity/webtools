@@ -9,6 +9,7 @@ if (false as boolean) {
     vanillaClass: true,
     vanillaGlobal: true,
     vanillaProps: true,
+    vanillaVars: true,
   };
 
   /* eslint-enable @typescript-eslint/no-unused-vars */
