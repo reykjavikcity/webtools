@@ -101,7 +101,7 @@ const Fail = <E extends Error = Error>(e: unknown) => {
  * `[error, results]` tuple with the `result` and `error` also attached as
  * named properties.
  *
- * Works on both promises and sync callback functions.
+ * Works on both promises and (synchronous) callback functions.
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#resultcatch
  */
