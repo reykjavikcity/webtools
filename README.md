@@ -386,7 +386,8 @@ Guarantees that a caught (`catch (e)`) value of `unknown` type, is indeed an
 
 If the input is an `Error` instance, it is returned as-is. If the input is
 something else it is wrapped in a new `ErrorFromPayload` instance, and the
-original value is stored in as a `payload` property.
+original value is stored in as a `payload` property, and it's `.toString()` is
+used for the `message` property.
 
 ```ts
 import { asError, type ErrorFromPayload } from '@reykjavik/webtools/errorhandling';
@@ -395,21 +396,23 @@ const theError = new Error('Something went wrong');
 try {
   throw theError;
 } catch (err) {
+  // theError is an instance of Error so it's returned as-is
   const error = asError(theError);
   console.error(error === theError); // true
-  console.error('patload' in error); // false
+  console.error('payload' in error); // false
 }
 
-const someObject = ['Something went wrong'];
+const someObject = ['Oops', 'Something went wrong'];
 try {
   throw someObject;
 } catch (err) {
+  // the thrown someObject is not an Error so an `ErrorFromPayload` is returned
   const error = asError(someObject);
   console.error(error === someObject); // false
-  console.error(error.message === someObject.join(',')); // false
   console.error(error instanceOf ErrorFromPayload); // true
 
   console.error(error.payload === someObject); // true
+  console.error(error.message === someObject.join(',')); // true
 }
 ```
 

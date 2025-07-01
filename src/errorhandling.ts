@@ -1,11 +1,19 @@
 /**
- * Error subclass for thrown values that got cought and turned into an actual
- * Error, with the thrown value as the `payload` property.
+ * Error subclass for thrown NON-Error values that got turned into an actual
+ * Error, with the original thrown value as the `payload` property.
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#aserror
  */
 /*#__NO_SIDE_EFFECTS__*/
 export class ErrorFromPayload extends Error {
+  /**
+   * This payload property is only set if the original `throw` value was NOT
+   * `instanceof Error`.
+   *
+   * In such cases it contains the thrown value as is, and the `message`
+   * property of this `ErrorFromPayload` instance is set to the `.toString()`
+   * representation of the payload.
+   */
   payload?: unknown;
 
   constructor(payload: unknown) {

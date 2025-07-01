@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- docs: Improve JSDocs and README for `asError()` and `ErrorFromPayload`
 
 ## 0.2.6
 
