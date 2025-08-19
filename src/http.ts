@@ -17,7 +17,7 @@ export const HTTP_103_EarlyHints = 103;
 export const HTTP_200_OK = 200;
 /** The request succeeded, and a new resource was created as a result. This is typically the response sent after POST or PUT requests. */
 export const HTTP_201_Created = 201;
-/* The request has been received but not yet acted upon. Another process or server handles the request. */
+/** The request has been received but not yet acted upon. Another process or server handles the request. */
 export const HTTP_202_Accepted = 202;
 /** The returned metadata is not necessarily complete. */
 export const HTTP_203_NonAuthoritativeInformation = 203;
