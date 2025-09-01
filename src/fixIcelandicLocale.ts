@@ -21,10 +21,12 @@ import {
 if (!Intl.Collator.supportedLocalesOf(['is']).length) {
   Intl.Collator = _PatchedCollator;
   String.prototype.localeCompare = _patchedStringLocaleCompare;
-
+}
+if (!Intl.NumberFormat.supportedLocalesOf(['is']).length) {
   Intl.NumberFormat = _PatchedNumberFormat;
   Number.prototype.toLocaleString = _patchedNumberToLocaleString;
-
+}
+if (!Intl.DateTimeFormat.supportedLocalesOf(['is']).length) {
   Intl.DateTimeFormat = _PatchedDateTimeFormat;
   Date.prototype.toLocaleString = _patchedDateToLocaleString;
   Date.prototype.toLocaleDateString = _patchedDateToLocaleDateString;

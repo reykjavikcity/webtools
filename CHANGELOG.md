@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/fixIcelandicLocale`:
+  - fix: Check for support of each Intl class separately
 - docs: Improve JSDocs and README for `asError()` and `ErrorFromPayload`
 
 ## 0.2.6
