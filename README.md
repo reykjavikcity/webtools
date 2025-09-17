@@ -31,6 +31,9 @@ bun add @reykjavik/webtools
   - [`maxWait`](#maxwait)
   - [`debounce`](#debounce)
   - [`throttle`](#throttle)
+- [`@reykjavik/webtools/hoooks`](#reykjavikwebtoolshoooks)
+  - [`useDebounced`](#usedebounced)
+  - [`useThrottled`](#usethrottled)
 - [`@reykjavik/webtools/errorhandling`](#reykjavikwebtoolserrorhandling)
   - [`asError`](#aserror)
   - [`Result` Singleton](#result-singleton)
@@ -477,6 +480,82 @@ sayHello.finish(true); // `cancel` parmeter is true
 ```
 
 ---
+
+## `@reykjavik/webtools/hoooks`
+
+Some useful React hooks.
+
+### `useDebounced`
+
+**Syntax:**
+`useDebounced<A extends Array<unknown>>(func: (...args: A) => void, delay: number, immediate?: boolean): ((...args: A) => void) & { cancel: (finish?: boolean) => void; }`
+
+Returns a stable debounced function that invokes the supplied function after
+the specified delay. When the component unmounts, any pending (debounced)
+calls are automatically cancelled.
+
+**NOTE:** The supplied callback does not need to be memoized. The debouncer
+will always invoke the last supplied version.
+
+```ts
+import { useDebounced } from '@reykjavik/webtools/hoooks';
+
+const MyComponent = () => {
+  const renderDate = new Date();
+  const debouncedSearch = useDebounced((query: string) => {
+    console.log('Searching for:', query, 'at', renderDate.toISOString());
+  }, 200);
+  return (
+    <input
+      type="text"
+      onChange={(e) => {
+        debouncedSearch(e.currentTarget.value);
+      }}
+    />
+  );
+};
+```
+
+See [`debounce`](#debounce) for more details about the parameters and the
+returned debounced function's `.cancel()` method.
+
+### `useThrottled`
+
+**Syntax:**
+`useThrottled<A extends Array<unknown>>(func: (...args: A) => void, delay: number, skipFirst?: boolean): ((...args: A) => void) & { finish: (cancel?: boolean) => void; }`
+
+Returns a stable throttler function that throttles the supplied function.
+
+**NOTE:** The supplied callback does not need to be memoized. The throttler
+will always invoke the last supplied version.
+
+```ts
+import { useThrottled } from '@reykjavik/webtools/hoooks';
+
+const MyComponent = () => {
+  const renderDate = new Date();
+  const throttledReportPosition = useThrottled((x: number, y: number) => {
+    console.log('Mouse position:', x, ',', y, 'at', renderDate.toISOString());
+  }, 200);
+
+  return (
+    <div
+      style={{ width: '300px', height: '300px', background: '#eee' }}
+      onMouseMove={(e) => {
+        throttledReportPosition(e.clientX, e.clientY);
+      }}
+    >
+      Move your mouse here.
+    </div>
+  );
+};
+```
+
+See [`throttle`](#throttle) for more details about the parameters and the
+returned throttled function's `.finish()` method.
+
+---
+
 ## `@reykjavik/webtools/errorhandling`
 
 A small set of lightweight tools for handling errors and promises in a safer,

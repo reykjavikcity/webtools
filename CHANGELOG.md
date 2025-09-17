@@ -5,6 +5,8 @@
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/async`:
   - feat: Add `debounce` and `throttle` helpers
+- `@reykjavik/webtools/hooks` (new module):
+  - feat: Add `useDebounced` and `useThrottled` hooks
 
 ## 0.2.7
 
