@@ -29,6 +29,8 @@ bun add @reykjavik/webtools
 - [`@reykjavik/webtools/async`](#reykjavikwebtoolsasync)
   - [`promiseAllObject`](#promiseallobject)
   - [`maxWait`](#maxwait)
+  - [`debounce`](#debounce)
+  - [`throttle`](#throttle)
 - [`@reykjavik/webtools/errorhandling`](#reykjavikwebtoolserrorhandling)
   - [`asError`](#aserror)
   - [`Result` Singleton](#result-singleton)
@@ -369,6 +371,112 @@ console.log(posts?.reason); // undefined | unknown
 
 ---
 
+### `debounce`
+
+**Syntax:**
+`debounce<A extends Array<unknown>>(func: (...args: A) => void, delay: number, immediate?: boolean): ((...args: A) => void) & { cancel: (finish?: boolean) => void; }`
+
+Returns a debounced function that only runs after `delay` milliseconds of
+quiet-time, and can optionally be made to run `immediate`ly on first call
+before dbouncing subsequent calls.
+
+```ts
+import { debounce } from '@reykjavik/webtools/async';
+
+// Basic usage:
+const sayHello = debounce((namme: string) => {
+  console.log('Hello ' + name);
+}, 200);
+
+sayHello('Alice');
+sayHello('Bob');
+sayHello('Charlie');
+sayHello('Dorothy');
+// Only "Hello Dorothy" is logged, 200ms after the last call
+
+// With `immediate` param set to true:
+const sayHi = debounce(
+  (namme: string) => console.log('Hi ' + name),
+  200,
+  true
+);
+sayHi('Alice');
+sayHi('Bob');
+sayHi('Charlie');
+sayHi('Dorothy');
+// "Hi Alice" is logged immediately
+// Then "Hi Dorothy" is logged, 200ms after the last call
+```
+
+The returned function has a nice `.cancel()` method, which can optionally
+invoke the function before cancelling, if it had a debounce pending.
+
+```ts
+sayHello('Erica');
+sayHello('Fiona');
+sayHello.cancel();
+// Nothing is logged because the debounce was cancelled
+
+sayHello('George');
+sayHello('Harold');
+sayHello.cancel(true); // `finish` parmeter is true
+// "Hello Harold" is logged immediately because it was pending
+```
+
+---
+
+### `throttle`
+
+**Syntax:**
+`throttle<A extends Array<unknown>>(func: (...args: A) => void, delay: number, skipFirst?: boolean): ((...args: A) => void) & { finish: (cancel?: boolean) => void; }`
+
+Returns a throttled function that never runs more often than every `delay`
+milliseconds. It can optionally made to `skipFirst` invocation.
+
+```ts
+import { throttle } from '@reykjavik/webtools/async';
+
+// Basic usage:
+const sayHello = throttle((name: string) => {
+  console.log('Hello ' + name);
+}, 200);
+
+sayHello('Alice');
+sayHello('Bob');
+sayHello('Charlie');
+sayHello('Dorothy');
+// Only "Hello Alice" is logged immediately. The other calls were throttled.
+
+// With `skipFirst` param set to true:
+const sayHi = throttle(
+  (name: string) => console.log('Hi ' + name),
+  200,
+  true
+);
+sayHi('Alice');
+sayHi('Bob');
+sayHi('Charlie');
+sayHi('Dorothy');
+// Nothing is logged. The first call was skipped, and the rest were throttled.
+```
+
+The returned function also has a nice `.finish()` method to reset the throttle
+timer. By default it instantly invokes the function, if the last call was
+throttled (skipped)-.
+
+```ts
+sayHello('Erica');
+sayHello('Fiona');
+sayHello.finish();
+// "Hello Fiona" is logged immediately because it was pending
+
+sayHello('George');
+sayHello('Harold');
+sayHello.finish(true); // `cancel` parmeter is true
+// Nothing is logged because the pending call was cancelled
+```
+
+---
 ## `@reykjavik/webtools/errorhandling`
 
 A small set of lightweight tools for handling errors and promises in a safer,

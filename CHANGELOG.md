@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/async`:
+  - feat: Add `debounce` and `throttle` helpers
 
 ## 0.2.7
 

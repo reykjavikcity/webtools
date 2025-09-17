@@ -1,6 +1,6 @@
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, mock, test } from 'bun:test';
 
-import { addLag, maxWait, promiseAllObject, sleep } from './async.js';
+import { addLag, debounce, maxWait, promiseAllObject, sleep, throttle } from './async.js';
 import * as moduleExports from './async.js';
 
 if (false as boolean) {
@@ -14,6 +14,8 @@ if (false as boolean) {
     addLag: true,
     maxWait: true,
     promiseAllObject: true,
+    debounce: true,
+    throttle: true,
   };
 
   // ---------------------------------------------------------------------------
@@ -149,5 +151,367 @@ describe('promiseAllObject', () => {
     // @ts-expect-error  (testing bad input)
     const undef: Record<string, unknown> = undefined;
     expect(() => promiseAllObject(undef)).toThrow();
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe('throttle', () => {
+  const prep = (skipFirst?: boolean) => {
+    const add = mock((a: number, b: number) => a + b);
+    return [add, throttle(add, 20, skipFirst)] as const;
+  };
+  test('creates a wrapped function', () => {
+    const [add, tAdd] = prep();
+
+    expect(tAdd(1, 2)).toBeUndefined(); // throttled Functions don't return anything
+    expect(add.mock.lastCall).toEqual([1, 2]);
+    expect(add.mock.calls.length).toBe(1);
+    expect('finish' in tAdd).toBe(true);
+  });
+
+  test('throttled calls wait for the delay', (done) => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+
+    setTimeout(() => {
+      expect(add.mock.calls.length).toBe(1);
+      expect(add.mock.lastCall).toEqual([1, 2]);
+      done();
+    }, 10);
+  });
+
+  test('throttled calls are performed after the delay', (done) => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd(3, 4);
+
+    setTimeout(() => {
+      expect(add.mock.calls.length).toBe(2);
+      expect(add.mock.lastCall).toEqual([3, 4]);
+      done();
+    }, 30);
+  });
+
+  test('runs the throttled call instantly', () => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd(3, 4);
+    tAdd.finish();
+
+    expect(add.mock.calls.length).toBe(2);
+    expect(add.mock.lastCall).toEqual([3, 4]);
+  });
+
+  test('only runs the throttled call once', () => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd(3, 4);
+    tAdd.finish();
+    tAdd.finish();
+    tAdd.finish();
+
+    expect(add.mock.calls.length).toBe(2);
+    expect(add.mock.lastCall).toEqual([3, 4]);
+  });
+
+  test('finished calls do not run after the delay', (done) => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd(3, 4);
+    tAdd.finish();
+
+    setTimeout(() => {
+      expect(add.mock.calls.length).toBe(2);
+      expect(add.mock.lastCall).toEqual([3, 4]);
+      done();
+    }, 30);
+  });
+
+  test('can cancel the throttled call', () => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd(3, 4);
+    tAdd.finish(true);
+
+    expect(add.mock.calls.length).toBe(1);
+    expect(add.mock.lastCall).toEqual([1, 2]);
+  });
+
+  test('does not run cancelled calls later', () => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd.finish(true);
+    tAdd.finish();
+
+    expect(add.mock.calls.length).toBe(1);
+    expect(add.mock.lastCall).toEqual([1, 2]);
+  });
+
+  test('`skipFirst` option skips the first call', () => {
+    const [add, tAdd] = prep(true);
+    tAdd(1, 2);
+    tAdd(2, 3);
+    expect(add.mock.calls.length).toBe(0);
+  });
+
+  test('with `skipFirst` throttled calls are performed after the delay', (done) => {
+    const [add, tAdd] = prep(true);
+    tAdd(1, 2);
+    tAdd(2, 3);
+
+    setTimeout(() => {
+      expect(add.mock.calls.length).toBe(1);
+      expect(add.mock.lastCall).toEqual([2, 3]);
+      done();
+    }, 30);
+  });
+
+  test('passes `this` to the throttled function', () => {
+    const add = mock(function (this: { b: number; c?: number }, a: number) {
+      this.c = a + this.b;
+    });
+    const foo = {
+      tAdd: throttle(add, 20),
+      b: 10,
+      c: -1,
+    };
+
+    foo.tAdd(5);
+    expect(add.mock.calls.length).toBe(1);
+    expect(foo.c).toBe(15);
+  });
+
+  test('throttle.d creates a dynamic function', (done) => {
+    const throttler = throttle.d(20);
+    let sideEffect: number | undefined;
+    const add = (a: number, b: number) => {
+      sideEffect = a + b;
+    };
+    const multiply = (a: number, b: number) => {
+      sideEffect = a * b;
+    };
+
+    throttler(add, 3, 3);
+    expect(sideEffect).toBe(6);
+
+    throttler(multiply, 3, 3);
+    throttler.finish();
+    expect(sideEffect).toBe(9);
+
+    throttler(add, 5, 5);
+    throttler(multiply, 5, 5);
+    setTimeout(() => {
+      expect(sideEffect).toBe(25);
+      done();
+    }, 30);
+  });
+
+  test('throttle.d passes `this` to the dynamic function', () => {
+    const foo = {
+      do: throttle.d(20),
+      b: 10,
+      c: -1 as number,
+    };
+    const add = function (this: typeof foo, a: number) {
+      this.c = a + this.b;
+    };
+    const multiply = function (this: typeof foo, a: number) {
+      this.c = a * this.b;
+    };
+
+    foo.do(add, 3);
+    expect(foo.c).toBe(13);
+
+    foo.do(multiply, 3);
+    foo.do.finish();
+    expect(foo.c).toBe(30);
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe('debounce', () => {
+  const prep = (immediate?: boolean) => {
+    const add = mock((a: number, b: number) => a + b);
+    return [add, debounce(add, 20, immediate)] as const;
+  };
+
+  test('creates a wrapped function', () => {
+    const [add, tAdd] = prep();
+
+    expect(tAdd(1, 2)).toBeUndefined(); // debounced Functions don't return anything
+    expect(add.mock.calls.length).toBe(0);
+    expect('cancel' in tAdd).toBe(true);
+  });
+
+  test('debounced calls wait for the delay', (done) => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+
+    setTimeout(() => {
+      expect(add.mock.calls.length).toBe(0);
+      done();
+    }, 10);
+  });
+
+  test('debounced calls are performed after the delay', (done) => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd(3, 4);
+
+    setTimeout(() => {
+      expect(add.mock.calls.length).toBe(1);
+      expect(add.mock.lastCall).toEqual([3, 4]);
+      done();
+    }, 30);
+  });
+
+  test('cancel method does not run the debounced call instantly', () => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd.cancel();
+
+    expect(add.mock.calls.length).toBe(0);
+  });
+
+  test('cancelled calls do not run after the delay', (done) => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd.cancel();
+
+    setTimeout(() => {
+      expect(add.mock.calls.length).toBe(0);
+      done();
+    }, 30);
+  });
+
+  test('cancel method can immediately finish the debounced call', () => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd.cancel(true);
+
+    expect(add.mock.calls.length).toBe(1);
+    expect(add.mock.lastCall).toEqual([2, 3]);
+  });
+
+  test('cancel method only runs the debounced call once', () => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd.cancel(true);
+    tAdd.cancel(true);
+    tAdd.cancel(true);
+
+    expect(add.mock.calls.length).toBe(1);
+    expect(add.mock.lastCall).toEqual([2, 3]);
+  });
+
+  test('cancel method does not run cancelled calls later either', (done) => {
+    const [add, tAdd] = prep();
+    tAdd(1, 2);
+    tAdd(2, 3);
+    tAdd.cancel(true);
+
+    setTimeout(() => {
+      tAdd.cancel(true);
+      expect(add.mock.calls.length).toBe(1);
+      expect(add.mock.lastCall).toEqual([2, 3]);
+      done();
+    }, 30);
+  });
+
+  test('skipFirst option skips the first call', () => {
+    const [add, tAdd] = prep(true);
+    tAdd(1, 2);
+    tAdd(2, 3);
+    expect(add.mock.calls.length).toBe(1);
+    expect(add.mock.lastCall).toEqual([1, 2]);
+  });
+
+  test('skipFirst option debounced calls are performed after the delay', (done) => {
+    const [add, tAdd] = prep(true);
+    tAdd(1, 2);
+    tAdd(2, 3);
+
+    setTimeout(() => {
+      expect(add.mock.calls.length).toBe(2);
+      expect(add.mock.lastCall).toEqual([2, 3]);
+      done();
+    }, 30);
+  });
+
+  test('passes `this` to the debounced function', () => {
+    const add = mock(function (this: { b: number; c?: number }, a: number) {
+      this.c = a + this.b;
+    });
+    const foo = {
+      tAdd: debounce(add, 20, true),
+      b: 10,
+      c: -1,
+    };
+    foo.tAdd(5);
+
+    expect(add.mock.calls.length).toBe(1);
+    expect(foo.c).toBe(15);
+  });
+
+  test('debounce.d creates a dynamic function', (done) => {
+    const debouncer = debounce.d(20, true);
+
+    let sideEffect: number | undefined;
+    const add = (a: number, b: number) => {
+      sideEffect = a + b;
+    };
+    const multiply = (a: number, b: number) => {
+      sideEffect = a * b;
+    };
+
+    debouncer(add, 3, 3);
+    expect(sideEffect).toBe(6);
+
+    debouncer(multiply, 3, 3);
+    debouncer.cancel(true);
+    expect(sideEffect).toBe(9);
+
+    debouncer(add, 5, 5);
+    debouncer(multiply, 5, 5);
+    setTimeout(() => {
+      expect(sideEffect).toBe(25);
+      done();
+    }, 30);
+  });
+
+  test('debounce.d passes `this` to the dynamic function', () => {
+    const foo = {
+      do: debounce.d(20, true),
+      b: 10,
+      c: -1 as number,
+    };
+    const add = function (this: typeof foo, a: number) {
+      this.c = a + this.b;
+    };
+    const multiply = function (this: typeof foo, a: number) {
+      this.c = a * this.b;
+    };
+
+    foo.do(add, 3);
+    expect(foo.c).toBe(13);
+
+    foo.do(multiply, 3);
+    foo.do.cancel(true);
+    expect(foo.c).toBe(30);
   });
 });
