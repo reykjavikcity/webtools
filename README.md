@@ -847,9 +847,11 @@ editor), but there's a brief summary:
   `scriptUrl` prop).
 - `scriptUrl?: string` — The full SiteImprove analytics script URL.
   (alternative to `accountId` prop).
-- `hasConsented?: boolean` — Manual GDPR 'analytics' consent flag. Allows hard
-  opt-out, but defers to [`CookieHubProvider` values](#usecookiehubconsent) if
-  they are available.
+- `hasConsented?: boolean` — Manual GDPR 'analytics' consent flag. A `false`
+  value allows hard opt-out, but defers to
+  [`CookieHubProvider` values](#usecookiehubconsent) if they are available.
+  Defaults to `undefined` which means "ask CookieHub if available, otherwise
+  no".
 - `onLoad?: (e: unknown) => void` — Fires when the script has loaded.
 - `onError?: (e: unknown) => void` — Fires if loading the script failed.
 
