@@ -90,5 +90,3 @@ export const vanillaVars = <T extends string>(...varNames: Array<T>) => {
   }
   return vars;
 };
-
-const { varColor, varBg, setVars } = vanillaVars('color', 'bg');

@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/next/vanillaExtract`:
+  - fix: Remove stray side-effect invocation of `vanillaClass` on import
 
 ## 0.2.9
 
