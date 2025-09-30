@@ -75,9 +75,20 @@ export function vanillaClass(
  */
 export const vanillaVars = <T extends string>(...varNames: Array<T>) => {
   const id = vanillaClass(``);
-  const vars = {} as Record<`var${Capitalize<T>}`, string>;
+  type VarObj = Record<`var${Capitalize<T>}`, string>;
+  const vars = {} as VarObj & {
+    /** Allows initializing all or some of the variables in CSS, without offending VSCode's CSS syntax parser too much. */
+    setVars: (vars: Partial<Record<T, unknown>>) => string;
+  };
+  vars.setVars = (vars) =>
+    Object.entries(vars)
+      .map(([name, value]) => `--${id}--${name}: ${value || ''};`)
+      .join('\n');
+
   for (const name of varNames) {
-    vars[`var${capitalize(name)}`] = `--${id}--${name}`;
+    (vars as VarObj)[`var${capitalize(name)}`] = `--${id}--${name}`;
   }
   return vars;
 };
+
+const { varColor, varBg, setVars } = vanillaVars('color', 'bg');

@@ -1188,21 +1188,21 @@ import {
   vanillaGlobal,
 } from '@reykjavik/webtools/vanillaExtract';
 
-export const { varPrimaryColor, varSecondaryColor } = vanillaVars(
+const { varPrimaryColor, varSecondaryColor, setVars } = vanillaVars(
   'primaryColor',
   'secondaryColor'
 );
 
-vanillaGlobal(`
-  :root {
-    ${varPrimaryColor}: #ff0000;
-    ${varSecondaryColor}: #00ff00;
-  }
-  body {
-    background-color: var(${varPrimaryColor});
-    color: var(${varSecondaryColor});
-  }
-`);
+export { varPrimaryColor, varSecondaryColor };
+
+export const wrapper = vanillaClass(`
+  ${setVars({
+    primaryColor: '#ff0000',
+    secondaryColor: '#00ff00',
+  })}
+  background-color: var(${varPrimaryColor});
+  color: var(${varSecondaryColor});
+ `);
 ```
 
 …and then in your component:
@@ -1215,6 +1215,7 @@ import * as cl from './someFile.css.ts';
 export function MyComponent() {
   return (
     <div
+      className={cl.wrapper}
       style={{
         [cl.varPrimaryColor]: 'yellow',
         [cl.varSecondaryColor]: 'blue',

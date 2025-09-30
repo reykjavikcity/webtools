@@ -3,6 +3,9 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/next/vanillaExtract`:
+  - feat: Make `vanillaVars` return a type-safe `setVars()` helper to avoid
+    offending VSCode's CSS syntax parser too much.
 
 ## 0.2.8
 
