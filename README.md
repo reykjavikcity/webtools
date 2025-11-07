@@ -711,6 +711,8 @@ failed `ResultTupleObj`.
 
 ### `Result.catch`
 
+Aliased as `Result.ify` for readability.
+
 **Syntax:**
 `Result.catch<T, Err>(callback: () => T): ResultTupleObj<T, Err>`  
 **Syntax:**

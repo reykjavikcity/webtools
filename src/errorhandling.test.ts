@@ -119,7 +119,14 @@ describe('asError', () => {
 
 describe('Result', () => {
   test('singleton contains correct keys', () => {
-    expect(Object.keys(Result)).toEqual(['Success', 'Fail', 'catch', 'map', 'throw']);
+    expect(Object.keys(Result)).toEqual([
+      'Success',
+      'Fail',
+      'catch',
+      'ify',
+      'map',
+      'throw',
+    ]);
   });
 });
 
@@ -169,6 +176,39 @@ describe('Result.catch', () => {
     const [error, result] = await Result.catch(Promise.resolve('test result'));
     expect(error).toBeUndefined();
     expect(result).toBe('test result');
+  });
+
+  test('handles promise rejections', async () => {
+    const [error, result] = await Result.catch(Promise.reject('test error'));
+    expect(error).toBeInstanceOf(ErrorFromPayload);
+    expect(error?.payload).toBe('test error');
+    expect(result).toBeUndefined();
+  });
+
+  test('handles synchronous callback functions', () => {
+    const callback = () => 'test result';
+    const cbRes = Result.catch(callback);
+    expect(cbRes.error).toBeUndefined();
+    expect(cbRes.result).toBe('test result');
+    const mapped = cbRes.mapTo((res) => res.length);
+    expect(mapped.result).toBe(11);
+    expect(mapped.error).toBeUndefined();
+  });
+
+  test('handles synchronous callback function errors', () => {
+    const callback = () => {
+      throw 'test error'; // eslint-disable-line no-throw-literal
+    };
+    const [error, result] = Result.catch(callback);
+    expect(error).toBeInstanceOf(ErrorFromPayload);
+    expect(error?.payload).toBe('test error');
+    expect(result).toBeUndefined();
+  });
+});
+
+describe('Result.ify', () => {
+  test('is a sugar alias for Result.catch', async () => {
+    expect(Result.catch === Result.ify).toBe(true);
   });
 
   test('handles promise rejections', async () => {

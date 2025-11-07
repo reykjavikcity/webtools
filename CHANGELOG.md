@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/errorhandling`:
+  - feat: Alias `Result.catch()` as `Result.ify()` for readability
 
 ## 0.2.9 – 0.2.10
 

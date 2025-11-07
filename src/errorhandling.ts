@@ -162,6 +162,8 @@ export const Result = {
   // NOTE: The JSDoc must be placed above the `catch_` function above.
   catch: catch_,
 
+  ify: catch_,
+
   /**
    * Helper to map a `ResultTuple`-like object to a new `ResultTupleObj`
    * object, applying a transformation function to the result, but retaining
