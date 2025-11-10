@@ -272,6 +272,9 @@ const unitToSeconds: Record<TimeUnit, number> = {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export const toSec = (ttl: TTL): number => {
+  if (!ttl) {
+    return 0;
+  }
   if (typeof ttl === 'string') {
     const value = parseFloat(ttl);
     const factor = unitToSeconds[ttl.slice(-1) as TimeUnit] || 1;
