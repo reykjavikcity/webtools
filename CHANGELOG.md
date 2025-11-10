@@ -3,6 +3,9 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/http`:
+  - **BREAKING** feat: `toMs()` now treats raw numbers as milliseconds (not as
+    seconds)
 - `@reykjavik/webtools/errorhandling`:
   - feat: Alias `Result.catch()` as `Result.ify()` for readability
 

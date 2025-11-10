@@ -256,12 +256,31 @@ type TTLObj = {
  */
 export type TTLConfig = TTL | TTLKeywords | TTLObj;
 
-const unitToSeconds: Record<TimeUnit, number> = {
-  s: 1,
-  m: 60,
-  h: 3_600,
-  d: 24 * 3_600,
-  w: 7 * 24 * 3_600,
+const unitToMilliseconds: Record<TimeUnit, number> = {
+  s: 1_000,
+  m: 60_000,
+  h: 60 * 60_000,
+  d: 24 * 60 * 60_000,
+  w: 7 * 24 * 60 * 60_000,
+};
+
+/**
+ * Converts a `TTL` (duration) value into milliseconds. Returns `0` for bad
+ * and/or negative input values.
+ *
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#toms-duration-helper
+ */
+/*#__NO_SIDE_EFFECTS__*/
+export const toMs = (ttl: TTL): number => {
+  if (!ttl) {
+    return 0;
+  }
+  if (typeof ttl === 'string') {
+    const value = parseFloat(ttl);
+    const factor = unitToMilliseconds[ttl.slice(-1) as TimeUnit] || 1;
+    ttl = value * factor;
+  }
+  return Math.max(0, Math.round(ttl)) || 0;
 };
 
 /**
@@ -272,25 +291,11 @@ const unitToSeconds: Record<TimeUnit, number> = {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export const toSec = (ttl: TTL): number => {
-  if (!ttl) {
-    return 0;
+  if (typeof ttl === 'number') {
+    ttl = ttl * 1_000;
   }
-  if (typeof ttl === 'string') {
-    const value = parseFloat(ttl);
-    const factor = unitToSeconds[ttl.slice(-1) as TimeUnit] || 1;
-    ttl = value * factor;
-  }
-  return Math.max(0, Math.round(ttl)) || 0;
+  return Math.round(toMs(ttl) / 1_000);
 };
-
-/**
- * Converts a `TTL` (duration) value into milliseconds. Returns `0` for bad
- * and/or negative input values.
- *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#toms-duration-helper
- */
-/*#__NO_SIDE_EFFECTS__*/
-export const toMs = (ttl: TTL): number => toSec(ttl) * 1_000;
 
 type ServerResponseStub = Pick<
   ServerResponse,
@@ -380,7 +385,7 @@ export const cacheControl = (
   let maxAge: typeof opts.maxAge | undefined = opts.maxAge;
   if (typeof maxAge === 'string') {
     if (maxAge === 'permanent') {
-      maxAge = 365 * unitToSeconds.d;
+      maxAge = 365 * unitToMilliseconds.d;
     } else if (maxAge === 'no-cache') {
       maxAge = 0;
     } else if (maxAge === 'unset') {

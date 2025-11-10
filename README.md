@@ -252,6 +252,10 @@ import type { toMs, TTL } from '@reykjavik/webtools/http';
 const ttl: TTL = '2h';
 
 const ttlMs1 = toMs(ttl); // 7_200_000
+// Raw numbers are returned as-is (rounded)
+const ttlMs2 = toMs(499.9); // 500
+// Negative numbers become zero
+const ttlMs3 = toMs('-1h'); // 0
 ```
 
 ---

@@ -249,12 +249,16 @@ describe('toSec', () => {
     expect(toSec('3d')).toEqual(259_200);
     expect(toSec('4w')).toEqual(2_419_200);
 
+    expect(toSec(NaN)).toEqual(0);
     // @ts-expect-error  (testing bad input)
-    const bad1: TTL = 'halló';
-    // @ts-expect-error  (testing bad input)
-    const bad2: TTL = undefined;
+    const bad1: TTL = '';
     expect(toSec(bad1)).toEqual(0);
+    // @ts-expect-error  (testing bad input)
+    const bad2: TTL = 'halló';
     expect(toSec(bad2)).toEqual(0);
+    // @ts-expect-error  (testing bad input)
+    const bad3: TTL = undefined;
+    expect(toSec(bad3)).toEqual(0);
   });
 });
 
@@ -262,8 +266,8 @@ describe('toSec', () => {
 
 describe('toMs', () => {
   test('works', () => {
-    expect(toMs(123)).toEqual(123_000);
-    expect(toMs(123.7)).toEqual(124_000);
+    expect(toMs(123)).toEqual(123);
+    expect(toMs(123.7)).toEqual(124);
     expect(toMs(-1)).toEqual(0);
 
     expect(toMs('1s')).toEqual(1_000);
@@ -272,9 +276,9 @@ describe('toMs', () => {
 
     // @ts-expect-error  (testing bad input)
     const bad1: TTL = 'halló';
+    expect(toMs(bad1)).toEqual(0);
     // @ts-expect-error  (testing bad input)
     const bad2: TTL = undefined;
-    expect(toMs(bad1)).toEqual(0);
     expect(toMs(bad2)).toEqual(0);
   });
 });
