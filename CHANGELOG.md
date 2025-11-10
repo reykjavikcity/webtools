@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.0
+
+_2025-11-10_
+
 - `@reykjavik/webtools/http`:
   - **BREAKING** feat: `toMs()` now treats raw numbers as milliseconds (not as
     seconds)
