@@ -4,13 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 
-## 0.3.1
-
-_2025-11-10_
-
-- docs: Update JSDoc @see links to point to new version branch
-
-## 0.3.0
+## 0.3.0 – 0.3.1
 
 _2025-11-10_
 
