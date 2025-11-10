@@ -2,7 +2,7 @@
  * Detects if the request is a client fetch, or an initial/full-page load.
  * Useful for deciding whether to defer data fetching or not.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README-rr.md#isclientfetch
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README-rr.md#isclientfetch
  */
 /*#__NO_SIDE_EFFECTS__*/
 export const isClientFetch = (request: Request): boolean =>

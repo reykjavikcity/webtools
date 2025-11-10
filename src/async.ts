@@ -46,7 +46,7 @@ export const addLag =
  * Resolves as soon as all of the passed `promises` have resolved/settled,
  * or after `timeout` milliseconds — whichever comes first.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#maxwait
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#maxwait
  */
 export function maxWait(timeout: number, promises: Array<unknown>): Promise<void>;
 export function maxWait<PromiseMap extends PlainObj>(
@@ -96,7 +96,7 @@ export function maxWait(timeout: number, promises: Array<unknown> | PlainObj) {
  * A variation of `Promise.all()` that accepts an object with named promises
  * and returns a same-shaped object with the resolved values.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#promiseallobject
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#promiseallobject
  */
 /*#__NO_SIDE_EFFECTS__*/
 export const promiseAllObject = <T extends PlainObj>(promisesMap: T) =>
@@ -129,7 +129,7 @@ type Cancellable<A extends Array<unknown>> = ((...args: A) => void) & {
  * of quiet-time.  \
  * The returned function also has a nice `.cancel()` method.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#debounce
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#debounce
  */
 /*#__NO_SIDE_EFFECTS__*/
 export const debounce = <A extends Array<unknown>>(
@@ -208,7 +208,7 @@ type Finishable<A extends Array<unknown>> = ((...args: A) => void) & {
  * The returned function also has a nice `.finish()` method to reset the
  * throttle timer
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#throttle
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#throttle
  */
 /*#__NO_SIDE_EFFECTS__*/
 export const throttle = <A extends Array<unknown>>(

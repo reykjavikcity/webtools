@@ -10,7 +10,7 @@ import { debounce, throttle } from './async.js';
  * **NOTE:** The supplied callback does not need to be memoized. The debouncer
  * will always invoke the last supplied version.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#usedebounced
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#usedebounced
  */
 export const useDebounced = <A extends Array<unknown>>(
   /** The function to debounce */
@@ -42,7 +42,7 @@ export const useDebounced = <A extends Array<unknown>>(
  * **NOTE:** The supplied callback does not need to be memoized. The throttler
  * will always invoke the last supplied version.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#usethrottled
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#usethrottled
  */
 export const useThrottled = <A extends Array<unknown>>(
   /** The function to throttle */

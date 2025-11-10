@@ -307,7 +307,7 @@ const moveCookiehubScriptInDomTree = () => {
  * management script and sets up a React state object with the relevant user
  * consent flags.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#cookiehubprovider-component
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#cookiehubprovider-component
  */
 export const CookieHubProvider = (props: CookieHubProviderProps) => {
   const [state, setState] = useState<CookieHubContextState>(initialConsentState);
@@ -407,7 +407,7 @@ export const CookieHubProvider = (props: CookieHubProviderProps) => {
  * Returns up-to-date cookie consent flags. For use in React components or hook
  * functions.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#usecookiehubconsent
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#usecookiehubconsent
  */
 export const useCookieHubConsent = (): Partial<CookieHubContextState['consent']> =>
   useContext(CookieHubContext)?.consent || {};

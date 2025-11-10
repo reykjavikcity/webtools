@@ -95,7 +95,7 @@ const trackDynamicPageView = (url: string, refUrl?: string, title?: string) =>
 /**
  * A small helper for tracking custom UI events and reporting them to SiteImrove.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#pingsiteimprove-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#pingsiteimprove-helper
  */
 export const pingSiteImprove = (category: string, action: string, label?: string) => {
   if (
@@ -113,7 +113,7 @@ export const pingSiteImprove = (category: string, action: string, label?: string
  * A small helper for reporting to SiteImrove when the user is programmatically
  * being sent to a different URL/resource.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#pingsiteimproveoutbound-helper
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#pingsiteimproveoutbound-helper
  */
 export const pingSiteImproveOutbound = (ourl: string) => {
   if (
@@ -267,7 +267,7 @@ const loc =
  * A component for loading a SiteImprove analytics script and set up page-view
  * tracking across client-side (pushState, replaceState) routing.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#siteimprove-component
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#siteimprove-component
  */
 export const SiteImprove = (props: SiteImproveProps) => {
   const consented = useResolvedAnalyticsConsent(props.hasConsented);

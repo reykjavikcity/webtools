@@ -4,7 +4,7 @@ import { globalStyle, GlobalStyleRule, style } from '@vanilla-extract/css';
 /**
  * Adds free-form CSS as a globalStyle
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#vanillaglobal
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#vanillaglobal
  */
 export const vanillaGlobal = (css: string) =>
   globalStyle('x', { x: `} ${css} x{x:` } as GlobalStyleRule);
@@ -15,7 +15,7 @@ export const vanillaGlobal = (css: string) =>
  * Spreads the return value into a style object, to inject free-form CSS
  * properties (or nested blocks)
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#vanillaprops
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#vanillaprops
  */
 export const vanillaProps = (css: string) => ({ x: `; ${css}` } as GlobalStyleRule);
 
@@ -38,7 +38,7 @@ type ClassNameCallback = (
  *
  * To opt out of the `&&` replacement, use the callback function signature.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#vanillaclass
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#vanillaclass
  */
 export function vanillaClass(css: string | ClassNameCallback): string;
 export function vanillaClass(debugId: string, css: string | ClassNameCallback): string;
@@ -71,7 +71,7 @@ export function vanillaClass(
  * Returns an object with privately scoped CSS variables props.
  * Pass them around and use them in your CSS.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.2/README.md#vanillacvars
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#vanillacvars
  */
 export const vanillaVars = <T extends string>(...varNames: Array<T>) => {
   const id = vanillaClass(``);
