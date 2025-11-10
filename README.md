@@ -41,6 +41,7 @@ bun add @reykjavik/webtools
   - [Type `ResultTupleObj`](#type-resulttupleobj)
     - [Type `ResultTupleObj.mapTo`](#type-resulttupleobjmapto)
   - [`Result.catch`](#resultcatch)
+  - [`Result.ify`](#resultify)
   - [`Result.map`](#resultmap)
   - [`Result.Success`](#resultsuccess)
   - [`Result.Fail`](#resultfail)
@@ -230,7 +231,11 @@ import type { toSec, TTL } from '@reykjavik/webtools/http';
 
 const ttl: TTL = '2h';
 
-const ttlSec = toSec(ttl);
+const ttlSec1 = toSec(ttl); // 7200
+// Raw numbers are returned as-is (rounded)
+const ttlSec2 = toSec(10.6); // 11
+// Negative numbers become zero
+const ttlSec3 = toSec('-1h'); // 0
 ```
 
 ### `toMs` duration helper
@@ -246,7 +251,7 @@ import type { toMs, TTL } from '@reykjavik/webtools/http';
 
 const ttl: TTL = '2h';
 
-const ttlSec = toMs(ttl);
+const ttlMs1 = toMs(ttl); // 7_200_000
 ```
 
 ---
@@ -746,14 +751,19 @@ fooQuery.result; // Guaranteed to be defined
 
 This function acts as the inverse of [`Result.throw()`](#resultthrow).
 
+### `Result.ify`
+
+Syntatic sugar alias of [`Result.catch`](#resultcatch).
+
 ### `Result.map`
 
 **Syntax:**
 `Result.map<T, T2, E>(result: ResultTuple<T, E>, mapResult: (resultValue: T) => T2): ResultTuple<T2, E>`
 
-Helper to map a `ResultTuple`-like object to a new `ResultTupleObj` object,
-applying a transformation function to the result, but retaining the error
-as-is.
+Convenience helper to map a `ResultTuple`-like object to a new
+`ResultTupleObj` object, applying a transformation function to the result, but
+retaining the error as-is. Errors thrown from the mapping function are caught
+and turned into a failed `ResultTupleObj`.
 
 ```ts
 import { Result } from '@reykjavik/webtools/errorhandling';
