@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.2
+
+_2025-12-01_
+
 - `@reykjavik/webtools/errorhandling`:
   - feat: Add type `Result.PayloadOf<T>` to extract the successful payload
     type from a `ResultTuple<T>` or a `ResultTuple`-returning function.
