@@ -204,4 +204,21 @@ export namespace Result {
   export type TupleObj<T, E extends Error = Error> = ResultTupleObj<T, E>;
   export type SuccessObj<T> = SuccessResult<T>;
   export type FailObj<E extends Error> = FailResult<E>;
+  /**
+   * Extracts the successful payload type `T` from a `Result.Tuple<T>`-like
+   * type, a `Promise` of such type, or a function returning either of those.
+   *
+   * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#type-resultpayloadof
+   */
+  export type PayloadOf<
+    T extends
+      | ResultTuple<unknown>
+      | Promise<ResultTuple<unknown>>
+      | ((...args: Array<any>) => ResultTuple<unknown> | Promise<ResultTuple<unknown>>)
+  > = T extends
+    | [undefined, infer P]
+    | Promise<ResultTuple<infer P>>
+    | ((...args: Array<any>) => ResultTuple<infer P> | Promise<ResultTuple<infer P>>)
+    ? P
+    : never;
 }

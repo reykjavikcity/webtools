@@ -46,6 +46,7 @@ bun add @reykjavik/webtools
   - [`Result.Success`](#resultsuccess)
   - [`Result.Fail`](#resultfail)
   - [`Result.throw`](#resultthrow)
+  - [Type `Result.PayloadOf`](#type-resultpayloadof)
 - [`@reykjavik/webtools/SiteImprove`](#reykjavikwebtoolssiteimprove)
   - [`SiteImprove` component](#siteimprove-component)
   - [`pingSiteImprove` helper](#pingsiteimprove-helper)
@@ -837,6 +838,29 @@ try {
 ```
 
 This function acts as the inverse of [`Result.catch()`](#resultcatch).
+
+### Type `Result.PayloadOf`
+
+**Syntax:**
+`Result.PayloadOf<T extends | ResultTuple<unknown> | Promise<ResultTuple<unknown>> | ((...args: Array<any>) => ResultTuple<unknown> | Promise<ResultTuple<unknown>>)>`
+
+This utility type extracts the successful payload type `T` from a
+`Result.Tuple<T>`-like type, a `Promise` of such type, or a function returning
+either of those.
+
+```ts
+import { Result } from '@reykjavik/webtools/errorhandling';
+
+type ResTpl = Result.Tuple<string, Error>;
+type ResTplPromise = Promise<Result.Tuple<number, Error>>;
+type ResTplFn = (arg: unknown) => Result.Tuple<boolean, Error>;
+type ResTplPromiseFn = (arg: unknown) => Promise<Result.Tuple<Date, Error>>;
+
+type Payload1 = Result.PayloadOf<ResTpl>; // string
+type Payload2 = Result.PayloadOf<ResTplPromise>; // number
+type Payload3 = Result.PayloadOf<ResTplFn>; // boolean
+type Payload4 = Result.PayloadOf<ResTplPromiseFn>; // Date
+```
 
 ---
 

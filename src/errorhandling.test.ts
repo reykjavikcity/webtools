@@ -23,13 +23,24 @@ if (false as boolean) {
   type Result_TupleObj_is_exported = Result.TupleObj<undefined>;
   type Result_SuccessObj_is_exported = Result.SuccessObj<undefined>;
   type Result_FailObj_is_exported = Result.FailObj<Error>;
+  type Result_PayloadOf_is_exported = Result.PayloadOf<ResultTuple<undefined>>;
 
   type assertions = [
     Expect<Equals<ResultTuple<unknown>, Result.Tuple<unknown>>>,
     Expect<Equals<ResultTupleObj<unknown>, Result.TupleObj<unknown>>>,
     Expect<
       Equals<Result.TupleObj<unknown>, Result.SuccessObj<unknown> | Result.FailObj<Error>>
-    >
+    >,
+
+    Expect<Equals<Result.PayloadOf<() => Result.Tuple<string>>, string>>,
+    Expect<Equals<Result.PayloadOf<() => Promise<Result.Tuple<string>>>, string>>,
+    Expect<Equals<Result.PayloadOf<Promise<Result.Tuple<string>>>, string>>,
+    Expect<Equals<Result.PayloadOf<Result.Tuple<string>>, string>>,
+
+    Expect<Equals<Result.PayloadOf<() => Result.TupleObj<string>>, string>>,
+    Expect<Equals<Result.PayloadOf<() => Promise<Result.TupleObj<string>>>, string>>,
+    Expect<Equals<Result.PayloadOf<Promise<Result.TupleObj<string>>>, string>>,
+    Expect<Equals<Result.PayloadOf<Result.TupleObj<string>>, string>>
   ];
 
   // ---------------------------------------------------------------------------
