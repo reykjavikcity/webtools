@@ -71,7 +71,7 @@ export function vanillaClass(
  * Returns an object with privately scoped CSS variables props.
  * Pass them around and use them in your CSS.
  *
- * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#vanillacvars
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#vanillavars
  */
 export const vanillaVars = <T extends string>(...varNames: Array<T>) => {
   const id = vanillaClass(``);

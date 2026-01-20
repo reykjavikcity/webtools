@@ -1216,10 +1216,14 @@ const myStyle = style({
 ### `vanillaVars`
 
 **Syntax:**
-`` vanillaVars(...varNames: Array<T>): Record <`var${Capitalize<T>}`, string> ``
+`` vanillaVars(...varNames: Array<T>): Record <`var${Capitalize<T>}`, string> & { setVars: (Partial<Record<`var${Capitalize<T>}`, unknown>>) => string} ``
 
 Returns an object with privately scoped CSS variables props. Pass them around
 and use them in your CSS.
+
+The object also has a `setVars` method for generating a CSS string that sets
+all or some of the variables in CSS, without offending VSCode's CSS syntax
+parser too much.
 
 ```ts
 // MyComponent.css.ts
