@@ -6,6 +6,6 @@
     "source.fixAll.eslint": "explicit"
   },
   "search.exclude": {
-    "npm-dist/*": true
+    "_npm-lib/*": true
   }
 }
