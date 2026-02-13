@@ -86,13 +86,16 @@ const Success = <T>(result: T) => {
     map<T, T2, E>(tuple, fn);
   return tuple;
 };
+
+function Fail<E extends Error = Error>(e: E): FailResult<E>;
+function Fail<E extends Error = Error>(e: unknown): FailResult<E>;
 /*#__NO_SIDE_EFFECTS__*/
-const Fail = <E extends Error = Error>(e: unknown) => {
+function Fail<E extends Error = Error>(e: unknown) {
   const tuple = [asError(e) as E] as FailResult<E>;
   tuple.error = tuple[0];
   tuple.mapTo = () => tuple;
   return tuple;
-};
+}
 
 /**
  * Error handling utility that wraps a promise or a callback function.

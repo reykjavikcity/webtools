@@ -128,6 +128,19 @@ describe('asError', () => {
 // ---------------------------------------------------------------------------
 // Test Result
 
+/**
+ * A custom error clas that is not assignable to Error, to test (below) that
+ * `FailResult`s are error-typed is correctly
+ */
+class CustomError extends Error {
+  skilabod: string;
+  constructor(skilabod: string) {
+    super('FormData validation error');
+    this.skilabod = skilabod;
+  }
+  name = 'CustomError';
+}
+
 describe('Result', () => {
   test('singleton contains correct keys', () => {
     expect(Object.keys(Result)).toEqual([
@@ -163,8 +176,18 @@ describe('Result.Success / Result.Fail', () => {
   });
 
   test('`Fail` creates a fail tuple', () => {
-    const error = new Error('test error');
-    const fail: ResultTupleObj<unknown> = Result.Fail(error);
+    const error = new CustomError('test error');
+    const fail: ResultTupleObj<unknown, CustomError> = Result.Fail(error);
+
+    ((..._: Array<ResultTupleObj<unknown, CustomError>>) => undefined)(
+      // @ts-expect-error  (Ensuring non CustomError failures are correctly typed)
+      Result.Fail('asdf' as unknown)
+    );
+    ((..._: Array<ResultTupleObj<unknown, CustomError>>) => undefined)(
+      // @ts-expect-error  (Ensuring non CustomError failures are correctly typed)
+      Result.Fail(new Error(''))
+    );
+
     expect(fail[0]).toEqual(error);
     expect(fail.error).toBe(error);
     expect(fail[1]).toBeUndefined();

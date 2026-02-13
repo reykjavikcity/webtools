@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- feat: Make `ResultFail` better infer its error type from the argument
 
 ## 0.3.2
 
@@ -10,7 +11,7 @@ _2025-12-01_
 
 - `@reykjavik/webtools/errorhandling`:
   - feat: Add type `Result.PayloadOf<T>` to extract the successful payload
-    type from a `ResultTuple<T>` or a `ResultTuple`-returning function.
+    type from a `ResultTuple<T>` or a `ResultTuple`-returning function
 
 ## 0.3.0 – 0.3.1
 
@@ -28,7 +29,7 @@ _2025-09-30_
 
 - `@reykjavik/webtools/next/vanillaExtract`:
   - feat: Make `vanillaVars` return a type-safe `setVars()` helper to avoid
-    offending VSCode's CSS syntax parser too much.
+    offending VSCode's CSS syntax parser too much
 
 ## 0.2.8
 
