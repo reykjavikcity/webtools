@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.3
+
+_2026-02-13_
+
 - feat: Make `ResultFail` better infer its error type from the argument
 
 ## 0.3.2
