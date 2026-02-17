@@ -224,4 +224,80 @@ export namespace Result {
     | ((...args: Array<any>) => ResultTuple<infer P> | Promise<ResultTuple<infer P>>)
     ? P
     : never;
+
+  /**
+   * Extracts the error type `E` from a `Result.Tuple<T, E>`-like
+   * type, a `Promise` of such type, or a function returning either of those.
+   *
+   * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#type-resultpayloadof
+   */
+  export type ErrorOf<
+    T extends
+      | ResultTuple<unknown>
+      | Promise<ResultTuple<unknown>>
+      | ((...args: Array<any>) => ResultTuple<unknown> | Promise<ResultTuple<unknown>>)
+  > = T extends [infer E, undefined?]
+    ? E
+    : T extends Promise<infer P>
+    ? P extends [infer E, undefined?]
+      ? E
+      : never
+    : T extends () => infer R
+    ? R extends [infer E, undefined?]
+      ? E
+      : R extends Promise<infer P>
+      ? P extends [infer E, undefined?]
+        ? E
+        : never
+      : never
+    : never;
 }
+
+/** /
+// ---------------------------------------------------------------------------
+// Tests for the Result.ErrorOf type helper:
+// Should all extract the `X_Error` type as the error type from the various `Result.Tuple`-like types below:
+let _e1: Result.ErrorOf<Result.Tuple<P, X_Error>>;
+//  ^?
+let _e2: Result.ErrorOf<Result.TupleObj<P, X_Error>>;
+//  ^?
+let _e3: Result.ErrorOf<ResultTupleObj<P, X_Error>>;
+//  ^?
+let _e4: Result.ErrorOf<ResultTuple<P, X_Error>>;
+//  ^?
+
+let _e5: Result.ErrorOf<Promise<Result.Tuple<P, X_Error>>>;
+//  ^?
+let _e6: Result.ErrorOf<Promise<Result.TupleObj<P, X_Error>>>;
+//  ^?
+let _e7: Result.ErrorOf<Promise<ResultTuple<P, X_Error>>>;
+//  ^?
+let _e8: Result.ErrorOf<Promise<ResultTupleObj<P, X_Error>>>;
+//  ^?
+
+let _E1: Result.ErrorOf<() => Result.Tuple<P, X_Error>>;
+//  ^?
+let _E2: Result.ErrorOf<() => Result.TupleObj<P, X_Error>>;
+//  ^?
+let _E3: Result.ErrorOf<() => ResultTupleObj<P, X_Error>>;
+//  ^?
+let _E4: Result.ErrorOf<() => ResultTuple<P, X_Error>>;
+//  ^?
+
+let _E5: Result.ErrorOf<() => Promise<Result.Tuple<P, X_Error>>>;
+//  ^?
+let _E6: Result.ErrorOf<() => Promise<Result.TupleObj<P, X_Error>>>;
+//  ^?
+let _E7: Result.ErrorOf<() => Promise<ResultTuple<P, X_Error>>>;
+//  ^?
+let _E8: Result.ErrorOf<() => Promise<ResultTupleObj<P, X_Error>>>;
+//  ^?
+
+type P = string;
+class X_Error extends Error {
+  skilabod = 'fooo';
+  constructor() {
+    super('FormData validation error');
+  }
+}
+/**/

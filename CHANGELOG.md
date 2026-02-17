@@ -3,12 +3,16 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/errorhandling`:
+  - feat: Add type `Result.ErrorOf<T>` to extract the error type of a
+    `ResultTuple<T>` or a `ResultTuple`-returning function
 
 ## 0.3.3
 
 _2026-02-13_
 
-- feat: Make `ResultFail` better infer its error type from the argument
+- `@reykjavik/webtools/errorhandling`:
+  - feat: Make `ResultFail` better infer its error type from the argument
 
 ## 0.3.2
 
@@ -16,7 +20,7 @@ _2025-12-01_
 
 - `@reykjavik/webtools/errorhandling`:
   - feat: Add type `Result.PayloadOf<T>` to extract the successful payload
-    type from a `ResultTuple<T>` or a `ResultTuple`-returning function
+    type from a `ResultTuple<T>` or a `ResultTuple`-returning functions
 
 ## 0.3.0 – 0.3.1
 

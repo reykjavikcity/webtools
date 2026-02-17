@@ -47,6 +47,7 @@ bun add @reykjavik/webtools
   - [`Result.Fail`](#resultfail)
   - [`Result.throw`](#resultthrow)
   - [Type `Result.PayloadOf`](#type-resultpayloadof)
+  - [Type `Result.ErrorOf`](#type-resulterrorof)
 - [`@reykjavik/webtools/SiteImprove`](#reykjavikwebtoolssiteimprove)
   - [`SiteImprove` component](#siteimprove-component)
   - [`pingSiteImprove` helper](#pingsiteimprove-helper)
@@ -860,6 +861,32 @@ type Payload1 = Result.PayloadOf<ResTpl>; // string
 type Payload2 = Result.PayloadOf<ResTplPromise>; // number
 type Payload3 = Result.PayloadOf<ResTplFn>; // boolean
 type Payload4 = Result.PayloadOf<ResTplPromiseFn>; // Date
+```
+
+---
+
+### Type `Result.ErrorOf`
+
+**Syntax:**
+`Result.ErrorOf<T extends | ResultTuple<unknown> | Promise<ResultTuple<unknown>> | ((...args: Array<any>) => ResultTuple<unknown> | Promise<ResultTuple<unknown>>)>`
+
+This utility type extracts the error type `E` from a `Result.Tuple<T>`-like
+type, a `Promise` of such type, or a function returning either of those.
+
+```ts
+import { Result } from '@reykjavik/webtools/errorhandling';
+
+type ResTpl = Result.Tuple<string, RangeError>;
+type ResTplPromise = Promise<Result.Tuple<number, RangeError>>;
+type ResTplFn = (arg: unknown) => Result.Tuple<boolean, RangeError>;
+type ResTplPromiseFn = (
+  arg: unknown
+) => Promise<Result.Tuple<Date, RangeError>>;
+
+type Error1 = Result.ErrorOf<ResTpl>; // RangeError
+type Error2 = Result.ErrorOf<ResTplPromise>; // RangeError
+type Error3 = Result.ErrorOf<ResTplFn>; // RangeError
+type Error4 = Result.ErrorOf<ResTplPromiseFn>; // RangeError
 ```
 
 ---

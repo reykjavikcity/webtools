@@ -1,9 +1,22 @@
-import { Equals, Expect } from '@maranomynet/libtools';
+import { Equals, Expect, Extends, NotExtends } from '@maranomynet/libtools';
 import { describe, expect, test } from 'bun:test';
 
 import type { ResultTuple, ResultTupleObj } from './errorhandling.js';
 import { asError, ErrorFromPayload, Result } from './errorhandling.js';
 import * as moduleExports from './errorhandling.js';
+
+/**
+ * A custom error clas that is not assignable to Error, to test (below) that
+ * `FailResult`s are error-typed is correctly
+ */
+class XError extends Error {
+  skilabod: string;
+  constructor(skilabod: string) {
+    super('FormData validation error');
+    this.skilabod = skilabod;
+  }
+  name = 'CustomError';
+}
 
 if (false as boolean) {
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -25,13 +38,41 @@ if (false as boolean) {
   type Result_FailObj_is_exported = Result.FailObj<Error>;
   type Result_PayloadOf_is_exported = Result.PayloadOf<ResultTuple<undefined>>;
 
+  type u = unknown;
+
   type assertions = [
     Expect<Equals<ResultTuple<unknown>, Result.Tuple<unknown>>>,
     Expect<Equals<ResultTupleObj<unknown>, Result.TupleObj<unknown>>>,
     Expect<
       Equals<Result.TupleObj<unknown>, Result.SuccessObj<unknown> | Result.FailObj<Error>>
     >,
+    Expect<Extends<ResultTupleObj<unknown>, ResultTuple<unknown>>>,
+    Expect<NotExtends<ResultTuple<unknown>, ResultTupleObj<unknown>>>,
 
+    // Result.ErrorOf<T>
+    Expect<Equals<Result.ErrorOf<() => Result.Tuple<string, XError>>, XError>>,
+    Expect<Equals<Result.ErrorOf<() => Promise<Result.Tuple<string, XError>>>, XError>>,
+    Expect<Equals<Result.ErrorOf<Promise<Result.Tuple<string, XError>>>, XError>>,
+    Expect<Equals<Result.ErrorOf<Result.Tuple<string, XError>>, XError>>,
+
+    Expect<Equals<Result.ErrorOf<() => Result.TupleObj<string, XError>>, XError>>,
+    Expect<
+      Equals<Result.ErrorOf<() => Promise<Result.TupleObj<string, XError>>>, XError>
+    >,
+    Expect<Equals<Result.ErrorOf<Promise<Result.TupleObj<string, XError>>>, XError>>,
+    Expect<Equals<Result.ErrorOf<Result.TupleObj<string, XError>>, XError>>,
+
+    Expect<Equals<Result.ErrorOf<() => ResultTuple<string, XError>>, XError>>,
+    Expect<Equals<Result.ErrorOf<() => Promise<ResultTuple<string, XError>>>, XError>>,
+    Expect<Equals<Result.ErrorOf<Promise<ResultTuple<string, XError>>>, XError>>,
+    Expect<Equals<Result.ErrorOf<ResultTuple<string, XError>>, XError>>,
+
+    Expect<Equals<Result.ErrorOf<() => ResultTupleObj<string, XError>>, XError>>,
+    Expect<Equals<Result.ErrorOf<() => Promise<ResultTupleObj<string, XError>>>, XError>>,
+    Expect<Equals<Result.ErrorOf<Promise<ResultTupleObj<string, XError>>>, XError>>,
+    Expect<Equals<Result.ErrorOf<ResultTupleObj<string, XError>>, XError>>,
+
+    // Result.PayloadOf<T>
     Expect<Equals<Result.PayloadOf<() => Result.Tuple<string>>, string>>,
     Expect<Equals<Result.PayloadOf<() => Promise<Result.Tuple<string>>>, string>>,
     Expect<Equals<Result.PayloadOf<Promise<Result.Tuple<string>>>, string>>,
@@ -128,19 +169,6 @@ describe('asError', () => {
 // ---------------------------------------------------------------------------
 // Test Result
 
-/**
- * A custom error clas that is not assignable to Error, to test (below) that
- * `FailResult`s are error-typed is correctly
- */
-class CustomError extends Error {
-  skilabod: string;
-  constructor(skilabod: string) {
-    super('FormData validation error');
-    this.skilabod = skilabod;
-  }
-  name = 'CustomError';
-}
-
 describe('Result', () => {
   test('singleton contains correct keys', () => {
     expect(Object.keys(Result)).toEqual([
@@ -176,14 +204,14 @@ describe('Result.Success / Result.Fail', () => {
   });
 
   test('`Fail` creates a fail tuple', () => {
-    const error = new CustomError('test error');
-    const fail: ResultTupleObj<unknown, CustomError> = Result.Fail(error);
+    const error = new XError('test error');
+    const fail: ResultTupleObj<unknown, XError> = Result.Fail(error);
 
-    ((..._: Array<ResultTupleObj<unknown, CustomError>>) => undefined)(
+    ((..._: Array<ResultTupleObj<unknown, XError>>) => undefined)(
       // @ts-expect-error  (Ensuring non CustomError failures are correctly typed)
       Result.Fail('asdf' as unknown)
     );
-    ((..._: Array<ResultTupleObj<unknown, CustomError>>) => undefined)(
+    ((..._: Array<ResultTupleObj<unknown, XError>>) => undefined)(
       // @ts-expect-error  (Ensuring non CustomError failures are correctly typed)
       Result.Fail(new Error(''))
     );
