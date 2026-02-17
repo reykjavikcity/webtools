@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.4
+
+_2026-02-17_
+
 - `@reykjavik/webtools/errorhandling`:
   - feat: Add type `Result.ErrorOf<T>` to extract the error type of a
     `ResultTuple<T>` or a `ResultTuple`-returning function
