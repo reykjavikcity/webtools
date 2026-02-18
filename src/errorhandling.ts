@@ -229,7 +229,7 @@ export namespace Result {
    * Extracts the error type `E` from a `Result.Tuple<T, E>`-like
    * type, a `Promise` of such type, or a function returning either of those.
    *
-   * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#type-resultpayloadof
+   * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#type-resulterrorof
    */
   export type ErrorOf<
     T extends
