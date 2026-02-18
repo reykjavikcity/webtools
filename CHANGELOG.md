@@ -3,6 +3,7 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- fix: `Result.ErrorOf<T>` not handling functions with parameters correctly
 
 ## 0.3.4
 

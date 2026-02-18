@@ -242,7 +242,7 @@ export namespace Result {
     ? P extends [infer E, undefined?]
       ? E
       : never
-    : T extends () => infer R
+    : T extends (...args: Array<any>) => infer R
     ? R extends [infer E, undefined?]
       ? E
       : R extends Promise<infer P>
@@ -280,6 +280,8 @@ let _E1: Result.ErrorOf<() => Result.Tuple<P, X_Error>>;
 let _E2: Result.ErrorOf<() => Result.TupleObj<P, X_Error>>;
 //  ^?
 let _E3: Result.ErrorOf<() => ResultTupleObj<P, X_Error>>;
+//  ^?
+let _E3b: Result.ErrorOf<(a: null) => ResultTupleObj<P, X_Error>>;
 //  ^?
 let _E4: Result.ErrorOf<() => ResultTuple<P, X_Error>>;
 //  ^?

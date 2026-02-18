@@ -64,6 +64,12 @@ if (false as boolean) {
 
     Expect<Equals<Result.ErrorOf<() => ResultTuple<string, XError>>, XError>>,
     Expect<Equals<Result.ErrorOf<() => Promise<ResultTuple<string, XError>>>, XError>>,
+    Expect<
+      Equals<Result.ErrorOf<(a: null, b: null) => ResultTuple<string, XError>>, XError>
+    >,
+    Expect<
+      Equals<Result.ErrorOf<(a: null) => Promise<ResultTuple<string, XError>>>, XError>
+    >,
     Expect<Equals<Result.ErrorOf<Promise<ResultTuple<string, XError>>>, XError>>,
     Expect<Equals<Result.ErrorOf<ResultTuple<string, XError>>, XError>>,
 
