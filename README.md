@@ -855,13 +855,18 @@ import { Result } from '@reykjavik/webtools/errorhandling';
 type ResTpl = Result.Tuple<string, Error>;
 type ResTplPromise = Promise<Result.Tuple<number, Error>>;
 type ResTplFn = (arg: unknown) => Result.Tuple<boolean, Error>;
-type ResTplPromiseFn = (arg: unknown) => Promise<Result.Tuple<Date, Error>>;
+type ResTplPromiseFn = (
+  arg: unknown
+) => Promise<Result.TupleObj<Date, Error>>;
 
 type Payload1 = Result.PayloadOf<ResTpl>; // string
 type Payload2 = Result.PayloadOf<ResTplPromise>; // number
 type Payload3 = Result.PayloadOf<ResTplFn>; // boolean
 type Payload4 = Result.PayloadOf<ResTplPromiseFn>; // Date
 ```
+
+NOTE: This type also works for [`ResultTupleObj`](#type-resulttupleobj) as
+it's a subtype of `ResultTuple`.
 
 ---
 
@@ -881,13 +886,16 @@ type ResTplPromise = Promise<Result.Tuple<number, RangeError>>;
 type ResTplFn = (arg: unknown) => Result.Tuple<boolean, RangeError>;
 type ResTplPromiseFn = (
   arg: unknown
-) => Promise<Result.Tuple<Date, RangeError>>;
+) => Promise<Result.TupleÞObj<Date, RangeError>>;
 
 type Error1 = Result.ErrorOf<ResTpl>; // RangeError
 type Error2 = Result.ErrorOf<ResTplPromise>; // RangeError
 type Error3 = Result.ErrorOf<ResTplFn>; // RangeError
 type Error4 = Result.ErrorOf<ResTplPromiseFn>; // RangeError
 ```
+
+NOTE: This type also works for [`ResultTupleObj`](#type-resulttupleobj) as
+it's a subtype of `ResultTuple`.
 
 ---
 
