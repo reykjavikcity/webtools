@@ -307,20 +307,21 @@ detection test.)
 
 **`Intl.NumberFormat` and `toLocaleString`:**
 
-- The `style: "unit"` option is not supported and prints units in Danish. (Soo
-  many units and unit-variants…)
+- The `style: "unit"` option is not supported and prints units in Danish. (So,
+  so (!!) many units and unit-variants… Impractical to handle size-wise.)
 - The `currencyDisplay: "name"` option is not supported and prints the
-  currency's full name in Danish.
+  currency's full name in Danish. (Impractical to handle size-wise.)
 
 **`Intl.DateTimeFormat` and `toLocaleDateString`:**
 
 - The `month: 'narrow'` and `weekday: 'narrow'` options are not supported, and
-  print the corresponding Danish initials.
+  print the corresponding Danish initials. (Near impossible to patch because
+  the Danish initials are ambigious)
 - For `timeZoneName` the values `"long"`, `"shortGeneric"` and `"longGeneric"`
-  will appear in Danish.
+  will appear in Danish. (Impractical to handle size-wise.)
 - The `timeStyle: 'full'` option prints the timezone names in Danish
 - The `dayPeriod` option has a couple of slight mismatches, at 5 am and 12
-  noon.
+  noon. (Completely harmless.)
 
 We eagerly accept bugfixes, additions, etc. to this module!
 
