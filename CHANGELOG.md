@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.6
+
+_2026-02-24_
+
 - `@reykjavik/webtools/async`:
   - feat: Add `cachifyAsync` helper for simple (yet robust) caching of async
     functions
