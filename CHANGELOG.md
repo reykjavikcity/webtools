@@ -3,12 +3,16 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/async`:
+  - feat: Add `cachifyAsync` helper for simple (yet robust) caching of async
+    functions
 
 ## 0.3.5
 
 _2026-02-18_
 
-- fix: `Result.ErrorOf<T>` not handling functions with parameters correctly
+- `@reykjavik/webtools/errorhandling`:
+  - fix: `Result.ErrorOf<T>` not handling functions with parameters correctly
 
 ## 0.3.4
 

@@ -30,6 +30,7 @@ bun add @reykjavik/webtools
   - [`promiseAllObject`](#promiseallobject)
   - [`maxWait`](#maxwait)
   - [`debounce`](#debounce)
+  - [`cachifyAsync`](#cachifyasync)
   - [`throttle`](#throttle)
 - [`@reykjavik/webtools/hoooks`](#reykjavikwebtoolshoooks)
   - [`useDebounced`](#usedebounced)
@@ -440,6 +441,67 @@ sayHello.cancel(true); // `finish` parmeter is true
 
 ---
 
+### `cachifyAsync`
+
+**Syntax:**
+`cachifyAsync<R, F extends (...args: any[]) => Promise<Result.TupleObj<R>>>(opts: { fn: F; ttl: TTL; throttle?: TTL; customTtl?: (args: Parameters<F>, result: Result.TupleObj<R>) => TTL | undefined; getKey?: (...args: Parameters<F>) => string; returnStale?: boolean }): F`
+
+Wraps an async function with a simple, robust caching layer. Returns a
+function with the same signature as `fn`, but with caching applied.
+
+The caching strategy is simple. If `fn` resolves to an error result, the error
+is cached for a short time (default: `30s`) to avoid hammering the underlying
+function, and a stale (last successful) result is returned if available. The
+error result is only while waiting for the issue to be resolved. Return stale
+(last successful) result while throttling.
+
+- No max size or eviction strategy—intended for caching a small, clearly
+  bounded number of different cache "keys" (e.g. per language).
+
+**Options:**
+
+- `fn: <T>(...args: ay[]) => Promise<Result.TupleObj<T>>` — The async function
+  to cache.
+- `ttl: TTL` — How long to cache successful results. Number values are treated
+  as seconds. (See (`TTL` type)[#type-ttl]).
+- `throttle? TTL` — The minimum time between retries for error results.
+  Numbers are treated as seconds.
+- `customTtl?: (args: Parameters<typeof fn>, result: Result.TupleObj<T>) => TTL | undefined;`
+  — set a custom TTL on success and/or error results. Return `undefined` to
+  use the default `ttl`/`throttle` values.
+- `getKey?: (...args: Parameters<typeof fn>) => string` — Creates a custom
+  cache key for the current result set. Default: `JSON.stringify(args)`.
+- `returnStale?: boolean` — Whether to return stale (last successful) result
+  when `fn` resolves to an error result. Defaults to `true`.
+
+**Example:**
+
+```ts
+import { cachifyAsync } from '@reykjavik/webtools/async';
+import { Result } from '@reykjavik/webtools/errorhandling';
+
+const fetchUser = async (id: string) =>
+  Result.ify(fetch(`/api/user/${id}`).then((r) => r.json()));
+
+const cachedFetchUser = cachifyAsync({
+  fn: fetchUser,
+  ttl: '10m',
+});
+
+// ---------------------****---------------------------------------
+// Usage:
+
+const result = await cachedFetchUser('123');
+
+if (result.error) {
+  // handle error
+} else {
+  // use result.result
+}
+```
+
+---
+
 ### `throttle`
 
 **Syntax:**
@@ -622,7 +684,7 @@ handling `ResultTupleObj` instances:
 
 - `Result.Success`
 - `Result.Fail`
-- `Result.catch`
+- `Result.catch` / `Result.ify`
 - `Result.map`
 - `Result.throw`
 

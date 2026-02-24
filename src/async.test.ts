@@ -16,6 +16,7 @@ if (false as boolean) {
     promiseAllObject: true,
     debounce: true,
     throttle: true,
+    cachifyAsync: true,
   };
 
   // ---------------------------------------------------------------------------

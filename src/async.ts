@@ -1,5 +1,8 @@
 import { EitherObj } from '@reykjavik/hanna-utils';
 
+import { Result } from './errorhandling.js';
+import { toSec as _toSec, TTL } from './http.js';
+
 type PlainObj = Record<string, unknown>;
 
 /**
@@ -270,3 +273,118 @@ throttle.d = (delay: number, skipFirst?: boolean) =>
     delay,
     skipFirst
   );
+
+// ---------------------------------------------------------------------------
+
+// Wrap toSec to use a 90% shorter TTL in development mode
+const toSec =
+  process.env.NODE_ENV === 'production' ? _toSec : (val: TTL) => _toSec(val) / 10;
+
+const DEFAULT_THROTTLING_MS: TTL = '30s';
+
+/**
+ * Wraps an async function with a simple, but fairly robust caching layer.
+ *
+ * Successful results are cached for `ttlMs`, while error results are
+ * throttled to avoid hammering the underlying function.
+ *
+ * Has no max size or eviction strategy; intended for caching a small,
+ * clearly bounded number of different cache "keys" (e.g. per language).
+ *
+ * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#cachifyasync
+ */
+export const cachifyAsync = <
+  R,
+  F extends (...args: Array<any>) => Promise<Result.TupleObj<R>>
+>(opts: {
+  /** The async function to cache. */
+  fn: F;
+
+  /** How long to cache successful results. Number values are treated as seconds */
+  ttl: TTL;
+
+  /**
+   * The minimum time between retries for error results, to avoid hammering
+   * the underlying function while waiting for the issue to be (hopefully)
+   * resolved.
+   *
+   * Raw numbers are treated as seconds.
+   *
+   *  Default: '30s'
+   */
+  throttle?: TTL;
+
+  /**
+   * Function to optionally set a custom TTL on success and/or error results,
+   * when the promise resolves.
+   *
+   * If `undefined` is returned, the default `ttlMs` and` `throttleMs` settings
+   * are used.
+   */
+  customTtl?: (args: Parameters<F>, result: Result.TupleObj<R>) => TTL | undefined;
+
+  /**
+   * Creates a custom cache key for the current result set
+   *
+   * Default: `JSON.stringify` of the function arguments
+   *
+   */
+  getKey?: (...args: Parameters<F>) => string;
+
+  /**
+   * Whether to return stale (last successful) result when `fn` resolves to an
+   * error result.
+   *
+   * Default: `true`
+   */
+  returnStale?: boolean;
+}): F => {
+  const { fn, getKey = (...args) => JSON.stringify(args), customTtl, returnStale } = opts;
+
+  // Set up the cache object
+  const TTL_SEC = toSec(opts.ttl);
+  const THROTTLING_SEC =
+    toSec(opts.throttle || 0) || Math.min(toSec(DEFAULT_THROTTLING_MS), TTL_SEC);
+
+  const _cache = new Map<
+    string,
+    { data: Promise<Result.TupleObj<R>>; freshUntil: number }
+  >();
+
+  return (async (...args: Parameters<F>) => {
+    const now = Date.now();
+    const key = getKey(...args);
+    const cached = _cache.get(key);
+    if (cached && now < cached.freshUntil) {
+      return cached.data;
+    }
+
+    const lastData = returnStale !== false && cached?.data;
+    const entry = {
+      // Set an initial "fresh until" that's longer than TTL_SEC to cover
+      // (somewhat) safely the time it takes for the promise to resolve,
+      // so that we don't trigger multiple calls to `fn` in parallel
+      // TODO: Build in a proper AbortSignal timeout, etc. to handle this more robustly
+      freshUntil: now + (TTL_SEC + 60) * 1_000,
+      data: fn(...args).then((result) => {
+        const customTtlSec = toSec(customTtl?.(args, result) || 0);
+        entry.freshUntil = now + (customTtlSec || TTL_SEC) * 1_000;
+
+        if (result.error) {
+          if (!customTtlSec) {
+            // Set shorter TTL on errors to allow quicker retries
+            entry.freshUntil = now + THROTTLING_SEC * 1_000;
+          }
+          if (lastData) {
+            // Return last known good data if available, even if it's a bit stale
+            return lastData;
+          }
+        }
+        return result;
+      }),
+    };
+    _cache.set(key, entry);
+
+    return entry.data;
+  }) as F;
+};
