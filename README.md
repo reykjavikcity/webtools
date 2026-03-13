@@ -49,6 +49,13 @@ bun add @reykjavik/webtools
   - [`Result.throw`](#resultthrow)
   - [Type `Result.PayloadOf`](#type-resultpayloadof)
   - [Type `Result.ErrorOf`](#type-resulterrorof)
+- [`@reykjavik/webtools/alertsStore`](#reykjavikwebtoolsalertsstore)
+  - [`createAlerterStore`](#createalerterstore)
+    - [type `AlerterConfig`](#type-alerterconfig)
+  - [`@reykjavik/webtools/alertsStore/react`](#reykjavikwebtoolsalertsstorereact)
+    - [`makeReactSubscription`](#makereactsubscription)
+    - [`renderAlertMessage`](#renderalertmessage)
+    - [`renderAlertMessage.withLinkRenderer`](#renderalertmessagewithlinkrenderer)
 - [`@reykjavik/webtools/SiteImprove`](#reykjavikwebtoolssiteimprove)
   - [`SiteImprove` component](#siteimprove-component)
   - [`pingSiteImprove` helper](#pingsiteimprove-helper)
@@ -959,6 +966,274 @@ type Error4 = Result.ErrorOf<ResTplPromiseFn>; // RangeError
 
 NOTE: This type also works for [`ResultTupleObj`](#type-resulttupleobj) as
 it's a subtype of `ResultTuple`.
+
+---
+
+## `@reykjavik/webtools/alertsStore`
+
+A small JS alerts store for toasts and other global UI feedback messages.
+
+Persists alerts to `sessionStorage` to survive browser reloads, and provides a
+simple pub/sub API for components to subscribe to alert changes.
+
+### `createAlerterStore`
+
+**Syntax:**
+`createAlerterStore(cfg?: AlerterConfig): { alerter: Record<Level, (payload: AlertPayload>) => void, subscribe: (callback: (alerts: Array<AlertInfo>, meta: { type: EventType, ids: Array<string> }) => void) => unsubscribe() => void; }`
+
+Factory function that instantiates a new alerter store and returns a strongly
+typed object with the following properties:
+
+- `alerter`: A singleton object with methods for dispatching new alerts of
+  different levels. Pass a payload object to the method of the level you want
+  to dispatch, and the alert will be added to the store.
+- `subscribe`: A function for subscribing to alert changes. It accepts a
+  callback that gets called with the current list of alerts and some metadata
+  whenever an alert is added or cleared.  
+  The callback is called immediately upon subscription if there are already
+  active alerts.  
+  It returns an unsubscribe function to stop receiving updates.
+
+Simple useage with default settings:
+
+```ts
+// ---------------------------------------------------------------------------
+// alerterStore.ts
+// ---------------------------------------------------------------------------
+
+import { createAlerterStore } from '@reykjavik/webtools/alertsStore';
+import type { InferSubscriberAlerts, InferAlerterPayload } from '@reykjavik/webtools/alertsStore';
+
+const { alerter, subscribe } = createAlerterStore();
+
+export { alerter, subscribe };
+export type AlertPayload = InferAlerterPayload(typeof alerter);
+export type AlertInfo = InferSubscriberAlerts<typeof subscribe>;
+
+// ---------------------------------------------------------------------------
+// appRoot.ts
+// ---------------------------------------------------------------------------
+
+import { subscribe } from '../alerterStore';
+
+const unsubscribe = subscribe((alerts, meta) => {
+  console.log('Current alerts:', alerts);
+  console.log('Change type:', meta.type);
+  console.log('Affected alert IDs:', meta.ids);
+});
+
+// Stop receiving updates after 1 hour
+setTimeout(unsubscribe, 3_600_000);
+
+// ---------------------------------------------------------------------------
+// someOtherModule.ts
+// ---------------------------------------------------------------------------
+
+import { alerter } from '../alerterStore';
+alerter.success({
+  message: 'All is good',
+  // type: 'something',
+  // flags: ['pristine'],
+  duration: 'MEDIUM',
+  delay: 500, // Optional delay
+});
+// after 500ms the above alert is added to the store, and all subscribers
+// are notified. The subscriber in `appRoot.ts` will log the following;
+/*
+  Current alerts: [
+    {
+      id: '_234566-27_', // autugenerated
+      level: 'success',
+      message: 'All is good',
+      duration: 5000, // ms
+      dismiss: <Function>,
+      setFalgs: <Function>,
+    }
+  ]
+  Change type: 'add'
+  Affected alert IDs: ['_234566-27_']
+*/
+```
+
+Note how the `AlertPayload` and `AlertInfo` types are inferred from the
+generated `alerter` and the `subscribe` functions, respectively, using the
+provided `InferAlerterPayload` and `InferSubscriberAlerts` utility types.
+
+#### type `AlerterConfig`
+
+The `createAlerter` function accepts an optional configuration object that
+allows the customization of all of the accepted alert values and durations.
+
+The configuration values affect the type signatures of the generated `alerter`
+and the `subscribe` functions. (See `InferAlerterPayload` and
+`InferSubscriberAlerts` below)
+
+The configuration options are as follows:
+
+- **`key?: string`**  
+  Identifier for the alerts store, used to create the key to persist alerts in
+  `sessionStorage` (or other provided storage).  
+  Required if you want to have multiple independent alert stores in the same
+  application.  
+  Default: `'app-alerts'`.
+
+- **`levels?: Array<string>`**  
+  The accepted alert levels. The returned `alerter` object has a named
+  dispatcher method for each level.  
+  Default: `['success', 'info', 'warning', 'error']`.
+
+- **`types?: Array<string>`**  
+  The allowed alert "types", which can be used to, for example, dispatch both
+  "toasts" vs. "static alert banners" via the same store.  
+  This can also be used for more basic styling or categorization purposes.  
+  Default: no restrictions, any string value is allowed.
+
+- **`flags?: Array<string>`**  
+  The allowed alert "flags", which can be changed during the lifetime of an
+  alert using the `setFlags` function on the `AlertInfo` object.  
+  This can be used for styling or any other purpose you like.  
+  Default: no restriction, any string value is allowed.
+
+- **`durations?: Record<string, number>`**  
+  The allowed alert "duration" names and their lengths in milliseconds.
+  Default:
+  `{ BLINK: 2_000, SHORT: 4_000, MEDIUM: 8_000, LONG: 16_000, XLONG: 32_000, INDEFINITE: 0 }`.
+
+- **`defaultDuration?: string`**  
+  The duration to use for alerts if no duration is specified when
+  dispatching.  
+  Default: `SHORT` if using the default durations, otherwise the default is
+  `0` (indefinite)
+
+- **`storage?: Pick<Storage, 'getItem' | 'setItem'>`**  
+  The storage object to use instead of `sessionStorage` (the default) for
+  persisting alerts across page reloads, etc.
+
+### `@reykjavik/webtools/alertsStore/react`
+
+#### `makeReactSubscription`
+
+**Syntax:**
+`makeReactSubscription(): { useAlerter: () => Array<AlertInfo>, AlertsContainer: (props: { children: (alerts: Array<alertInfo>) => ReactNode }) => ReactNode }`
+
+Factory function that creates a React subscription hook and a container
+component linked to a specific alerter store subscibe function.
+
+The returned `useAlerter` hook can be used in any React component to get the
+current list of alerts from the store
+
+Meanwhile the `AlertsContainer` is a sugar component that calls `useAlerter()`
+internally and provides the current alerts list to its child as a render prop.
+
+The returned list and its items and their properties are all immutable/stable
+so you can safely use them as dependencies in React hooks, etc.
+
+```ts
+// ---------------------------------------------------------------------------
+// alerterStore.ts
+// ---------------------------------------------------------------------------
+
+import { createAlerterStore } from '@reykjavik/webtools/alertsStore';
+import { makeReactSubscription } from '@reykjavik/webtools/alertsStore/react';
+
+const { alerter, subscribe } = createAlerterStore();
+
+export { alerter };
+export const { useAlerter, AlertsContainer } =
+  makeReactSubscription(subscribe);
+
+// ---------------------------------------------------------------------------
+// app.tsx
+// ---------------------------------------------------------------------------
+
+import { AlertsContainer } from '../alerterStore';
+import { Toast } from '../components/Toast';
+
+// In your App JSX
+<AlertsContainer>
+  {(alerts) => (
+    <div class="toastcontainer">
+      {alerts.map((alert) => (
+        <Toast key={alert.id} {...alert} />
+      ))}
+    </div>
+  )}
+</AlertsContainer>;
+```
+
+#### `renderAlertMessage`
+
+**Syntax:**
+`renderAlertMessage(message: AlertInfo['message'], linkComponent?: renderAlertMessage.LinkRenderer): ReactNode`
+
+Helper to render an alerter alert message, which can be a simple string or a
+more complex array of strings and objects representing links and rich (bold)
+text formatting.
+
+It renders link objects as simple `<a href="" />` elements, by default, but
+you can optionally provide a custom `linkComponent` as a second parameter.
+
+Third
+
+```ts
+import { renderAlertMessage } from '@reykjavik/webtools/alertsStore/react';
+import Link from 'next/link';
+
+import { AlertInfo } from '../alertsStore';
+
+export const Toast = (props: AlertInfo) => {
+  const dismissOnLinkClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('a')) {
+      props.dismiss(); // Dismiss the alert when a link is clicked
+    }
+  };
+  return (
+    <div class="toast" onClick={dismissOnLinkClick}>
+      {renderAlertMessage(props.message, Link)}
+    </div>
+  );
+};
+```
+
+To build your own custom `LinkComponent`, you can use the
+`renderAlertMessage.LinkRenderer` type for the function signature.
+
+```ts
+import { renderAlertMessage } from '@reykjavik/webtools/alertsStore/react';
+import { Link } from 'react-router';
+
+const MyWrappedLink: renderAlertMessage.LinkRenderer = (props) => {
+  const { href, ...linkProps } = props;
+  return <Link to={href} {...linkProps} />;
+};
+
+// Then elsewhere in your Alert/Toast component
+<div class="toast__message">
+  {renderAlertMessage(props.message, MyWrappedLink)};
+</div>;
+```
+
+Alternatively, if you want to avoid passing the `LinkComponent` every time you
+call `renderAlertMessage`, you can use the
+`renderAlertMessage.withLinkRenderer` helper
+
+#### `renderAlertMessage.withLinkRenderer`
+
+**Syntax:**
+`renderAlertMessage.withLinkRenderer(LinkComponent: renderAlertMessage.LinkRenderer): (message: AlertInfo['message']):ReactNode`
+
+It returns a curried version of [`renderAlertMessage`](#renderAlertMessage)
+that uses the passed `LinkComponent` for rendering links in alert messages.
+
+```ts
+const curriedRenderAlertMessage =
+  renderAlertMessage.withLinkRenderer(MyWrappedLink);
+
+// Then elsewhere in your Alert/Toast component
+<div class="toast__message">
+  {renderAlertMessage(props.message, MyWrappedLink)};
+</div>;
+```
 
 ---
 

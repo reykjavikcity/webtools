@@ -293,6 +293,7 @@ const DEFAULT_THROTTLING_MS: TTL = '30s';
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#cachifyasync
  */
+/*#__NO_SIDE_EFFECTS__*/
 export const cachifyAsync = <
   R,
   F extends (...args: Array<any>) => Promise<Result.TupleObj<R>>
@@ -318,7 +319,7 @@ export const cachifyAsync = <
    * Function to optionally set a custom TTL on success and/or error results,
    * when the promise resolves.
    *
-   * If `undefined` is returned, the default `ttlMs` and` `throttleMs` settings
+   * If `undefined` is returned, the default `ttl` and` `throttle` settings
    * are used.
    */
   customTtl?: (args: Parameters<F>, result: Result.TupleObj<R>) => TTL | undefined;

@@ -19,7 +19,8 @@
     "prepublishOnly": "echo \"\nRun 'bun run publish:list' to publish this package\n\n\"  && exit 1"
   },
   "dependencies": {
-    "@reykjavik/hanna-utils": "^0.2.20"
+    "@reykjavik/hanna-utils": "^0.2.22",
+    "valibot": "^1.2.0"
   },
   "peerDependencies": {
     "@vanilla-extract/css": "^1.14.1",
@@ -48,7 +49,7 @@
   "devDependencies": {
     "@happy-dom/global-registrator": "^14.12.3",
     "@hugsmidjan/hxmstyle": "^8.13.0",
-    "@maranomynet/libtools": "^0.1.16",
+    "@maranomynet/libtools": "^0.1.20",
     "@types/bun": "^1.2.12",
     "@types/react": "^18.3.21",
     "@types/react-dom": "^18.3.7",
