@@ -4,6 +4,13 @@
 
 - ... <!-- Add new lines here. -->
 
+## 0.3.8
+
+_2026-03-16_
+
+- `@reykjavik/webtools/alertsStore/react`
+  - fix: Wrong parameter type signature for `makeReactSubscription`
+
 ## 0.3.7
 
 _2026-03-16_
