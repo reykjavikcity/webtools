@@ -1,4 +1,4 @@
-import { describe, expect, mock, test } from 'bun:test';
+import { afterAll, beforeAll, describe, expect, mock, test } from 'bun:test';
 
 import type {
   AlerterConfig,
@@ -26,10 +26,10 @@ if (false as boolean) {
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }
 
-// Clear storage before tests to avoid interference from previous runs
-sessionStorage.clear();
-
 describe(createAlerterStore.name, () => {
+  beforeAll(() => sessionStorage.clear());
+  afterAll(() => sessionStorage.clear());
+
   test('should allow subscribing to alerts', async () => {
     const store = createAlerterStore();
     let lastAlerts: Array<InferSubscriberAlerts<typeof store.subscribe>> = [];

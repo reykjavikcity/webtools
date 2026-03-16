@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { AlertMessage } from './index.js';
 
 type SubsScriber<AlertInfo> = (
-  callback: (alerts: Array<AlertInfo>, _type: string) => void
+  callback: (alerts: Array<AlertInfo>, meta: { type: string; ids: Array<string> }) => void
 ) => () => void;
 
 /**
