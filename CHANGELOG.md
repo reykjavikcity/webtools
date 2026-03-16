@@ -3,13 +3,15 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/alertsStore/react`:
+  - feat: Support rendering `br` and `em` elements in alert messages
 
 ## 0.3.7 – 0.3.10
 
 _2026-03-16_
 
 - feat: Add `@reykjavik/webtools/alertsStore` for toasts and other global UI
-  feedback messages along with helpers
+  feedback messages along with `@reykjavik/webtools/alertsStore/react` helpers
 
 ## 0.3.6
 

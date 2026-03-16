@@ -16,9 +16,13 @@ const messageSchema = v.union([
         hrefLang: v.optional(v.string()),
         lang: v.optional(v.string()),
       }),
+      // line break elements
+      v.object({
+        tag: v.literal('br'),
+      }),
       // strong/bold elements
       v.object({
-        tag: v.literal('strong'),
+        tag: v.picklist(['strong', 'em']),
         text: v.string(),
       }),
     ])

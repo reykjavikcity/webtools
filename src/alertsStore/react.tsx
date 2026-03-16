@@ -63,6 +63,9 @@ export const renderAlertMessage = (
             </Link>,
           ];
         }
+        if (part.tag === 'br') {
+          return <br key={i} />;
+        }
         return [' ', <part.tag key={i}>{part.text}</part.tag>];
       });
 };
