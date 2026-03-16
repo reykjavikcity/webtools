@@ -4,14 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 
-## 0.3.11
-
-_2026-03-16_
-
-- `@reykjavik/webtools/alertsStore/react`:
-  - feat: Support rendering `br` and `em` elements in alert messages
-
-## 0.3.7 – 0.3.10
+## 0.3.7 – 0.3.11
 
 _2026-03-16_
 
