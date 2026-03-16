@@ -3,13 +3,15 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/alertsStore/react`:
+  - fix: Add missing `onClick` prop to `LinkRendererProps`
 
 ## 0.3.7 – 0.3.9
 
 _2026-03-16_
 
 - feat: Add `@reykjavik/webtools/alertsStore` for toasts and other global UI
-  feedback messages along with `@reykjavik/webtools/alertsStore/react` helpers
+  feedback messages along with helpers
 
 ## 0.3.6
 

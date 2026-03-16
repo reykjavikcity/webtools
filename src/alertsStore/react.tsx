@@ -84,7 +84,7 @@ export namespace renderAlertMessage {
   type LinkRendererProps = Omit<
     Extract<AlertMessage[number], { tag: 'a' }>,
     'tag' | 'text'
-  > & { children: ReactNode };
+  > & { onClick?: (e: MouseEvent) => void; children: ReactNode };
 
   export type LinkRenderer = (props: LinkRendererProps) => ReactNode;
 }
