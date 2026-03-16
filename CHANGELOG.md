@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.9
+
+_2026-03-16_
+
 - `@reykjavik/webtools/alertsStore/react`:
   - feat: Add convenience `onLinkClick` parameter to `renderAlertMessage`
 
