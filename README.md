@@ -1164,15 +1164,17 @@ import { Toast } from '../components/Toast';
 #### `renderAlertMessage`
 
 **Syntax:**
-`renderAlertMessage(message: AlertInfo['message'], linkComponent?: renderAlertMessage.LinkRenderer, onLinkClick?: (e: MouseEvent) => void): ReactNode`
+`renderAlertMessage(message: AlertInfo['message'], onLinkClick?: (e: MouseEvent) => void, linkComponent?: renderAlertMessage.LinkRenderer): ReactNode`
 
 Helper to render an alerter alert message, which can be a simple string or a
 more complex array of strings and objects representing links and rich (bold)
 text formatting.
 
+You can optionally pass an additional `onLinkClick` handler as a second
+parameter. (For example the alert's `dismiss` dispatcher.)
+
 It renders link objects as simple `<a href="" />` elements, by default, but
-you can optionally provide a custom `linkComponent` as a second parameter,
-with an additional `onLinkClick` handler for the links.
+you can optionally provide a custom `linkComponent` as a third parameter.
 
 Third
 
