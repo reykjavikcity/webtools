@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.7
+
+_2026-03-16_
+
 - feat: Add `@reykjavik/webtools/alertsStore` for toasts and other global UI
   feedback messages along with `@reykjavik/webtools/alertsStore/react` helpers
 
