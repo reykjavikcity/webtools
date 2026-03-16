@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { MouseEvent, ReactNode, useEffect, useState } from 'react';
 
 import { AlertMessage } from './index.js';
 
@@ -44,6 +44,7 @@ export const makeReactSubscription = <AlertInfo,>(subscribe: SubsScriber<AlertIn
 /*#__NO_SIDE_EFFECTS__*/
 export const renderAlertMessage = (
   message: AlertMessage,
+  onLinkClick?: (e: MouseEvent) => void,
   linkComponent?: renderAlertMessage.LinkRenderer
 ): ReactNode => {
   const Link = linkComponent || 'a';
@@ -57,7 +58,7 @@ export const renderAlertMessage = (
           const { text, tag, ...linkProps } = part;
           return [
             ' ',
-            <Link key={i} {...linkProps}>
+            <Link key={i} {...linkProps} onClick={onLinkClick && ((e) => onLinkClick(e))}>
               {text}
             </Link>,
           ];
@@ -74,8 +75,9 @@ export const renderAlertMessage = (
  */
 /*#__NO_SIDE_EFFECTS__*/
 renderAlertMessage.withLinkRenderer =
-  (LinkCompnent: renderAlertMessage.LinkRenderer) => (message: AlertMessage) =>
-    renderAlertMessage(message, LinkCompnent);
+  (LinkCompnent: renderAlertMessage.LinkRenderer) =>
+  (message: AlertMessage, onLinkClick: (e: MouseEvent) => void) =>
+    renderAlertMessage(message, onLinkClick, LinkCompnent);
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace renderAlertMessage {

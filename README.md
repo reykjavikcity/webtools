@@ -1164,14 +1164,15 @@ import { Toast } from '../components/Toast';
 #### `renderAlertMessage`
 
 **Syntax:**
-`renderAlertMessage(message: AlertInfo['message'], linkComponent?: renderAlertMessage.LinkRenderer): ReactNode`
+`renderAlertMessage(message: AlertInfo['message'], linkComponent?: renderAlertMessage.LinkRenderer, onLinkClick?: (e: MouseEvent) => void): ReactNode`
 
 Helper to render an alerter alert message, which can be a simple string or a
 more complex array of strings and objects representing links and rich (bold)
 text formatting.
 
 It renders link objects as simple `<a href="" />` elements, by default, but
-you can optionally provide a custom `linkComponent` as a second parameter.
+you can optionally provide a custom `linkComponent` as a second parameter,
+with an additional `onLinkClick` handler for the links.
 
 Third
 
@@ -1181,18 +1182,11 @@ import Link from 'next/link';
 
 import { AlertInfo } from '../alertsStore';
 
-export const Toast = (props: AlertInfo) => {
-  const dismissOnLinkClick = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('a')) {
-      props.dismiss(); // Dismiss the alert when a link is clicked
-    }
-  };
-  return (
-    <div class="toast" onClick={dismissOnLinkClick}>
-      {renderAlertMessage(props.message, Link)}
-    </div>
-  );
-};
+export const Toast = (props: AlertInfo) => (
+  <div class="toast">
+    {renderAlertMessage(props.message, Link, props.dismiss)}
+  </div>
+);
 ```
 
 To build your own custom `LinkComponent`, you can use the
@@ -1209,7 +1203,7 @@ const MyWrappedLink: renderAlertMessage.LinkRenderer = (props) => {
 
 // Then elsewhere in your Alert/Toast component
 <div class="toast__message">
-  {renderAlertMessage(props.message, MyWrappedLink)};
+  {renderAlertMessage(props.message, MyWrappedLink, props.dismiss)};
 </div>;
 ```
 
@@ -1220,7 +1214,7 @@ call `renderAlertMessage`, you can use the
 #### `renderAlertMessage.withLinkRenderer`
 
 **Syntax:**
-`renderAlertMessage.withLinkRenderer(LinkComponent: renderAlertMessage.LinkRenderer): (message: AlertInfo['message']):ReactNode`
+`renderAlertMessage.withLinkRenderer(LinkComponent: renderAlertMessage.LinkRenderer): (message: AlertInfo['message'], onLinkClick?: (e: MouseEvent) => void):ReactNode`
 
 It returns a curried version of [`renderAlertMessage`](#renderAlertMessage)
 that uses the passed `LinkComponent` for rendering links in alert messages.
@@ -1231,7 +1225,7 @@ const curriedRenderAlertMessage =
 
 // Then elsewhere in your Alert/Toast component
 <div class="toast__message">
-  {renderAlertMessage(props.message, MyWrappedLink)};
+  {renderAlertMessage(props.message, props.dismiss)};
 </div>;
 ```
 
