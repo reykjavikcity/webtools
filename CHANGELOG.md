@@ -4,14 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 
-## 0.3.10
-
-_2026-03-16_
-
-- `@reykjavik/webtools/alertsStore/react`:
-  - fix: Add missing `onClick` prop to `LinkRendererProps`
-
-## 0.3.7 – 0.3.9
+## 0.3.7 – 0.3.10
 
 _2026-03-16_
 
