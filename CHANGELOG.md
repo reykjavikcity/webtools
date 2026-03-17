@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.12
+
+_2026-03-17_
+
 - `@reykjavik/webtools/alertsStore`:
   - feat: Make alert `type` property disabled by default, enabled via config
   - feat: Add `AlerterConfig.title?:boolean` to enable optional alert `title`s
