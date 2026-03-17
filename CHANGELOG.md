@@ -4,20 +4,15 @@
 
 - ... <!-- Add new lines here. -->
 
-## 0.3.13
+## 0.3.12 – 0.3.13
 
 _2026-03-17_
 
 - `@reykjavik/webtools/alertsStore`:
-  - feat: Add "message-only" shorthand signature to alerter dispatcher methods
-
-## 0.3.12
-
-_2026-03-17_
-
-- `@reykjavik/webtools/alertsStore`:
-  - feat: Make alert `type` property disabled by default, enabled via config
   - feat: Add `AlerterConfig.title?:boolean` to enable optional alert `title`s
+  - feat: Add "message-only" shorthand signature to alerter dispatcher methods
+  - feat: Make alert `type` property disabled by default, enabled via config
+    (never used in the wild, yet)
 
 ## 0.3.7 – 0.3.11
 
