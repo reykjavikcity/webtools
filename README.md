@@ -1032,7 +1032,6 @@ setTimeout(unsubscribe, 3_600_000);
 import { alerter } from '../alerterStore';
 alerter.success({
   message: 'All is good',
-  // type: 'something',
   // flags: ['pristine'],
   duration: 'MEDIUM',
   delay: 500, // Optional delay
@@ -1086,7 +1085,11 @@ The configuration options are as follows:
   The allowed alert "types", which can be used to, for example, dispatch both
   "toasts" vs. "static alert banners" via the same store.  
   This can also be used for more basic styling or categorization purposes.  
-  Default: no restrictions, any string value is allowed.
+  Default: `[ ]` (No types and the `type` property not allowed).
+
+- **`title?: boolean`**  
+  Whether to allow an optional `title` property on alerts.  
+  Default: `false`.
 
 - **`flags?: Array<string>`**  
   The allowed alert "flags", which can be changed during the lifetime of an

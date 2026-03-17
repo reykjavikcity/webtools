@@ -50,7 +50,7 @@ describe(createAlerterStore.name, () => {
     await Bun.sleep(100);
     expect(cb).toHaveBeenCalledTimes(2);
     unsubscribe();
-    store.alerter.error({ message: 'Test alert 3', type: 'foo', duration: 'BLINK' });
+    store.alerter.error({ message: 'Test alert 3', flags: ['ding'], duration: 'BLINK' });
     await Bun.sleep(50);
     expect(cb).toHaveBeenCalledTimes(2); // not called because we unsubscribed
 
@@ -78,7 +78,7 @@ describe(createAlerterStore.name, () => {
       {
         level: 'error',
         message: 'Test alert 3',
-        type: 'foo',
+        flags: ['ding'],
         duration: 2_000,
         ...common,
       },
@@ -138,6 +138,7 @@ describe(createAlerterStore.name, () => {
     const customStorage = new Map<string, string>();
     const store = createAlerterStore({
       key: 'custom',
+      title: true,
       levels: ['foo', 'bar'],
       types: ['toast'],
       durations: { short: 10, long: 100 },
@@ -168,7 +169,12 @@ describe(createAlerterStore.name, () => {
       pending: [],
     });
 
-    store.alerter.bar({ message: 'Test alert 2', duration: 'long', delay: 100 });
+    store.alerter.bar({
+      title: 'Hi!',
+      message: 'Test alert 2',
+      duration: 'long',
+      delay: 100,
+    });
     expect(JSON.parse(customStorage.get('custom')!)).toEqual({
       active: [
         {
@@ -182,6 +188,7 @@ describe(createAlerterStore.name, () => {
       pending: [
         {
           level: 'bar',
+          title: 'Hi!',
           message: 'Test alert 2',
           duration: 100,
           id: expect.any(String),
@@ -201,6 +208,7 @@ describe(createAlerterStore.name, () => {
         },
         {
           level: 'bar',
+          title: 'Hi!',
           message: 'Test alert 2',
           duration: 100,
           id: expect.any(String),

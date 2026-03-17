@@ -31,17 +31,17 @@ const messageSchema = v.union([
 
 export type AlertMessage = v.InferOutput<typeof messageSchema>;
 
-type _AlertNotification<Level, Type, Flag> = {
+type _AlertNotification<Level, Type, Flag, Title> = {
   level: Level;
   message: AlertMessage;
-  type?: Type;
   flags?: Array<Flag>;
   duration?: number;
   id: string;
-};
-type _AlertNotificationPending<Level, Type, Flag> = {
+} & (Title extends true ? { title?: string } : unknown) &
+  (string extends Type ? unknown : { type?: Type });
+type _AlertNotificationPending<Level, Type, Flag, Title> = {
   showAt: number;
-} & _AlertNotification<Level, Type, Flag>;
+} & _AlertNotification<Level, Type, Flag, Title>;
 
 // ---------------------------------------------------------------------------
 
@@ -70,6 +70,7 @@ export type AlerterConfig<
   Level extends string = (typeof defaultAlertLevels)[number],
   Type extends string = string,
   Flag extends string = string,
+  Title extends boolean = false,
   Duration extends string = keyof typeof defaultDurations,
   Durations extends Record<Duration, number> = Record<Duration, number>
 > = {
@@ -98,7 +99,7 @@ export type AlerterConfig<
    *
    * This can also be used for more basic styling or categorization purposes.
    *
-   * Default: no restrictions, any string value is allowed.
+   * Default: `[ ]`  (No types and the `type` property not allowed).
    */
   types?: Array<Type>;
 
@@ -140,6 +141,13 @@ export type AlerterConfig<
   defaultDuration?: Durations extends Record<infer D, number> ? D : never;
 
   /**
+   * Whether to allow an optional `title` property on alerts.
+   *
+   * Default: `false`.
+   */
+  title?: Title;
+
+  /**
    * Optional custom storage object to use instead of `sessionStorage` (the
    * default) for persisting alerts across page reloads, etc.
    */
@@ -162,9 +170,10 @@ export const createAlerterStore = <
   Level extends string = (typeof defaultAlertLevels)[number],
   Type extends string = string,
   Flag extends string = string,
+  Title extends boolean = false,
   Duration extends string = keyof typeof defaultDurations
 >(
-  cfg: AlerterConfig<Level, Type, Flag, Duration> = {}
+  cfg: AlerterConfig<Level, Type, Flag, Title, Duration> = {}
 ) => {
   const STORE_KEY = cfg.key || defaultKey;
 
@@ -185,8 +194,9 @@ export const createAlerterStore = <
 
   const _notificationSchema = v.object({
     level: v.picklist(alertLevels),
+    title: cfg.title ? v.optional(v.string()) : v.never(),
     message: messageSchema,
-    type: v.optional(cfg.types ? v.picklist(cfg.types) : v.string()),
+    type: cfg.types && cfg.types.length ? v.optional(v.picklist(cfg.types)) : v.never(),
     flags: v.optional(v.array(cfg.flags ? v.picklist(cfg.flags) : v.string())),
     duration: v.optional(v.number()),
     id: v.string(),
@@ -199,8 +209,8 @@ export const createAlerterStore = <
     ),
   });
 
-  type AlertNotification = _AlertNotification<Level, Type, Flag>;
-  type AlertNotificationPending = _AlertNotificationPending<Level, Type, Flag>;
+  type AlertNotification = _AlertNotification<Level, Type, Flag, Title>;
+  type AlertNotificationPending = _AlertNotificationPending<Level, Type, Flag, Title>;
 
   type AlertState = {
     active: Array<AlertInfo>;
@@ -413,13 +423,6 @@ export const createAlerterStore = <
      */
     message: AlertMessage;
     /**
-     * Allows distinguishing between different "types" of alerts, for example,
-     * to dispatch both "toasts" vs. "static alert banners" via the same store.
-     *
-     * May also be used for more basic styling or categorization purposes.
-     */
-    type?: Type;
-    /**
      * Flag values can be changed during the lifetime of
      * an alert using the `setFlags` function on each `AlertInfo` object.
      *
@@ -436,7 +439,25 @@ export const createAlerterStore = <
      */
     duration?: Duration;
     delay?: number; // delay dispatching the notification in ms
-  };
+  } & (Title extends true
+    ? {
+        /**
+         * Optional title to accompany the alert message.
+         */
+        title?: string;
+      }
+    : unknown) &
+    (string extends Type
+      ? unknown
+      : {
+          /**
+           * Allows distinguishing between different "types" of alerts, for example,
+           * to dispatch both "toasts" vs. "static alert banners" via the same store.
+           *
+           * May also be used for more basic styling or categorization purposes.
+           */
+          type?: Type;
+        });
 
   const alerter = ObjectFromEntries(
     alertLevels.map((level) => [
@@ -463,7 +484,11 @@ export const createAlerterStore = <
         // Also TS has a hard time understanding the dynamically generated
         // schema and that they're actually correct in terms of the configuration
         // type params `Level`, `Type` and `Flag`.
-        const paesed = v.parse(alertsSchema, JSON.parse(storedAlerts)) as AlertState;
+        const paesed = v.parse(
+          alertsSchema,
+          JSON.parse(storedAlerts)
+        ) as unknown as AlertState;
+
         alerts.pending = paesed.pending;
         alerts.active = paesed.active.map(addMethodsToAlertInfo);
       } catch (e) {
