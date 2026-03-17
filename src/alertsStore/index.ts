@@ -390,8 +390,12 @@ export const createAlerterStore = <
     }, showAt - Date.now());
   };
 
-  const _addAlert = (payload: AlertPayload, level: Level) => {
-    const notification = buildNotification(payload, level);
+  const _addAlert = (payload: AlertPayload | AlertMessage, level: Level) => {
+    const _payload =
+      typeof payload === 'string' || Array.isArray(payload)
+        ? ({ message: payload } as AlertPayload)
+        : payload;
+    const notification = buildNotification(_payload, level);
     if (!notification.showAt) {
       // Notification starts active. Clone the array.
       alerts.active = [...alerts.active, addMethodsToAlertInfo(notification)];
@@ -462,7 +466,7 @@ export const createAlerterStore = <
   const alerter = ObjectFromEntries(
     alertLevels.map((level) => [
       level,
-      (payload: AlertPayload) => _addAlert(payload, level),
+      (payload: AlertMessage | AlertPayload) => _addAlert(payload, level),
     ])
   );
 

@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/alertsStore`:
+  - feat: Add "message-only" shorthand signature to alerter dispatcher methods
 
 ## 0.3.12
 

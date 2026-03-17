@@ -1034,17 +1034,44 @@ alerter.success({
   message: 'All is good',
   // flags: ['pristine'],
   duration: 'MEDIUM',
-  delay: 500, // Optional delay
+  delay: 500, // Optional delay in milliseconds
 });
-// after 500ms the above alert is added to the store, and all subscribers
-// are notified. The subscriber in `appRoot.ts` will log the following;
+alerter.info('Simple message!'); // Shorthand syntax
+
+// On the next event loop tick the "info" alert (with no delay) is emitted, and all
+// subscribers are notified. The subscriber in `appRoot.ts` will log the following;
 /*
   Current alerts: [
     {
-      id: '_234566-27_', // autugenerated
+      id: '_234566-28_', // auto-generated
+      level: 'info',
+      message: 'Simple message!',
+      duration: 5000, // ms
+      dismiss: <Function>,
+      setFalgs: <Function>,
+    }
+  ]
+  Change type: 'add'
+  Affected alert IDs: ['_234566-28_']
+*/
+
+// Then after 500ms the "success" alert is added to the store, and all subscribers
+// are notified again. The subscriber in `appRoot.ts` will log the following;
+/*
+  Current alerts: [
+    {
+      id: '_234566-28_',
+      level: 'info',
+      message: 'Simple message!',
+      duration: 5000, // ms
+      dismiss: <Function>,
+      setFalgs: <Function>,
+    },
+    {
+      id: '_234566-27_',
       level: 'success',
       message: 'All is good',
-      duration: 5000, // ms
+      duration: 5000,
       dismiss: <Function>,
       setFalgs: <Function>,
     }
