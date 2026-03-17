@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.14
+
+_2026-03-17_
+
 - `@reykjavik/webtools/alertsStore`:
   - fix: Regression in `InferAlerterPayload` type
 
