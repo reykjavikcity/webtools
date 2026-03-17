@@ -1,3 +1,5 @@
+import { Equals, Expect } from '@maranomynet/libtools';
+import { Cleanup } from '@reykjavik/hanna-utils';
 import { afterAll, beforeAll, describe, expect, mock, test } from 'bun:test';
 
 import type {
@@ -37,10 +39,30 @@ describe(createAlerterStore.name, () => {
       lastAlerts = alerts;
     });
 
+    type MyPayload = InferAlerterPayload<typeof store.alerter>;
+    type _ = Expect<
+      Equals<
+        Cleanup<MyPayload>,
+        {
+          message: moduleExports.AlertMessage;
+          flags?: Array<string>;
+          duration?:
+            | 'BLINK'
+            | 'SHORT'
+            | 'MEDIUM'
+            | 'LONG'
+            | 'XLONG'
+            | 'INDEFINITE'
+            | undefined;
+          delay?: number;
+        }
+      >
+    >;
+
     let unsubscribe = store.subscribe(cb);
     await Bun.sleep(50);
     expect(cb).toHaveBeenCalledTimes(0); // Not called yet because of the initial empty state
-    store.alerter.success({ message: 'Test alert 1' });
+    store.alerter.success('Test alert 1');
     expect(cb).toHaveBeenCalledTimes(0); // Not called yet because allerts are dispatched asynchronously
     await Bun.sleep(50);
     expect(cb).toHaveBeenCalledTimes(1);
@@ -152,6 +174,22 @@ describe(createAlerterStore.name, () => {
         },
       },
     });
+
+    type MyPayload = InferAlerterPayload<typeof store.alerter>;
+    type _ = Expect<
+      Equals<
+        Cleanup<MyPayload>,
+        {
+          message: moduleExports.AlertMessage;
+          flags?: Array<string>;
+          duration?: 'short' | 'long';
+          delay?: number;
+          title?: string;
+          type?: 'toast';
+        }
+      >
+    >;
+
     expect('success' in store.alerter).toBe(false);
     store.alerter.foo({ message: 'Test alert', type: 'toast' });
     expect(customStorage.size).toBe(1);

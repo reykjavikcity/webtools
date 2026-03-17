@@ -561,7 +561,9 @@ export const createAlerterStore = <
  * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#createalerterstore
  */
 export type InferAlerterPayload<F extends Record<string, (...args: Array<any>) => void>> =
-  F extends Record<string, (payload: infer P) => void> ? P : never;
+  F extends Record<string, (payload: infer P) => void>
+    ? Extract<P, { message: unknown }>
+    : never;
 
 /**
  * Utility type for inferring the alert info object shape received by the

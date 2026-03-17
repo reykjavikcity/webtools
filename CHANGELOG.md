@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/alertsStore`:
+  - fix: Regression in `InferAlerterPayload` type
 
 ## 0.3.12 – 0.3.13
 
