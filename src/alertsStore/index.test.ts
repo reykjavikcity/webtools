@@ -147,16 +147,24 @@ describe(createAlerterStore.name, () => {
     expect(prevAlert.message === lastAlerts[0]?.message).toBe(true);
   }, 1000);
 
-  test('throws on repeat instatiations with the same key', () => {
-    expect(() => createAlerterStore()).toThrow(/"app~alerts" already exists/i);
+  test('repeat instatiations with the same key return existing store', () => {
+    const _console_warn = console.warn;
+    console.warn = mock(() => undefined);
+
+    const store1 = createAlerterStore();
+    const store2 = createAlerterStore();
+    expect(store2).toBe(store1);
     const key = 'foobar';
-    createAlerterStore({ key });
-    expect(() => createAlerterStore({ key })).toThrow(
-      new RegExp(`"${key}" already exists`, 'i')
-    );
+    const store3 = createAlerterStore({ key });
+    expect(store3).not.toBe(store1);
+    const store4 = createAlerterStore({ key });
+    expect(store4).toBe(store3);
+
+    expect(console.warn).toHaveBeenCalledTimes(3);
+    console.warn = _console_warn;
   });
 
-  test('Accepts custom stores', async () => {
+  test('Accepts custom storage instances', async () => {
     const key = 'custom';
     const customStorage = new Map<string, string>();
     const store = createAlerterStore({

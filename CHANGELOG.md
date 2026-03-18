@@ -3,6 +3,9 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/alertsStore`:
+  - feat: console.warn instead of throwing when recreating an extisting store
+    — return old store instead of creating a new one.
 
 ## 0.3.15
 

@@ -165,7 +165,7 @@ export type AlerterConfig<
   };
 };
 
-const storeKeys: Record<string, true> = {};
+const storeStore: Record<string, unknown> = {};
 
 /**
  * Factory function that creates an alerter store singleton with optional
@@ -186,10 +186,18 @@ export const createAlerterStore = <
 ) => {
   const STORE_KEY = cfg.key || DEFAULT_KEY;
 
-  if (storeKeys[STORE_KEY]) {
-    throw new Error(`An alerter store with key "${STORE_KEY}" already exists.`);
+  if (storeStore[STORE_KEY]) {
+    process.env.NODE_ENV !== 'production' &&
+      console.warn(
+        `An alerter store with key "${STORE_KEY}" already exists.\n` +
+          `Returning the existing store, which may have been configured differently.\n` +
+          `Make sure to use unique keys if you want multiple independent stores.`
+      );
+    return storeStore[STORE_KEY] as {
+      alerter: typeof alerter;
+      subscribe: typeof subscribe;
+    };
   }
-  storeKeys[STORE_KEY] = true;
 
   const storgae =
     cfg.storage || (typeof sessionStorage !== 'undefined' ? sessionStorage : undefined);
@@ -548,7 +556,7 @@ export const createAlerterStore = <
       _saveAlertsToStorage();
     })();
 
-  return {
+  return (storeStore[STORE_KEY] = {
     /**
      * Singleton object with methods for showing alerts of different levels.
      * Pass a payload object to the method of the level you want to dispatch,
@@ -574,7 +582,7 @@ export const createAlerterStore = <
      * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#createalerterstore
      */
     subscribe,
-  };
+  });
 };
 
 /**
