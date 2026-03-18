@@ -45,7 +45,7 @@ type _AlertNotificationPending<Level, Type, Flag, Title> = {
 
 // ---------------------------------------------------------------------------
 
-const defaultKey = 'app~alerts';
+const DEFAULT_KEY = 'app~alerts';
 
 const defaultAlertLevels = ['info', 'warning', 'success', 'error'] as const;
 
@@ -58,7 +58,7 @@ const defaultDurations = {
   INDEFINITE: 0,
 };
 
-const defaultDefaultDuration = 'MEDIUM' satisfies keyof typeof defaultDurations;
+const DEFAULT_DEFAULT_DURATION = 'MEDIUM' satisfies keyof typeof defaultDurations;
 
 /**
  * A configuration object for the `createAlerter` factory function, that allows
@@ -135,10 +135,18 @@ export type AlerterConfig<
    * Default duration to use for alerts if no duration is specified when
    * dispatching.
    *
-   * Default: `SHORT` if using the default durations, otherwise the default
+   * You can also pass an object with different default durations for each
+   * alert level, e.g. longer defaults for "errors" than "success" alerts.
+   *
+   * Default: `MEDIUM` if using the default durations, otherwise the default
    * is `0` (indefinite)
    */
-  defaultDuration?: Durations extends Record<infer D, number> ? D : never;
+  defaultDuration?:
+    | (Durations extends Record<infer D, number> ? (D extends string ? D : never) : never)
+    | Record<
+        Level,
+        Durations extends Record<infer D, number> ? (D extends string ? D : never) : never
+      >;
 
   /**
    * Whether to allow an optional `title` property on alerts.
@@ -166,6 +174,7 @@ const storeKeys: Record<string, true> = {};
  * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#createalerterstore
  */
 /*#__NO_SIDE_EFFECTS__*/
+// eslint-disable-next-line complexity
 export const createAlerterStore = <
   Level extends string = (typeof defaultAlertLevels)[number],
   Type extends string = string,
@@ -175,7 +184,7 @@ export const createAlerterStore = <
 >(
   cfg: AlerterConfig<Level, Type, Flag, Title, Duration> = {}
 ) => {
-  const STORE_KEY = cfg.key || defaultKey;
+  const STORE_KEY = cfg.key || DEFAULT_KEY;
 
   if (storeKeys[STORE_KEY]) {
     throw new Error(`An alerter store with key "${STORE_KEY}" already exists.`);
@@ -188,9 +197,17 @@ export const createAlerterStore = <
   const alertLevels = cfg.levels || (defaultAlertLevels as unknown as Array<Level>);
   const durations =
     cfg.durations || (defaultDurations as unknown as Record<Duration, number>);
-  const DEFAULT_DURATION = cfg.durations
+
+  const defaultDurationsByLevel =
+    cfg.defaultDuration && typeof cfg.defaultDuration !== 'string'
+      ? cfg.defaultDuration
+      : undefined;
+
+  const defaultDuration = !cfg.durations
+    ? (DEFAULT_DEFAULT_DURATION as Duration)
+    : typeof cfg.defaultDuration === 'string'
     ? cfg.defaultDuration
-    : (defaultDefaultDuration as Duration);
+    : undefined;
 
   const _notificationSchema = v.object({
     level: v.picklist(alertLevels),
@@ -334,8 +351,14 @@ export const createAlerterStore = <
   ): (AlertNotification & { showAt?: undefined }) | AlertNotificationPending => {
     // Strip away duration and delay (not part of the notification object)
     const { duration, delay, ...payload } = _payload;
-    const durationMs: number =
-      durations[(duration || DEFAULT_DURATION || '') as Duration] || 0;
+    const durationMs: number | undefined =
+      durations[
+        duration ||
+          (defaultDurationsByLevel &&
+            (defaultDurationsByLevel[level] as unknown as Duration)) ||
+          ((defaultDuration || '') as Duration)
+      ];
+
     return {
       ...payload,
       level,

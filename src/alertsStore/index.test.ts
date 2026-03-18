@@ -89,7 +89,7 @@ describe(createAlerterStore.name, () => {
       {
         level: 'success',
         message: 'Test alert 1',
-        duration: 4_000,
+        duration: 8_000,
         ...common,
       },
       {
@@ -157,9 +157,10 @@ describe(createAlerterStore.name, () => {
   });
 
   test('Accepts custom stores', async () => {
+    const key = 'custom';
     const customStorage = new Map<string, string>();
     const store = createAlerterStore({
-      key: 'custom',
+      key,
       title: true,
       levels: ['foo', 'bar'],
       types: ['toast'],
@@ -193,8 +194,8 @@ describe(createAlerterStore.name, () => {
     expect('success' in store.alerter).toBe(false);
     store.alerter.foo({ message: 'Test alert', type: 'toast' });
     expect(customStorage.size).toBe(1);
-    expect(customStorage.get('custom')).toBeString();
-    expect(JSON.parse(customStorage.get('custom')!)).toEqual({
+    expect(customStorage.get(key)).toBeString();
+    expect(JSON.parse(customStorage.get(key)!)).toEqual({
       active: [
         {
           level: 'foo',
@@ -213,7 +214,7 @@ describe(createAlerterStore.name, () => {
       duration: 'long',
       delay: 100,
     });
-    expect(JSON.parse(customStorage.get('custom')!)).toEqual({
+    expect(JSON.parse(customStorage.get(key)!)).toEqual({
       active: [
         {
           level: 'foo',
@@ -235,7 +236,7 @@ describe(createAlerterStore.name, () => {
       ],
     });
     await Bun.sleep(150);
-    expect(JSON.parse(customStorage.get('custom')!)).toEqual({
+    expect(JSON.parse(customStorage.get(key)!)).toEqual({
       active: [
         {
           level: 'foo',
@@ -249,6 +250,45 @@ describe(createAlerterStore.name, () => {
           title: 'Hi!',
           message: 'Test alert 2',
           duration: 100,
+          id: expect.any(String),
+        },
+      ],
+      pending: [],
+    });
+  });
+
+  test('allows default durations by level', async () => {
+    const key = 'custom2';
+    const customStorage = new Map<string, string>();
+    const store = createAlerterStore({
+      key,
+      levels: ['foo', 'bar'],
+      durations: { short: 10, long: 1000 },
+      defaultDuration: {
+        foo: 'long',
+        bar: 'short',
+      },
+      storage: {
+        getItem: (key: string) => customStorage.get(key),
+        setItem: (key: string, value: string) => customStorage.set(key, value),
+      },
+    });
+
+    store.alerter.foo({ message: 'Test alert' });
+    store.alerter.bar({ message: 'Test alert' });
+    await Bun.sleep(50);
+    expect(JSON.parse(customStorage.get(key)!)).toEqual({
+      active: [
+        {
+          level: 'foo',
+          message: 'Test alert',
+          duration: 1000,
+          id: expect.any(String),
+        },
+        {
+          level: 'bar',
+          message: 'Test alert',
+          duration: 10,
           id: expect.any(String),
         },
       ],

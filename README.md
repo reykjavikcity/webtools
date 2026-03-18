@@ -1129,10 +1129,12 @@ The configuration options are as follows:
   Default:
   `{ BLINK: 2_000, SHORT: 4_000, MEDIUM: 8_000, LONG: 16_000, XLONG: 32_000, INDEFINITE: 0 }`.
 
-- **`defaultDuration?: string`**  
+- **`defaultDuration?: string | Record<Level, Duration>`**  
   The duration to use for alerts if no duration is specified when
   dispatching.  
-  Default: `SHORT` if using the default durations, otherwise the default is
+  You can also pass an object with different default durations for each alert
+  level, e.g. longer defaults for "errors" than "success" alerts.  
+  Default: `MEDIUM` if using the default durations, otherwise the default is
   `0` (indefinite)
 
 - **`storage?: Pick<Storage, 'getItem' | 'setItem'>`**  

@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/alertsStore`:
+  - feat: Support `defaultDuration` object w durations for each alert `level`
   - feat: Bump the default `defaultDuration` to `'MEDIUM'` (more reasonable)
 
 ## 0.3.12 – 0.3.14
