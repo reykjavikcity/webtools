@@ -58,7 +58,7 @@ const defaultDurations = {
   INDEFINITE: 0,
 };
 
-const defaultDefaultDuration = 'SHORT' satisfies keyof typeof defaultDurations;
+const defaultDefaultDuration = 'MEDIUM' satisfies keyof typeof defaultDurations;
 
 /**
  * A configuration object for the `createAlerter` factory function, that allows
