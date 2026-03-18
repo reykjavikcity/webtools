@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.15
+
+_2026-03-18_
+
 - `@reykjavik/webtools/alertsStore`:
   - feat: Support `defaultDuration` object w durations for each alert `level`
   - feat: Bump the default `defaultDuration` to `'MEDIUM'` (more reasonable)
