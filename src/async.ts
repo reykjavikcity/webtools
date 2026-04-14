@@ -301,7 +301,11 @@ export const cachifyAsync = <
   /** The async function to cache. */
   fn: F;
 
-  /** How long to cache successful results. Number values are treated as seconds */
+  /**
+   *  How long to cache successful results.
+   *
+   * Number values are treated as seconds
+   */
   ttl: TTL;
 
   /**
