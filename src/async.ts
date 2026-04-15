@@ -12,6 +12,7 @@ type PlainObj = Record<string, unknown>;
 /*#__NO_SIDE_EFFECTS__*/
 export const sleep = (length: number, opts?: { signal?: AbortSignal }) =>
   new Promise<void>((resolve, reject) => {
+    length = Math.max(0, length);
     const signal = opts && opts.signal;
     if (!signal) {
       return setTimeout(resolve, length);

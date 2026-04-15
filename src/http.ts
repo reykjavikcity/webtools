@@ -284,7 +284,7 @@ export const toMs = (ttl: TTL): number => {
 };
 
 /**
- * Converts a `TTL` (max-age) value into seconds. Returns `0` for bad and/or
+ * Converts a `TTL` (max-age) value into (whole) seconds. Returns `0` for bad and/or
  * negative input values.
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#tosec-ttl-helper
