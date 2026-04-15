@@ -239,6 +239,7 @@ describe('toSec', () => {
   test('works', () => {
     expect(toSec(123)).toEqual(123);
     expect(toSec(123.7)).toEqual(124);
+    expect(toSec(0.1)).toEqual(0);
     expect(toSec(-1)).toEqual(0);
 
     expect(toSec('1s')).toEqual(1);
