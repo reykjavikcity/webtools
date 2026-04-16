@@ -456,14 +456,14 @@ sayHello.cancel(true); // `finish` parmeter is true
 Wraps an async function with a simple, robust caching layer. Returns a
 function with the same signature as `fn`, but with caching applied.
 
-The caching strategy is simple. If `fn` resolves to an error result, the error
-is cached for a short time (default: `30s`) to avoid hammering the underlying
-function, and a stale (last successful) result is returned if available. The
-error result is only while waiting for the issue to be resolved. Return stale
-(last successful) result while throttling.
+Successful results are cached for `ttlMs`, while error results are throttled
+(default: `30s`) to avoid hammering the underlying function, and return a
+stale (last successful) result if available and `returnStale` is not
+explicitly set to `false`.
 
-- No max size or eviction strategy—intended for caching a small, clearly
-  bounded number of different cache "keys" (e.g. per language).
+It has no max size or eviction strategy and is only intended for caching a
+small, clearly bounded number of different cache "keys" (e.g. one result per
+language).
 
 **Options:**
 

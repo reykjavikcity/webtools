@@ -288,8 +288,9 @@ const DEFAULT_THROTTLING_MS: TTL = '30s';
  * Successful results are cached for `ttlMs`, while error results are
  * throttled to avoid hammering the underlying function.
  *
- * Has no max size or eviction strategy; intended for caching a small,
- * clearly bounded number of different cache "keys" (e.g. per language).
+ * It has no max size or eviction strategy and is only intended for caching
+ * a small, clearly bounded number of different cache "keys"
+ * (e.g. one result per language).
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#cachifyasync
  */
@@ -302,9 +303,9 @@ export const cachifyAsync = <
   fn: F;
 
   /**
-   *  How long to cache successful results.
+   * How long to cache successful results.
    *
-   * Number values are treated as seconds
+   * Number values are rounded and treated as seconds.
    */
   ttl: TTL;
 
@@ -313,7 +314,7 @@ export const cachifyAsync = <
    * the underlying function while waiting for the issue to be (hopefully)
    * resolved.
    *
-   * Raw numbers are treated as seconds.
+   * Raw numbers are rounded and treated as seconds.
    *
    *  Default: '30s'
    */
@@ -329,10 +330,9 @@ export const cachifyAsync = <
   customTtl?: (args: Parameters<F>, result: Result.TupleObj<R>) => TTL | undefined;
 
   /**
-   * Creates a custom cache key for the current result set
+   * Creates a custom cache key for the current result set.
    *
-   * Default: `JSON.stringify` of the function arguments
-   *
+   * Default: `JSON.stringify()` of the arguments passed to the cached function
    */
   getKey?: (...args: Parameters<F>) => string;
 

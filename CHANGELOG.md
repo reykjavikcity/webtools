@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/async`:
+  - docs: Fix README section on `cachifyAsync`
 
 ## 0.3.16
 
