@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/async`:
+  - feat: Add `cachifyAsync.devTTLScaling` property
   - docs: Fix README section on `cachifyAsync`
 
 ## 0.3.16
@@ -12,7 +13,7 @@ _2026-03-18_
 
 - `@reykjavik/webtools/alertsStore`:
   - feat: console.warn instead of throwing when recreating an extisting store
-    — return old store instead of creating a new one.
+    — return old store instead of creating a new one
 
 ## 0.3.15
 

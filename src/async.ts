@@ -1,7 +1,7 @@
 import { EitherObj } from '@reykjavik/hanna-utils';
 
 import { Result } from './errorhandling.js';
-import { toSec as _toSec, TTL } from './http.js';
+import { toSec, TTL } from './http.js';
 
 type PlainObj = Record<string, unknown>;
 
@@ -276,10 +276,6 @@ throttle.d = (delay: number, skipFirst?: boolean) =>
 
 // ---------------------------------------------------------------------------
 
-// Wrap toSec to use a 90% shorter TTL in development mode
-const toSec =
-  process.env.NODE_ENV === 'production' ? _toSec : (val: TTL) => _toSec(val) / 10;
-
 const DEFAULT_THROTTLING_MS: TTL = '30s';
 
 /**
@@ -353,7 +349,10 @@ export const cachifyAsync = <
 
   const _cache = new Map<
     string,
-    { data: Promise<Result.TupleObj<R>>; freshUntil: number }
+    {
+      data: Promise<Result.TupleObj<R>>;
+      freshUntil: number;
+    }
   >();
 
   return (async (...args: Parameters<F>) => {
@@ -364,21 +363,21 @@ export const cachifyAsync = <
       return cached.data;
     }
 
+    const msScaling =
+      process.env.NODE_ENV === 'production' ? 1 : Math.max(1, cachifyAsync.devTTLScaling);
+    const MS = 1_000 / msScaling;
+
     const lastData = returnStale !== false && cached?.data;
     const entry = {
-      // Set an initial "fresh until" that's longer than TTL_SEC to cover
-      // (somewhat) safely the time it takes for the promise to resolve,
-      // so that we don't trigger multiple calls to `fn` in parallel
-      // TODO: Build in a proper AbortSignal timeout, etc. to handle this more robustly
-      freshUntil: now + (TTL_SEC + 60) * 1_000,
       data: fn(...args).then((result) => {
+        const now = Date.now();
         const customTtlSec = toSec(customTtl?.(args, result) || 0);
-        entry.freshUntil = now + (customTtlSec || TTL_SEC) * 1_000;
+        entry.freshUntil = now + (customTtlSec || TTL_SEC) * MS;
 
         if (result.error) {
           if (!customTtlSec) {
             // Set shorter TTL on errors to allow quicker retries
-            entry.freshUntil = now + THROTTLING_SEC * 1_000;
+            entry.freshUntil = now + THROTTLING_SEC * MS;
           }
           if (lastData) {
             // Return last known good data if available, even if it's a bit stale
@@ -387,9 +386,25 @@ export const cachifyAsync = <
         }
         return result;
       }),
+
+      // Set an initial "fresh until" that's longer than TTL_SEC to cover
+      // (somewhat) safely the time it takes for the promise to resolve,
+      // so that we don't trigger multiple calls to `fn` in parallel
+      // TODO: Build in a proper AbortSignal timeout, etc. to handle this more robustly
+      freshUntil: now + (TTL_SEC + 60) * MS,
     };
     _cache.set(key, entry);
 
     return entry.data;
   }) as F;
 };
+
+/**
+ * Optional scaling factor for `TTL` values in during development and testing.
+ * A higher value speeds up tests and reduces the effects of caching.
+ *
+ * This value is completely ignored in production, where TTLs are used as-is.
+ *
+ * Default: `20` (i.e. only 5% of the specified production TTL)
+ */
+cachifyAsync.devTTLScaling = 20;

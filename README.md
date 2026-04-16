@@ -465,6 +465,13 @@ It has no max size or eviction strategy and is only intended for caching a
 small, clearly bounded number of different cache "keys" (e.g. one result per
 language).
 
+**Note on TTLs:** In non-production environments, TTL values are scaled down
+by a factor of `cachifyAsync.devTTLScaling` (default: `20`) to speed up
+development and testing. This means that a TTL of `1m` will only last for 3
+seconds in development. This scaling factor is completely ignored in
+production, where TTLs are used as-is. Change this value to `1` to disable
+scaling in development, or any other number you like.
+
 **Options:**
 
 - `fn: <T>(...args: ay[]) => Promise<Result.TupleObj<T>>` — The async function
