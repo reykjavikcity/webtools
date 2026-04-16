@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.17
+
+_2026-04-16_
+
 - `@reykjavik/webtools/async`:
   - feat: Add `cachifyAsync.devTTLScaling` property
   - fix: Suppress console warnings if `sleep` receive a negative duration
