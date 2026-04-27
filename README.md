@@ -487,6 +487,10 @@ scaling in development, or any other number you like.
   cache key for the current result set. Default: `JSON.stringify(args)`.
 - `returnStale?: boolean` — Whether to return stale (last successful) result
   when `fn` resolves to an error result. Defaults to `true`.
+- `patience?: TTL` - If set, then when an API call takes longer than this
+  value, the cache will return a stale (last successful) result if available,
+  instead of waiting for a slow API call to finish. (Ignored if `returnStale`
+  is set to `false`.)
 
 **Example:**
 

@@ -1,7 +1,7 @@
 import { EitherObj } from '@reykjavik/hanna-utils';
 
 import { Result } from './errorhandling.js';
-import { toSec, TTL } from './http.js';
+import { toMs, toSec, TTL } from './http.js';
 
 type PlainObj = Record<string, unknown>;
 
@@ -313,9 +313,23 @@ export const cachifyAsync = <
    *
    * Raw numbers are rounded and treated as seconds.
    *
-   *  Default: '30s'
+   * Default: '30s'
    */
   throttle?: TTL;
+
+  /**
+   * If set, and a successfully resolved cache entry exists the caching function
+   * may lose patience and return the stale result, but the cache gets updated
+   * in the background when the promise resolves.
+   *
+   * Does nothing if `returnStale` is false or if there is no **successfully**
+   * resolved cache entry.
+   *
+   * **NOTE:** Raw numbers are treated as **milliseconds**.
+   *
+   * Default: `undefined` (i.e. indefinite)
+   */
+  patience?: TTL;
 
   /**
    * Function to optionally set a custom TTL on success and/or error results,
@@ -341,12 +355,19 @@ export const cachifyAsync = <
    */
   returnStale?: boolean;
 }): F => {
-  const { fn, getKey = (...args) => JSON.stringify(args), customTtl, returnStale } = opts;
+  const {
+    fn,
+    getKey = (...args) => JSON.stringify(args),
+    customTtl,
+    returnStale = true,
+  } = opts;
 
   // Set up the cache object
   const TTL_SEC = toSec(opts.ttl);
   const THROTTLING_SEC =
     toSec(opts.throttle || 0) || Math.min(toSec(DEFAULT_THROTTLING_MS), TTL_SEC);
+
+  const patienceMs = toMs(opts.patience || 0);
 
   const _cache = new Map<
     string,
@@ -368,26 +389,47 @@ export const cachifyAsync = <
       process.env.NODE_ENV === 'production' ? 1 : Math.max(1, cachifyAsync.devTTLScaling);
     const MS = 1_000 / msScaling;
 
-    const lastData = returnStale !== false && cached?.data;
-    const entry = {
-      data: fn(...args).then((result) => {
-        const now = Date.now();
-        const customTtlSec = toSec(customTtl?.(args, result) || 0);
-        entry.freshUntil = now + (customTtlSec || TTL_SEC) * MS;
+    const lastData = returnStale && cached?.data;
 
-        if (result.error) {
-          if (!customTtlSec) {
-            // Set shorter TTL on errors to allow quicker retries
-            entry.freshUntil = now + THROTTLING_SEC * MS;
-          }
-          if (lastData) {
-            // Return last known good data if available, even if it's a bit stale
-            return lastData;
-          }
+    /* eslint-disable @typescript-eslint/no-use-before-define */
+    const inflightPromise = fn(...args).then((result) => {
+      const now = Date.now();
+      const customTtlSec = toSec(customTtl?.(args, result) || 0);
+      entry.freshUntil = now + (customTtlSec || TTL_SEC) * MS;
+
+      if (result.error) {
+        if (!customTtlSec) {
+          // Set shorter TTL on errors to allow quicker retries
+          entry.freshUntil = now + THROTTLING_SEC * MS;
         }
-        return result;
-      }),
+        if (lastData) {
+          // Return last known good data if available, even if it's a bit stale
+          return lastData;
+        }
+      }
+      return result;
+    });
+    /* eslint-enable @typescript-eslint/no-use-before-define */
 
+    const entry = {
+      data:
+        !patienceMs || !returnStale || !lastData
+          ? inflightPromise
+          : Promise.race([
+              inflightPromise,
+              sleep(patienceMs / msScaling)
+                .then(() => lastData)
+                .then(({ error }) => {
+                  if (error) {
+                    return inflightPromise;
+                  }
+                  inflightPromise.then((result) => {
+                    entry.data = Promise.resolve(result);
+                    return result;
+                  });
+                  return lastData;
+                }),
+            ]),
       // Set an initial "fresh until" that's longer than TTL_SEC to cover
       // (somewhat) safely the time it takes for the promise to resolve,
       // so that we don't trigger multiple calls to `fn` in parallel

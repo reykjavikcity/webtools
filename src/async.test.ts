@@ -529,14 +529,18 @@ describe('debounce', () => {
 // ===========================================================================
 
 describe('cachifyAsync', () => {
+  const ttlWait = 330;
+  const throttleWait = 110;
+
   const prep = <T extends Array<unknown> = []>(
-    opts?: Omit<Parameters<typeof cachifyAsync>[0], 'fn' | 'ttl' | 'throttle'>
+    opts?: Omit<Parameters<typeof cachifyAsync>[0], 'fn' | 'ttl' | 'throttle'>,
+    lagMs = 0
   ) => {
     let c = 0;
     const meta = {
       up: true,
       fn: mock((..._args: T) =>
-        Promise.resolve(
+        sleep(lagMs).then(() =>
           meta.up
             ? Result.Success(_args.length ? _args : `value${c++ ? ` ${c}` : ''}`)
             : Result.Fail(new Error('Failed'))
@@ -559,12 +563,12 @@ describe('cachifyAsync', () => {
     const [meta, cachedFn] = prep();
     expect((await cachedFn()).result).toBe('value');
     expect(meta.fn.mock.calls.length).toBe(1);
-    cachedFn();
-    cachedFn();
+    await cachedFn();
+    await cachedFn();
     expect(meta.fn.mock.calls.length).toBe(1);
     expect((await cachedFn()).result).toBe('value');
-    await sleep(330);
-    cachedFn();
+    await sleep(ttlWait);
+    await cachedFn();
     expect(meta.fn.mock.calls.length).toBe(2);
     expect((await cachedFn()).result).toBe('value 2');
   });
@@ -578,11 +582,11 @@ describe('cachifyAsync', () => {
     expect((await cachedFn(3, '.')).result).toEqual([3, '.']);
     expect(meta.fn.mock.calls.length).toBe(2);
     expect((await cachedFn(1, '')).result).toEqual([1, '']);
-    cachedFn(1, '');
+    await cachedFn(1, '');
     expect(meta.fn.mock.calls.length).toBe(2);
-    await sleep(330);
-    cachedFn(1, '');
-    cachedFn(3, '.');
+    await sleep(ttlWait);
+    await cachedFn(1, '');
+    await cachedFn(3, '.');
     expect(meta.fn.mock.calls.length).toBe(4);
   });
 
@@ -596,25 +600,25 @@ describe('cachifyAsync', () => {
     expect(r0.result).toBeUndefined();
 
     // Errors are cached
-    cachedFn();
+    await cachedFn();
     expect(meta.fn.mock.calls.length).toBe(1);
 
     // But only for 100ms
-    await sleep(110);
-    cachedFn();
+    await sleep(throttleWait);
+    await cachedFn();
     expect(meta.fn.mock.calls.length).toBe(2);
 
     // API is back up
     meta.up = true;
     // After error cache expires call again
-    await sleep(110);
+    await sleep(throttleWait);
     const r1 = await cachedFn();
     expect(meta.fn.mock.calls.length).toBe(3);
     expect(r1.error).toBeUndefined();
     expect(r1.result).toBe('value');
 
     // Sucess is cached more than 100 ms
-    await sleep(110);
+    await sleep(throttleWait);
     await cachedFn();
     await cachedFn();
     await cachedFn();
@@ -623,7 +627,7 @@ describe('cachifyAsync', () => {
 
     // API goes down again
     meta.up = false;
-    await sleep(330 - 110);
+    await sleep(ttlWait - throttleWait);
     // Cache returns stale success results while API is down
     const r2 = await cachedFn();
     expect(r2.error).toBeUndefined();
@@ -638,7 +642,7 @@ describe('cachifyAsync', () => {
     expect(r0.result).toBe('value');
 
     // Wait until the cache expires
-    await sleep(330);
+    await sleep(ttlWait);
 
     // API starts offline
     meta.up = false;
@@ -658,9 +662,63 @@ describe('cachifyAsync', () => {
     expect(meta.fn.mock.calls.length).toBe(2);
     // Repeatedly calling `cachedFn` with the same category but different count
     // should return the previously cached result.
-    cachedFn('b', 99);
-    cachedFn('b', 130);
+    await cachedFn('b', 99);
+    await cachedFn('b', 130);
     expect((await cachedFn('b', -7)).result).toEqual(['b', 2]);
+    expect(meta.fn.mock.calls.length).toBe(2);
+  });
+
+  test.only('returns stale when `patience` runs out', async () => {
+    const [meta, cachedFn] = prep({ patience: '1s' }, 160);
+
+    // API is slower than patience, but returns successfully
+    // since the cache is empty.
+    const r1 = await cachedFn();
+    expect(r1.error).toBeUndefined();
+    expect(r1.result).toBe('value');
+    expect(meta.fn.mock.calls.length).toBe(1);
+
+    // Wait until the cache expires
+    await sleep(ttlWait);
+
+    // A stale cache exists so the next call returns the stale result
+    const r2 = await cachedFn();
+    expect(r2.error).toBeUndefined();
+    expect(r2.result).toBe('value');
+    expect(meta.fn.mock.calls.length).toBe(2);
+
+    // The last stale cache entry from last time is immetiately returned
+    // and the slow API  cal has not yet updated in the background.
+    const r3 = await cachedFn();
+    expect(r3.error).toBeUndefined();
+    expect(r3.result).toBe('value');
+    expect(meta.fn.mock.calls.length).toBe(2);
+
+    // wait for the lagging API call to resolve and update the cache
+    // in the background
+    await sleep(100);
+    // the cache entry still exists but has an updated value now
+    const r4 = await cachedFn();
+    expect(r4.error).toBeUndefined();
+    expect(r4.result).toBe('value 2');
+    expect(meta.fn.mock.calls.length).toBe(2);
+  });
+
+  test.only('`returnStale:false` obviates the `patience` option', async () => {
+    const [meta, cachedFn] = prep({ patience: '1s', returnStale: false }, 160);
+
+    const r1 = await cachedFn();
+    expect(r1.error).toBeUndefined();
+    expect(r1.result).toBe('value');
+    expect(meta.fn.mock.calls.length).toBe(1);
+
+    // Wait until the cache expires
+    await sleep(ttlWait);
+
+    // A stale cache exists but is not returned (patience is ignored)
+    const r2 = await cachedFn();
+    expect(r2.error).toBeUndefined();
+    expect(r2.result).toBe('value 2');
     expect(meta.fn.mock.calls.length).toBe(2);
   });
 });
