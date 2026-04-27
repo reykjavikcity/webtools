@@ -242,6 +242,8 @@ describe('toSec', () => {
     expect(toSec(0.1)).toEqual(0);
     expect(toSec(-1)).toEqual(0);
 
+    expect(toSec('900ms')).toEqual(1);
+    expect(toSec('2050ms')).toEqual(2);
     expect(toSec('1s')).toEqual(1);
     expect(toSec('-2s')).toEqual(0);
     expect(toSec('2m')).toEqual(120);
@@ -271,6 +273,8 @@ describe('toMs', () => {
     expect(toMs(123.7)).toEqual(124);
     expect(toMs(-1)).toEqual(0);
 
+    expect(toMs('901.4ms')).toEqual(901);
+    expect(toMs('2050ms')).toEqual(2050);
     expect(toMs('1s')).toEqual(1_000);
     expect(toMs('-2s')).toEqual(0);
     expect(toMs('4w')).toEqual(2_419_200_000);

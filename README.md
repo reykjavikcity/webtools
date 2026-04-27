@@ -192,7 +192,7 @@ const myTTL2: TTLConfig = { maxAge: '4s' };
 The `ttlCfg` parameter is either a bare `TTL` (max-age) value:
 
 - `number` — seconds
-- `"${number}${'s'|'m'|'h'|'d'|'w'}"` — gets converted to seconds
+- `"${number}${'ms'|'s'|'m'|'h'|'d'|'w'}"` — gets converted to seconds
 
 …one of these `TTLKeywords`:
 
@@ -231,7 +231,7 @@ behavior.
 ### `toSec` TTL helper
 
 **Syntax:**
-`` toSec(ttl: number | `${number}${'s'|'m'|'h'|'d'|'w'}`): number ``
+`` toSec(ttl: number | `${number}${'ms'|'s'|'m'|'h'|'d'|'w'}`): number ``
 
 Converts a `TTL` (max-age) value into seconds. Returns `0` for bad and/or
 negative input values.
@@ -251,7 +251,7 @@ const ttlSec3 = toSec('-1h'); // 0
 ### `toMs` duration helper
 
 **Syntax:**
-`` toSec(duration: number | `${number}${'s'|'m'|'h'|'d'|'w'}`): number ``
+`` toSec(duration: number | `${number}${'ms'|'s'|'m'|'h'|'d'|'w'}`): number ``
 
 Converts a `TTL` (duration) value into milliseconds. Returns `0` for bad
 and/or negative input values.
@@ -506,7 +506,7 @@ const cachedFetchUser = cachifyAsync({
   ttl: '10m',
 });
 
-// ---------------------****---------------------------------------
+// ------------------------------------------------------------
 // Usage:
 
 const result = await cachedFetchUser('123');

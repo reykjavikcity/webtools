@@ -233,7 +233,7 @@ export type HTTP_ERROR_ALL = HTTP_CLIENT_ERROR_ALL | HTTP_SERVER_ERROR_ALL;
 
 // ---------------------------------------------------------------------------
 
-type TimeUnit = 's' | 'm' | 'h' | 'd' | 'w';
+type TimeUnit = 'ms' | 's' | 'm' | 'h' | 'd' | 'w';
 export type TTL = number | `${number}${TimeUnit}`;
 type TTLKeywords = 'permanent' | 'unset' | 'no-cache';
 type TTLObj = {
@@ -257,6 +257,7 @@ type TTLObj = {
 export type TTLConfig = TTL | TTLKeywords | TTLObj;
 
 const unitToMilliseconds: Record<TimeUnit, number> = {
+  ms: 1,
   s: 1_000,
   m: 60_000,
   h: 60 * 60_000,
@@ -277,7 +278,9 @@ export const toMs = (ttl: TTL): number => {
   }
   if (typeof ttl === 'string') {
     const value = parseFloat(ttl);
-    const factor = unitToMilliseconds[ttl.slice(-1) as TimeUnit] || 1;
+    const factor = ttl.endsWith('ms')
+      ? 1
+      : unitToMilliseconds[ttl.slice(-1) as TimeUnit] || 1;
     ttl = value * factor;
   }
   return Math.max(0, Math.round(ttl)) || 0;

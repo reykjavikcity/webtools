@@ -3,6 +3,8 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/http`:
+  - feat: Support 'ms' unit in `toMs` and `toSec` TTL helpers
 
 ## 0.3.18
 
