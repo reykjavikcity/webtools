@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.18
+
+_2026-04-27_
+
 - `@reykjavik/webtools/async`:
   - feat: Add `patience` option to `cachifyAsync` to return stale data when
     the API is slow
