@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.19
+
+_2026-06-04_
+
 - `@reykjavik/webtools/http`:
   - feat: Add `TTLObj` prop `public`, deprecate the more obscure `publ`
   - feat: Support 'ms' unit in `toMs` and `toSec` TTL helpers
