@@ -218,7 +218,7 @@ response header
 If set to a positive value then `stale-if-error=` is added to the response
 header
 
-**`TTLConfig.publ?: boolean`**
+**`TTLConfig.public?: boolean`**
 
 Sets the response caching as "public", instead of the default "private"
 

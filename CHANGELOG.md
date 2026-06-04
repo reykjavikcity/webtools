@@ -4,6 +4,7 @@
 
 - ... <!-- Add new lines here. -->
 - `@reykjavik/webtools/http`:
+  - feat: Add `TTLObj` prop `public`, deprecate the more obscure `publ`
   - feat: Support 'ms' unit in `toMs` and `toSec` TTL helpers
 
 ## 0.3.18

@@ -223,12 +223,27 @@ describe('cacheControlHeaders', () => {
         : undefined),
     });
 
-    expect(cacheControlHeaders({ maxAge: '2m', publ: true }, 'my-etag-123')).toEqual({
+    expect(cacheControlHeaders({ maxAge: '2m', public: true }, 'my-etag-123')).toEqual({
       'Cache-Control': 'public, max-age=120, immutable',
       ...(process.env.NODE_ENV !== 'production'
         ? { 'X-Cache-Control': 'public, max-age=120, immutable' }
         : undefined),
       ETag: 'my-etag-123',
+    });
+
+    // Still supports the deprecated `publ` option
+    expect(cacheControlHeaders({ maxAge: '2m', publ: true })).toEqual({
+      'Cache-Control': 'public, max-age=120, immutable',
+      ...(process.env.NODE_ENV !== 'production'
+        ? { 'X-Cache-Control': 'public, max-age=120, immutable' }
+        : undefined),
+    });
+    // ...but `public` takes precedence over it.
+    expect(cacheControlHeaders({ maxAge: '2m', publ: true, public: false })).toEqual({
+      'Cache-Control': 'private, max-age=120, immutable',
+      ...(process.env.NODE_ENV !== 'production'
+        ? { 'X-Cache-Control': 'private, max-age=120, immutable' }
+        : undefined),
     });
   });
 });

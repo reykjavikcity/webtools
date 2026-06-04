@@ -244,9 +244,12 @@ type TTLObj = {
   // Sets `stale-if-error=` for the resource */
   staleIfError?: TTL;
   /** Sets the response caching as "public", instead of the default "private" */
-  publ?: boolean;
+  public?: boolean;
   /** Sets a 'must-revalidate' flag instead of the default 'immutable'  */
   stability?: 'revalidate' | 'immutable' | 'normal';
+
+  /** @deprecated Use option `public` instead  (Will be removed in v0.4) */
+  publ?: boolean;
 };
 
 /**
@@ -412,7 +415,8 @@ export const cacheControl = (
   const sIE_ttl = toSec(opts.staleIfError || 0);
   const sIE = sIE_ttl ? `, stale-if-error=${sIE_ttl}` : '';
 
-  const scope = opts.publ ? 'public' : 'private';
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  const scope = opts.public ?? opts.publ ? 'public' : 'private';
   const stability =
     (opts.stability && stabilities[opts.stability]) || stabilities.immutable;
 
