@@ -289,8 +289,8 @@ type ClearCache<F extends () => void> = {
    * is true and the next call to the cached function either fails or takes too
    * long to resolve
    *
-   * NOTE: This method accepts the same parameters as the cached function.
-   * The parameters are passed through the `getKey` function to find the
+   * NOTE: This method accepts the same arguments as the cached function.
+   * The arguments are passed through the `getKey` function to find the
    * matching cache entry.
    */
   invalidate: (...fnArgs: Parameters<F>) => void;
