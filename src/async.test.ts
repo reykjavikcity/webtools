@@ -668,7 +668,7 @@ describe('cachifyAsync', () => {
     expect(meta.fn.mock.calls.length).toBe(2);
   });
 
-  test.only('returns stale when `patience` runs out', async () => {
+  test.concurrent('returns stale when `patience` runs out', async () => {
     const [meta, cachedFn] = prep({ patience: '1s' }, 160);
 
     // API is slower than patience, but returns successfully
@@ -704,7 +704,7 @@ describe('cachifyAsync', () => {
     expect(meta.fn.mock.calls.length).toBe(2);
   });
 
-  test.only('`returnStale:false` obviates the `patience` option', async () => {
+  test.concurrent('`returnStale:false` obviates the `patience` option', async () => {
     const [meta, cachedFn] = prep({ patience: '1s', returnStale: false }, 160);
 
     const r1 = await cachedFn();
