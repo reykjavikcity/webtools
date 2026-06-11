@@ -465,6 +465,8 @@ It has no max size or eviction strategy and is only intended for caching a
 small, clearly bounded number of different cache "keys" (e.g. one result per
 language).
 
+It however allows manual invalidation and purging of cache items, if needed.
+
 **Note on TTLs:** In non-production environments, TTL values are scaled down
 by a factor of `cachifyAsync.devTTLScaling` (default: `20`) to speed up
 development and testing. This means that a TTL of `1m` will only last for 3
@@ -491,6 +493,16 @@ scaling in development, or any other number you like.
   value, the cache will return a stale (last successful) result if available,
   instead of waiting for a slow API call to finish. (Ignored if `returnStale`
   is set to `false`.)
+
+**Methods:**
+
+- `cachedFn.invalidate(...args: Parameters<typeof fn>): void` — Invalidates
+  the cache for the given arguments by setting its TTL to `0`. The stale data
+  still remains and may be returned if `returnStale` is true.  
+  The arguments are passed through the `getKey` function to find the matching
+  cache entry.
+- `cachedFn.purge(...args: Parameters<typeof fn>): void` — Completely deletes
+  the cache entry for the given arguments.
 
 **Example:**
 

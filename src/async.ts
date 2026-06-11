@@ -279,6 +279,32 @@ throttle.d = (delay: number, skipFirst?: boolean) =>
 
 const DEFAULT_THROTTLING_MS: TTL = '30s';
 
+type ClearCache<F extends () => void> = {
+  /**
+   * Invalidates a cache entry for the given arguments, if it exists, by setting
+   * its TTL to 0, so that the next call to the cached function with the same
+   * arguments will trigger a call to the underlying function.
+   *
+   * However, the stale entry still exists and may be returned if `returnStale`
+   * is true and the next call to the cached function either fails or takes too
+   * long to resolve
+   *
+   * NOTE: This method accepts the same parameters as the cached function.
+   * The parameters are passed through the `getKey` function to find the
+   * matching cache entry.
+   */
+  invalidate: (...fnArgs: Parameters<F>) => void;
+
+  /**
+   * Completely deletes a cache entry for the given arguments, if it exists.
+   *
+   * NOTE: This method accepts the same parameters as the cached function.
+   * The parameters are passed through the `getKey` function to find the
+   * matching cache entry.
+   */
+  purge: (...fnArgs: Parameters<F>) => void;
+};
+
 /**
  * Wraps an async function with a simple, but fairly robust caching layer.
  *
@@ -318,20 +344,6 @@ export const cachifyAsync = <
   throttle?: TTL;
 
   /**
-   * If set, and a successfully resolved cache entry exists the caching function
-   * may lose patience and return the stale result, but the cache gets updated
-   * in the background when the promise resolves.
-   *
-   * Does nothing if `returnStale` is false or if there is no **successfully**
-   * resolved cache entry.
-   *
-   * **NOTE:** Raw numbers are treated as **milliseconds**.
-   *
-   * Default: `undefined` (i.e. indefinite)
-   */
-  patience?: TTL;
-
-  /**
    * Function to optionally set a custom TTL on success and/or error results,
    * when the promise resolves.
    *
@@ -348,13 +360,27 @@ export const cachifyAsync = <
   getKey?: (...args: Parameters<F>) => string;
 
   /**
+   * If set, and a successfully resolved cache entry exists the caching function
+   * may lose patience and return the stale result, but the cache gets updated
+   * in the background when the promise resolves.
+   *
+   * Does nothing if `returnStale` is false or if there is no **successfully**
+   * resolved cache entry.
+   *
+   * **NOTE:** Raw numbers are treated as **milliseconds**.
+   *
+   * Default: `undefined` (i.e. indefinite)
+   */
+  patience?: TTL;
+
+  /**
    * Whether to return stale (last successful) result when `fn` resolves to an
    * error result.
    *
    * Default: `true`
    */
   returnStale?: boolean;
-}): F => {
+}): F & ClearCache<F> => {
   const {
     fn,
     getKey = (...args) => JSON.stringify(args),
@@ -377,7 +403,7 @@ export const cachifyAsync = <
     }
   >();
 
-  return (async (...args: Parameters<F>) => {
+  const cachedFn = (async (...args: Parameters<F>) => {
     const now = Date.now();
     const key = getKey(...args);
     const cached = _cache.get(key);
@@ -439,7 +465,21 @@ export const cachifyAsync = <
     _cache.set(key, entry);
 
     return entry.data;
-  }) as F;
+  }) as F & ClearCache<F>;
+
+  cachedFn.invalidate = (...fnArgs) => {
+    const key = getKey(...fnArgs);
+    const entry = _cache.get(key);
+    if (entry) {
+      entry.freshUntil = 0;
+    }
+  };
+  cachedFn.purge = (...fnArgs) => {
+    const key = getKey(...fnArgs);
+    _cache.delete(key);
+  };
+
+  return cachedFn;
 };
 
 /**

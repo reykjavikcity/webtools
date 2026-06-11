@@ -721,4 +721,46 @@ describe('cachifyAsync', () => {
     expect(r2.result).toBe('value 2');
     expect(meta.fn.mock.calls.length).toBe(2);
   });
+
+  test.concurrent('Invalidate function works', async () => {
+    const [meta, cachedFn] = prep<[1 | 2]>();
+
+    await cachedFn(1);
+    await cachedFn(2);
+    expect(meta.fn.mock.calls.length).toBe(2);
+
+    cachedFn.invalidate(1);
+    await cachedFn(1);
+    await cachedFn(2);
+    expect(meta.fn.mock.calls.length).toBe(3);
+
+    // Still returns stale result if the API goes down
+    cachedFn.invalidate(1);
+    meta.up = false;
+    const r1 = await cachedFn(1);
+    expect(r1.error).toBeUndefined();
+    expect(r1.result).toEqual([1]);
+    expect(meta.fn.mock.calls.length).toBe(4);
+  });
+
+  test.concurrent('Purge function works', async () => {
+    const [meta, cachedFn] = prep<[1 | 2]>();
+
+    await cachedFn(1);
+    await cachedFn(2);
+    expect(meta.fn.mock.calls.length).toBe(2);
+
+    cachedFn.purge(1);
+    await cachedFn(1);
+    await cachedFn(2);
+    expect(meta.fn.mock.calls.length).toBe(3);
+
+    // Entry is deleted so it doesn't return stale result when API goes down
+    cachedFn.purge(1);
+    meta.up = false;
+    const r1 = await cachedFn(1);
+    expect(r1.error).toBeInstanceOf(Error);
+    expect(r1.result).toBeUndefined();
+    expect(meta.fn.mock.calls.length).toBe(4);
+  });
 });
