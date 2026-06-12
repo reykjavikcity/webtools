@@ -279,6 +279,21 @@ throttle.d = (delay: number, skipFirst?: boolean) =>
 
 const DEFAULT_THROTTLING_MS: TTL = '30s';
 
+type _Clearer<F extends () => void> = {
+  (...fnArgs: Parameters<F>): void;
+  /**
+   * The `filter` argument function receives the `cacheKey` for each cache
+   * entry and if it returns `true` that cache entry gets invalidated
+   * (or purged).
+   *
+   * Default: `() => true` (i.e. all entries are invalidated/purged)
+   */
+  all: (
+    /** Decides if a cache key should be invalidated/purged */
+    filter?: (cacheKey: string) => boolean
+  ) => void;
+};
+
 type ClearCache<F extends () => void> = {
   /**
    * Invalidates a cache entry for the given arguments, if it exists, by setting
@@ -293,7 +308,7 @@ type ClearCache<F extends () => void> = {
    * The arguments are passed through the `getKey` function to find the
    * matching cache entry.
    */
-  invalidate: (...fnArgs: Parameters<F>) => void;
+  invalidate: _Clearer<F>;
 
   /**
    * Completely deletes a cache entry for the given arguments, if it exists.
@@ -302,7 +317,7 @@ type ClearCache<F extends () => void> = {
    * The parameters are passed through the `getKey` function to find the
    * matching cache entry.
    */
-  purge: (...fnArgs: Parameters<F>) => void;
+  purge: _Clearer<F>;
 };
 
 /**
@@ -467,16 +482,33 @@ export const cachifyAsync = <
     return entry.data;
   }) as F & ClearCache<F>;
 
-  cachedFn.invalidate = (...fnArgs) => {
+  cachedFn.invalidate = ((...fnArgs) => {
     const key = getKey(...fnArgs);
     const entry = _cache.get(key);
     if (entry) {
       entry.freshUntil = 0;
     }
+  }) as _Clearer<F>;
+
+  cachedFn.invalidate.all = (filter = () => true) => {
+    _cache.forEach((entry, key) => {
+      if (filter(key)) {
+        entry.freshUntil = 0;
+      }
+    });
   };
-  cachedFn.purge = (...fnArgs) => {
+
+  cachedFn.purge = ((...fnArgs) => {
     const key = getKey(...fnArgs);
     _cache.delete(key);
+  }) as _Clearer<F>;
+
+  cachedFn.purge.all = (filter = () => true) => {
+    _cache.forEach((_, key) => {
+      if (filter(key)) {
+        _cache.delete(key);
+      }
+    });
   };
 
   return cachedFn;

@@ -504,6 +504,10 @@ scaling in development, or any other number you like.
 - `cachedFn.purge(...args: Parameters<typeof fn>): void` — Completely deletes
   the cache entry for the given arguments.
 
+Both `invalidate` and `purge` also have an `all` method to invalidate/purge
+all cache entries at once. It accepts a `filter` function as an optional
+argument to only invalidate/purge some entries.
+
 **Example:**
 
 ```ts

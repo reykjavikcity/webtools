@@ -741,6 +741,25 @@ describe('cachifyAsync', () => {
     expect(r1.error).toBeUndefined();
     expect(r1.result).toEqual([1]);
     expect(meta.fn.mock.calls.length).toBe(4);
+
+    // invalidate all entries at once
+    meta.up = false;
+    cachedFn.invalidate.all();
+    await cachedFn(1);
+    const r2 = await cachedFn(2);
+    expect(r2.error).toBeUndefined();
+    expect(r2.result).toEqual([2]);
+    expect(meta.fn.mock.calls.length).toBe(6);
+
+    // invalidating only entry with key `[2]`
+    meta.up = false;
+    cachedFn.invalidate.all((key) => key === '[2]');
+    await cachedFn(1);
+    expect(meta.fn.mock.calls.length).toBe(6);
+    const r3 = await cachedFn(2);
+    expect(r3.error).toBeUndefined();
+    expect(r3.result).toEqual([2]);
+    expect(meta.fn.mock.calls.length).toBe(7);
   });
 
   test.concurrent('Purge function works', async () => {
@@ -762,5 +781,24 @@ describe('cachifyAsync', () => {
     expect(r1.error).toBeInstanceOf(Error);
     expect(r1.result).toBeUndefined();
     expect(meta.fn.mock.calls.length).toBe(4);
+
+    // purge all entries at once
+    meta.up = false;
+    cachedFn.purge.all();
+    await cachedFn(1);
+    const r2 = await cachedFn(2);
+    expect(r2.error).toBeInstanceOf(Error);
+    expect(r2.result).toBeUndefined();
+    expect(meta.fn.mock.calls.length).toBe(6);
+
+    // purging only entry with key `[2]`
+    meta.up = false;
+    cachedFn.purge.all((key) => key === '[2]');
+    await cachedFn(1);
+    expect(meta.fn.mock.calls.length).toBe(6);
+    const r3 = await cachedFn(2);
+    expect(r3.error).toBeInstanceOf(Error);
+    expect(r3.result).toBeUndefined();
+    expect(meta.fn.mock.calls.length).toBe(7);
   });
 });
