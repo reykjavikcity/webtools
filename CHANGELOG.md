@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.21
+
+_2026-06-12_
+
 - `@reykjavik/webtools/async`:
   - feat: Add `invalidate.all()` and `purge.all()` methods to `cachifyAsync`ed
     functions
