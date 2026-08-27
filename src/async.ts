@@ -320,6 +320,14 @@ type ClearCache<F extends () => void> = {
   purge: _Clearer<F>;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Cache<T = any> = {
+  get: (key: string) => T | undefined;
+  set: (key: string, value: T) => void;
+  delete: (key: string) => void;
+  forEach: (callback: (value: T, key: string) => void) => void;
+};
+
 /**
  * Wraps an async function with a simple, but fairly robust caching layer.
  *
@@ -329,6 +337,8 @@ type ClearCache<F extends () => void> = {
  * It has no max size or eviction strategy and is only intended for caching
  * a small, clearly bounded number of different cache "keys"
  * (e.g. one result per language).
+ *
+ * If you want something more advanced, you can provide your own `cache` object.
  *
  * @see https://github.com/reykjavikcity/webtools/blob/v0.3/README.md#cachifyasync
  */
@@ -368,6 +378,15 @@ export const cachifyAsync = <
   customTtl?: (args: Parameters<F>, result: Result.TupleObj<R>) => TTL | undefined;
 
   /**
+   * If set, the caching function will use this cache object instead of creating
+   * its own internal cache. This allows using something like `lru-cache`
+   * for more advanced caching or eviction strategies.
+   *
+   * The cache object must be willing/able to accept any type of value.
+   */
+  cache?: Cache;
+
+  /**
    * Creates a custom cache key for the current result set.
    *
    * Default: `JSON.stringify()` of the arguments passed to the cached function
@@ -400,6 +419,7 @@ export const cachifyAsync = <
     fn,
     getKey = (...args) => JSON.stringify(args),
     customTtl,
+    cache,
     returnStale = true,
   } = opts;
 
@@ -410,13 +430,10 @@ export const cachifyAsync = <
 
   const patienceMs = toMs(opts.patience || 0);
 
-  const _cache = new Map<
-    string,
-    {
-      data: Promise<Result.TupleObj<R>>;
-      freshUntil: number;
-    }
-  >();
+  const _cache: Cache<{
+    data: Promise<Result.TupleObj<R>>;
+    freshUntil: number;
+  }> = cache || new Map();
 
   const cachedFn = (async (...args: Parameters<F>) => {
     const now = Date.now();

@@ -3,6 +3,9 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+- `@reykjavik/webtools/async`:
+  - feat: Support passing a custom `cache` object to `cachifyAsync` … for more
+    advanced caching or eviction strategies
 
 ## 0.3.21
 
@@ -33,7 +36,7 @@ _2026-04-27_
 
 - `@reykjavik/webtools/async`:
   - feat: Add `patience` option to `cachifyAsync` to return stale data when
-    the API is slow
+    the API is slowd
 
 ## 0.3.17
 

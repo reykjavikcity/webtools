@@ -451,7 +451,7 @@ sayHello.cancel(true); // `finish` parmeter is true
 ### `cachifyAsync`
 
 **Syntax:**
-`cachifyAsync<R, F extends (...args: any[]) => Promise<Result.TupleObj<R>>>(opts: { fn: F; ttl: TTL; throttle?: TTL; customTtl?: (args: Parameters<F>, result: Result.TupleObj<R>) => TTL | undefined; getKey?: (...args: Parameters<F>) => string; returnStale?: boolean }): F`
+`cachifyAsync<R, F extends (...args: any[]) => Promise<Result.TupleObj<R>>>(opts: { fn: F; ttl: TTL; throttle?: TTL; customTtl?: (args: Parameters<F>, result: Result.TupleObj<R>) => TTL | undefined; getKey?: (...args: Parameters<F>) => string; returnStale?: boolean, cache?: CacheObject }): F`
 
 Wraps an async function with a simple, robust caching layer. Returns a
 function with the same signature as `fn`, but with caching applied.
@@ -461,11 +461,14 @@ Successful results are cached for `ttlMs`, while error results are throttled
 stale (last successful) result if available and `returnStale` is not
 explicitly set to `false`.
 
-It has no max size or eviction strategy and is only intended for caching a
-small, clearly bounded number of different cache "keys" (e.g. one result per
-language).
+It has no max size or eviction strategy _by default_, and is only intended for
+caching a small, clearly bounded number of different cache "keys" (e.g. one
+result per language).  
+However, It allows manual invalidation and purging of cache items, if needed.
 
-It however allows manual invalidation and purging of cache items, if needed.
+If you need more advanced caching strategies, you must supply your own `cache`
+object (like `lru-cache`) that implements `Map`-like `get`, `set`, `delete`
+and `forEach`methods.
 
 **Note on TTLs:** In non-production environments, TTL values are scaled down
 by a factor of `cachifyAsync.devTTLScaling` (default: `20`) to speed up
@@ -493,6 +496,10 @@ scaling in development, or any other number you like.
   value, the cache will return a stale (last successful) result if available,
   instead of waiting for a slow API call to finish. (Ignored if `returnStale`
   is set to `false`.)
+- `cache?: CacheObject` - If set, then the caching function will use this
+  cache object instead of creating its own internal cache. This allows using
+  something like `lru-cache` for more advanced caching or eviction strategies.
+  The cache object must be willing/able to accept any type of value.
 
 **Methods:**
 
