@@ -234,7 +234,7 @@ export const throttle = <A extends Array<unknown>>(
 
     if (!throttled) {
       skipFirst ? throttled++ : func.apply(_this, _args);
-      timeout = setTimeout(throttledFn.finish, delay) as unknown as TimerId; // Go home TypeScript, you're drunk!
+      timeout = setTimeout(throttledFn.finish, delay);
     }
 
     throttled++;
@@ -321,7 +321,7 @@ type ClearCache<F extends () => void> = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Cache<T = any> = {
+type CacheObject<T = any> = {
   get: (key: string) => T | undefined;
   set: (key: string, value: T) => void;
   delete: (key: string) => void;
@@ -382,9 +382,11 @@ export const cachifyAsync = <
    * its own internal cache. This allows using something like `lru-cache`
    * for more advanced caching or eviction strategies.
    *
-   * The cache object must be willing/able to accept any type of value.
+   * The cache object must be willing/able to accept any type of value,
+   * and SHOULD NOT manage its own TTL (or have extremely long TTL) as
+   * `cachifyAsync` manages the TTLs internally.
    */
-  cache?: Cache;
+  cache?: CacheObject;
 
   /**
    * Creates a custom cache key for the current result set.
@@ -430,7 +432,7 @@ export const cachifyAsync = <
 
   const patienceMs = toMs(opts.patience || 0);
 
-  const _cache: Cache<{
+  const _cache: CacheObject<{
     data: Promise<Result.TupleObj<R>>;
     freshUntil: number;
   }> = cache || new Map();
