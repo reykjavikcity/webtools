@@ -801,4 +801,14 @@ describe('cachifyAsync', () => {
     expect(r3.result).toBeUndefined();
     expect(meta.fn.mock.calls.length).toBe(7);
   });
+
+  test.concurrent('accepts custom `cache` object', async () => {
+    const cache = new Map<string, unknown>();
+    const [meta, cachedFn] = prep<[number]>({ cache });
+
+    await cachedFn(1);
+    await cachedFn(2);
+    expect(meta.fn.mock.calls.length).toBe(2);
+    expect(cache.size).toBe(2);
+  });
 });
