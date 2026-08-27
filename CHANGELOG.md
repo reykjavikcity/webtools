@@ -4,20 +4,13 @@
 
 - ... <!-- Add new lines here. -->
 
-## 0.3.23
-
-_2026-08-27_
-
-- `@reykjavik/webtools/async`:
-  - docs: Add note that custom CacheObject must not do TTL management
-
-## 0.3.22
+## 0.3.22 – 0.3.23
 
 _2026-08-27_
 
 - `@reykjavik/webtools/async`:
   - feat: Support passing a custom `cache` object to `cachifyAsync` … for more
-    advanced caching or eviction strategies
+    advanced size-management and/or eviction strategies
 
 ## 0.3.21
 
