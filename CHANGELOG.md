@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.22
+
+_2026-08-27_
+
 - `@reykjavik/webtools/async`:
   - feat: Support passing a custom `cache` object to `cachifyAsync` … for more
     advanced caching or eviction strategies
