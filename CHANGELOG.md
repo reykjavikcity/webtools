@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.23
+
+_2026-08-27_
+
 - `@reykjavik/webtools/async`:
   - docs: Add note that custom CacheObject must not do TTL management
 
