@@ -503,6 +503,9 @@ scaling in development, or any other number you like.
   instead of creating its own internal cache. The cache object must be
   willing/able to accept any type of value, and SHOULD NOT manage its own TTL
   (or have extremely long TTL).
+- `unwrapResult?: boolean` — If set to `true`, the `Result.TupleObj<T>`
+  returned by the cached function is "unwrapped" and its result value returned
+  (possibly `undefined` if there was an error).
 
 **Methods:**
 

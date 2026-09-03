@@ -811,4 +811,18 @@ describe('cachifyAsync', () => {
     expect(meta.fn.mock.calls.length).toBe(2);
     expect(cache.size).toBe(2);
   });
+
+  test.concurrent('`unwrapResult` option works', async () => {
+    const cachedFn = cachifyAsync({
+      fn: async (x: number, throwErr?: true) =>
+        throwErr ? Result.Fail('Argh!!!') : Result.Success(x),
+      ttl: '30s',
+      unwrapResult: true,
+    });
+
+    const r1 = await cachedFn(32);
+    expect(r1).toEqual(32);
+    const r2 = await cachedFn(17, true);
+    expect(r2).toEqual(undefined);
+  });
 });
