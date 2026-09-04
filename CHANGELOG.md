@@ -4,22 +4,11 @@
 
 - ... <!-- Add new lines here. -->
 
-## 0.3.25
+## 0.3.24 – 0.3.25
 
 _2026-09-04_
 
-- `@reykjavik/webtools/async`:
-  - feat: Revert `unwrapResult` convenience option from `cachifyAsync` … as it
-    breaks complex, conditional return types of generic input functions
-
-
-
-## 0.3.24
-
-_2026-09-04_
-
-- `@reykjavik/webtools/async`:
-  - feat: Add `unwrapResult` convenience option to `cachifyAsync`
+- fix: Added and reverted experimental feature for `cachifyAsync`
 
 ## 0.3.22 – 0.3.23
 
