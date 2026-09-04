@@ -345,13 +345,7 @@ type CacheObject<T = any> = {
 /*#__NO_SIDE_EFFECTS__*/
 export const cachifyAsync = <
   R,
-  F extends (...args: Array<any>) => Promise<Result.TupleObj<R>>,
-  UnWrap extends boolean = false,
-  RetF = boolean extends UnWrap
-    ? F
-    : UnWrap extends false
-    ? F
-    : (...args: Parameters<F>) => Promise<Awaited<ReturnType<F>>['result']>
+  F extends (...args: Array<any>) => Promise<Result.TupleObj<R>>
 >(opts: {
   /** The async function to cache. */
   fn: F;
@@ -422,30 +416,13 @@ export const cachifyAsync = <
    * Default: `true`
    */
   returnStale?: boolean;
-
-  /**
-   * Sugar option to "unwrap" the cached function's return value to only the `result`
-   * property of the `Result.TupleObj` returned by the underlying function.
-   *
-   * In cases where the cached function returns a `Fail` tuple, the `error` is
-   * ignored and the `undefined` `result` value is returned.
-   *
-   * This is useful when the cached function only ever returns "Success" results
-   * and you want to skip the extra `Result.TupleObj` wrapper, or when you only
-   * care about the successful result and want to ignore/swallow any errors and
-   * convert them to `undefined`.
-   *
-   * Default: `false`
-   */
-  unwrapResult?: UnWrap;
-}): RetF & ClearCache<F> => {
+}): F & ClearCache<F> => {
   const {
     fn,
     getKey = (...args) => JSON.stringify(args),
     customTtl,
     cache,
     returnStale = true,
-    unwrapResult,
   } = opts;
 
   // Set up the cache object
@@ -465,7 +442,7 @@ export const cachifyAsync = <
     const key = getKey(...args);
     const cached = _cache.get(key);
     if (cached && now < cached.freshUntil) {
-      return unwrapResult ? cached.data.then((data) => data.result) : cached.data;
+      return cached.data;
     }
 
     const msScaling =
@@ -521,8 +498,8 @@ export const cachifyAsync = <
     };
     _cache.set(key, entry);
 
-    return unwrapResult ? entry.data.then((data) => data.result) : entry.data;
-  }) as RetF & ClearCache<F>;
+    return entry.data;
+  }) as F & ClearCache<F>;
 
   cachedFn.invalidate = ((...fnArgs) => {
     const key = getKey(...fnArgs);
