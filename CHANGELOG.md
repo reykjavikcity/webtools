@@ -3,6 +3,11 @@
 ## Upcoming...
 
 - ... <!-- Add new lines here. -->
+
+## 0.3.24
+
+_2026-09-04_
+
 - `@reykjavik/webtools/async`:
   - feat: Add `unwrapResult` convenience option to `cachifyAsync`
 
