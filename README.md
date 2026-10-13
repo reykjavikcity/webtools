@@ -273,12 +273,10 @@ const ttlMs3 = toMs('-1h'); // 0
 ## `@reykjavik/webtools/fixIcelandicLocale`
 
 As of early 2024, Google Chrome still does not support the Icelandic locale
-`is`/`is-IS` in any way. Meanwhile other browsers have supported it for over a
-decade.
+`is`/`is-IS` in any way. Meanwhile other browsers/runtimes have supported it
+for over a decade.
 
-This module patches the following methods/classes by substituting the `is`
-locale with `da` (Danish) and apply a few post-hoc fixes to their return
-values.
+This module patches the following methods/classes:
 
 - `Intl.Collator` and `String.prototype.localeCompare` (\*)
 - `Intl.NumberFormat` and `Number.prototype.toLocaleString` (\*)
@@ -287,6 +285,9 @@ values.
 - `Intl.RelativeDateFormat`
 - `Intl.PluralRules`
 - `Intl.ListFormat`
+
+The patching is done by internally substituting the `is` locale with `da`
+(Danish) and then apply a few post-hoc fixes to their return values.
 
 (\*) The results are quite usable, but not entirely perfect. The
 limitations/caveats are listed below.
@@ -301,8 +302,8 @@ import '@reykjavik/webtools/fixIcelandicLocale';
 // as you normally would. (See "limitations" below.)
 ```
 
-(**NOTE** The patch is only applied in engines that fail a simple feature
-detection test.)
+(**NOTE** The patch is only applied in engines that fail a simple, per-module
+feature detection test.)
 
 ### Limitations
 
@@ -470,8 +471,8 @@ needed.
 If you need more advanced strategies that manage the cache size and evict old
 entries, you may pass an external `cache` object that implements `Map`-like
 `get`, `set`, `delete` and `forEach`methods (e.g. an `lru-cache` instance).  
-This external cache SHOULD NOT manage its own TTL (or have extremely long
-TTLs) as `cachifyAsync` manages the TTLs internally.
+This external cache SHOULD NOT manage its own TTL (or have extremely long TTLs
+configured) as `cachifyAsync` manages the TTLs internally.
 
 **Note on TTLs:** In non-production environments, TTL values are scaled down
 by a factor of `cachifyAsync.devTTLScaling` (default: `20`) to speed up
